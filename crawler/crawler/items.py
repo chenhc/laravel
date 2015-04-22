@@ -15,7 +15,53 @@ class CrawlerItem(scrapy.Item):
 
 
 class FoodMaterialItem(scrapy.Item):
+    # 名字
     name = scrapy.Field()
+
+    # 别名
     alias = scrapy.Field()
-    suit_types = scrapy.Field()
-    avoid_types = scrapy.Field()
+
+    # 图片URL
+    image_url = scrapy.Field()
+
+    # 建议食量
+    amount_rec = scrapy.Field()
+
+    # 适宜人群
+    suit_crowds = scrapy.Field()
+
+    # 禁忌人群
+    avoid_crowds = scrapy.Field()
+
+    # 适宜体质
+    suit_ctcms = scrapy.Field()
+
+    # 禁忌体质
+    avoid_ctcms = scrapy.Field()
+
+    # 简介
+    brief = scrapy.Field()
+
+    # 营养价值
+    nutrient = scrapy.Field()
+
+    # 食用功效
+    efficacy = scrapy.Field()
+
+    # 食用禁忌
+    taboos = scrapy.Field()
+
+    # 适宜搭配
+    suit_mix = scrapy.Field()
+
+    # 禁忌搭配
+    avoid_mix = scrapy.Field()
+
+    # 选购技巧
+    choose = scrapy.Field()
+
+    # 储藏方法
+    store = scrapy.Field()
+
+    # 烹饪小贴士
+    tips = scrapy.Field()
