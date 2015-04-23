@@ -65,3 +65,38 @@ class FoodMaterialItem(scrapy.Item):
 
     # 烹饪小贴士
     tips = scrapy.Field()
+
+
+class FoodRecipeItem(scrapy.Item):
+    # 名字
+    name = scrapy.Field()
+
+    # 工艺
+    method = scrapy.Field()
+
+    # 难度
+    difficulty = scrapy.Field()
+
+    # 分量：人数
+    amount = scrapy.Field()
+
+    # 口味
+    taste = scrapy.Field()
+
+    # 准备时间
+    setup_time = scrapy.Field()
+
+    # 烹饪时间
+    cook_time = scrapy.Field()
+
+    # 晒客
+    sharer = scrapy.Field()
+
+    # 主料
+    primaries = scrapy.Field()
+
+    # 辅料
+    accessories = scrapy.Field()
+
+    # 做法
+    procedure = scrapy.Field()
