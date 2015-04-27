@@ -15,6 +15,9 @@ class CrawlerItem(scrapy.Item):
 
 
 class FoodMaterialItem(scrapy.Item):
+    # 来源
+    source = scrapy.Field()
+
     # 名字
     name = scrapy.Field()
 
@@ -68,8 +71,17 @@ class FoodMaterialItem(scrapy.Item):
 
 
 class FoodRecipeItem(scrapy.Item):
+    # 来源
+    source = scrapy.Field()
+
     # 名字
     name = scrapy.Field()
+
+    # 菜系
+    area = scrapy.Field()
+
+    # 标签
+    tags = scrapy.Field()
 
     # 工艺
     method = scrapy.Field()
