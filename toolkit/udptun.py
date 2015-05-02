@@ -24,6 +24,7 @@ import select
 import hashlib
 import logging
 import threading
+import traceback
 
 
 def inet_aton(a):
@@ -40,11 +41,22 @@ def fmt_packet(packet):
     return '%s %s=>%s' % (repr(packet[:4]), src, dst)
 
 
+def catch_exc_detail(func):
+    def execute(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception:
+            logging.error("%s(%s, %s): %s" % (func.__name__, args, kwargs, 
+                traceback.format_exc()))
+    return execute
+
+
 class Tunnel(object):
 
     TUN_SET_IFF = 0x400454ca
     TUN_IFF = 0x0001
-    TUN_MTU = 1500 - 24 - 8 - 4
+    TUN_MTU = 1480 - 20 - 8 - 4
+    BUFFER_SIZE = 8192
 
     def __init__(self, ip=None):
         try:
@@ -91,7 +103,7 @@ class Tunnel(object):
         return self.fd
 
     def read(self):
-        return os.read(self.fd, self.TUN_MTU)
+        return os.read(self.fd, self.BUFFER_SIZE)
 
     def write(self, packet):
         return os.write(self.fd, packet)
@@ -121,7 +133,7 @@ class EpollServerMixin(object):
 
 class UdpTunnel(EpollServerMixin):
 
-    TUN_MTU = Tunnel.TUN_MTU
+    BUFFER_SIZE = 8192
 
     def __init__(self, ip=None):
         super(UdpTunnel, self).setup()
@@ -142,6 +154,7 @@ class UdpTunnel(EpollServerMixin):
         raw = ''.join([v for k, v in items]) + key
         return hashlib.md5(raw).hexdigest()
 
+    @catch_exc_detail
     def call(self, __peer__, __method__, __key__, **kwargs):
         if __debug__:
             logging.debug('call %s at %s with %s: %s' % \
@@ -173,22 +186,25 @@ class UdpTunnel(EpollServerMixin):
         while True:
             try:
                 packet = self.tun.read()
-            except Exception as err:
+            except OSError as err:
                 if err.errno == errno.EAGAIN:
                     break
+                elif err.errno == errno.INTR:
+                    continue
                 raise
+
             self.send_tun_packet(packet)
-            break
 
     def on_udp_active(self):
         while True:
             try:
-                packet, peer = self.udp.recvfrom(self.TUN_MTU)
-            except Exception as err:
+                packet, peer = self.udp.recvfrom(self.BUFFER_SIZE)
+            except IOError as err:
                 if err.errno == errno.EAGAIN:
                     break
+                elif err.errno == errno.INTR:
+                    continue
                 raise
-                break
 
             if packet[0] == '{':
                 self.on_call(peer, packet)
@@ -254,6 +270,7 @@ class UdpTunnelServer(UdpTunnel):
         if __debug__:
             logging.info('register user %s from %s with %s' % (user, peer, ip))
 
+    @catch_exc_detail
     def send_tun_packet(self, packet):
         dst = struct.unpack('!I', packet[20:24])[0]
         peer = self.route.get(dst)
@@ -263,6 +280,7 @@ class UdpTunnelServer(UdpTunnel):
                 logging.debug('send to udp %s: %s' % \
                         (peer, fmt_packet(packet)))
 
+    @catch_exc_detail
     def send_udp_packet(self, packet):
         dst = struct.unpack('!I', packet[20:24])[0]
         if dst == self.ip:
@@ -316,6 +334,7 @@ class UdpTunnelClient(UdpTunnel):
     def set_ip(self, ip):
         self.tun.set_ip(ip)
 
+    @catch_exc_detail
     def send_tun_packet(self, packet):
         self.udp.sendto(packet, self.peer)
         if __debug__:
