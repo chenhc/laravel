@@ -1,0 +1,17 @@
+server {
+    listen   80;
+    server_name ilive.laravel;
+
+    root ilive/website/public;
+    index index.html index.htm index.php;
+
+    location / {
+       try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        include fastcgi_params;
+        fastcgi_pass unix:/var/run/php5-fpm.sock;
+    }
+}
