@@ -15,11 +15,13 @@ if [ ! "$#" -eq 3 ]; then
     exit 1
 fi
 
+SQLDIR="$(readlink -f "$(dirname "$0")/..")"
+
 DATABASE="$1"
 USER_OPT="-u$2"
 PASSWORD_OPT="-p$3"
 
-SQLFILE='ilive.sql'
+SQLFILE="$SQLDIR/ilive.sql"
 
 mysql $USER_OPT $PASSWORD_OPT <<EOF
 DROP DATABASE IF EXISTS \`$DATABASE\`;

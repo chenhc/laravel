@@ -14,6 +14,16 @@ class CrawlerItem(scrapy.Item):
     pass
 
 
+class HackItem(scrapy.Item):
+    verifycode_key = scrapy.Field()
+    verifycode = scrapy.Field()
+    verifycode_shicai = scrapy.Field()
+    verify_shicai = scrapy.Field()
+
+    name = scrapy.Field()
+    img_src = scrapy.Field()
+
+
 class FoodMaterialItem(scrapy.Item):
     # 来源
     source = scrapy.Field()

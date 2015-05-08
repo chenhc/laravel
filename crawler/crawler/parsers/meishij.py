@@ -17,7 +17,24 @@ Changelog:
 if __name__ == '__main__':
     import mainenv
 
-from crawler.items import FoodMaterialItem, FoodRecipeItem
+from crawler.items import HackItem, FoodMaterialItem, FoodRecipeItem
+
+
+class HackParser(object):
+    def parse(self, response):
+        form = response.xpath('//form[@id="hack_form"]')
+        print form.extract()
+        verifycode_key, = form.xpath('./input[@name="verifycode_key"]/@value').extract()
+        verifycode, = form.xpath('./input[@name="verifycode"]/@value').extract()
+        verifycode_shicai, = form.xpath('./input[@name="verifycode_shicai"]/@value').extract()
+        verify_shicai, = form.xpath('./input[@name="verify_shicai"]/@value').extract()
+        img_src, = form.xpath('.//img/@src').extract()
+        name, = form.xpath('.//p[@class="ques_p"]/strong/text()').extract()
+        name = name.strip()[1:-1]
+        yield HackItem(verifycode_key=verifycode_key, verifycode=verifycode,
+                verifycode_shicai=verifycode_shicai,
+                verify_shicai=verify_shicai, name=name, img_src=img_src)
+
 
 class FoodMaterialParser(object):
     def parse(self, response, attr_map={
@@ -172,6 +189,13 @@ class FoodRecipeParser(object):
 
 if __name__ == '__main__':
     from crawler.utils import fetch
+
+    def show_hack():
+        url = 'http://www.meishij.net/hack/hack.php'
+        item, = HackParser().parse(fetch(url))
+        for attr, value in item.iteritems():
+            print '%s=%s' % (attr, value)
+            print
 
     def show_food_material(name):
         url = 'http://www.meishij.net/%s' % (name,)
