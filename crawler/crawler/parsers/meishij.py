@@ -62,7 +62,9 @@ class FoodMaterialParser(object):
         attr_names = div_sc_header_con1.xpath('.//p[@class="p2"]/strong/text()').extract()
         attr_names.reverse()
         for record in div_sc_header_con1.xpath('.//p[@class="p2"]/text()').extract():
-            attr, value = record.split(u'：', 1)
+            if len(record.split(u'：',1)) == 1: 
+                continue
+            attr, value = record.split(u'：',1)
             attr = attr.strip() or attr_names.pop().strip()
             attr = attr[1:-1]
             value = value.strip()
