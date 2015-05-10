@@ -122,3 +122,12 @@ class FoodRecipeItem(scrapy.Item):
 
     # 做法
     procedure = scrapy.Field()
+
+
+class MaterialListItem(scrapy.Item):
+    #所属类型
+    typename = scrapy.Field()
+    #名字
+    name = scrapy.Field()
+    #对应的链接
+    url = scrapy.Field()
