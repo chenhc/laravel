@@ -24,6 +24,17 @@ class HackItem(scrapy.Item):
     img_src = scrapy.Field()
 
 
+class PageItem(scrapy.Item):
+    # url
+    url = scrapy.Field()
+
+    # 类型
+    type = scrapy.Field()
+
+    # 其他属性
+    kwargs = scrapy.Field()
+
+
 class FoodMaterialItem(scrapy.Item):
     # 来源
     source = scrapy.Field()
@@ -125,9 +136,11 @@ class FoodRecipeItem(scrapy.Item):
 
 
 class MaterialListItem(scrapy.Item):
-    #所属类型
-    typename = scrapy.Field()
-    #名字
+    # 类别
+    category = scrapy.Field()
+
+    # 名字
     name = scrapy.Field()
-    #对应的链接
+
+    # url
     url = scrapy.Field()

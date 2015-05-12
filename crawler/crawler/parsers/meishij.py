@@ -17,7 +17,8 @@ Changelog:
 if __name__ == '__main__':
     import mainenv
 
-from crawler.items import HackItem, FoodMaterialItem, FoodRecipeItem,MaterialListItem
+from crawler.items import HackItem, PageItem, FoodMaterialItem, \
+        FoodRecipeItem, MaterialListItem
 
 
 class HackParser(object):
@@ -189,36 +190,42 @@ class FoodRecipeParser(object):
         recipe['procedure'] = '\n'.join(procedure)
         yield recipe
 
+
 #parse 分析食材百科页面 分析页面里面的每一个食材的名字，类型，对应的链接，以及得到食材页面下一页的链接，继续分析
 class MaterialListParser(object):
     def parse(self,response):
-        other_c = response.xpath('//div[@class="other_c listnav_con clearfix"]')
-        #得到类型
-        typename, = other_c.xpath('//dd[@class="current"]/h1/a/text()').extract()
-        listtyle1 = response.xpath('//div[@class="listtyle1"]')
-        for l in listtyle1:
-            listitem = MaterialListItem()
-            listitem['typename'] = typename.encode('utf8')
+        # 食材类别
+        div_other_c = response.xpath('//div[@class="other_c listnav_con clearfix"]')
+        category, = div_other_c.xpath('//dd[@class="current"]/h1/a/text()').extract()
+        category = category.encode('utf8')
+
+        # 食材列表
+        div_listtyle1 = response.xpath('//div[@class="listtyle1"]')
+        for l in div_listtyle1:
+            # 类别
+            item = MaterialListItem(category=category)
+
+            # 名字
             name, = l.xpath('./div[@class="info1"]/h3/a/text()').extract()
-            listitem['name'] = name.encode('utf8')
+            item['name'] = name.encode('utf8')
+
+            # url
             url, = l.xpath('./div[@class="img"]/a/@href').extract()
-            print url
-            listitem['url'] = url
-            rootpage = response.url.split(u'?',1)[0]
-            page_w = response.xpath('//div[@class="listtyle1_page_w"]')
-            nxt, = page_w.xpath('a[@class="next"]/@href').extract()
-            url = response.url + nxt
-            yield listitem
-        #分割去除'?page=x'字段
-        rootpage = response.url.split(u'?',1)[0]
-        #print 'root',rootpage
+            item['url'] = url
+
+            yield item
+
+        # base url
+        base_url = response.url.split(u'?', 1)[0]
+
+        # 下一页解析
         page_w = response.xpath('//div[@class="listtyle1_page_w"]')
-        #得到下一页'?page=x+1' 字段
-        nxt, = page_w.xpath('a[@class="next"]/@href').extract()
-        #两个拼接
-        url = rootpage + nxt
-        #print 'url', url
-        show_material_list(fetch(url))
+        result = page_w.xpath('a[@class="next"]/@href').extract()
+        if result:
+            nxt, = result
+            next_url = base_url + nxt
+            yield PageItem(url=next_url, type=MaterialListItem,
+                    kwargs=dict(category=category))
 
 if __name__ == '__main__':
     from crawler.utils import fetch
@@ -237,20 +244,18 @@ if __name__ == '__main__':
             print '%s=%s' % (attr, value)
             print
             
-    def show_food_recipe():
-        url = "http://meishij.net/zuofa/huotuizhengluyu_1.html"
+    def show_food_recipe(url):
         item, = FoodRecipeParser().parse(fetch(url))
         for attr, value in item.iteritems():
             print '%s=%s' % (attr, value)
             print
    
-    def show_material_list(response):
-        items = MaterialListParser().parse(response)
+    def show_material_list(url):
+        items = MaterialListParser().parse(fetch(url))
         for item in items:
-                print item['name']
-                print item['typename']
-                print item['url']
-                print 
+            for attr, value in item.iteritems():
+                print '%s=%s' % (attr, value)
+            print 
 
 
     #for m in ('香菇',):
@@ -259,6 +264,7 @@ if __name__ == '__main__':
         print
 
     url = "http://www.meishij.net/shicai/shucai_list"
-    response = fetch(url)
-    show_material_list(response)
-    show_food_recipe()
+    show_material_list(url)
+
+    url = "http://meishij.net/zuofa/huotuizhengluyu_1.html"
+    show_food_recipe(url)
