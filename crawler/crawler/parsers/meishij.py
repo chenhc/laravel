@@ -18,7 +18,7 @@ if __name__ == '__main__':
     import mainenv
 
 from crawler.items import HackItem, PageItem, FoodMaterialItem, \
-        FoodRecipeItem, MaterialListItem
+        FoodRecipeItem, MaterialListItem,CategoryListItem
 
 
 class HackParser(object):
@@ -190,8 +190,24 @@ class FoodRecipeParser(object):
         recipe['procedure'] = '\n'.join(procedure)
         yield recipe
 
+#解析食材百科类别栏 得到每一个类别的名字(如:蔬菜)与对应的链接,对应的链接可用于每种食材类别页面解析的入口,也包括了维生素类别，体质类别的入口
+class CategoryListParser(object):
+    def parse(self,response):
+        div_other_c = response.xpath('//div[@class="other_c listnav_con clearfix"]')
+        # 食材分类
+        dls = div_other_c.xpath('./dl')
+        for dl in dls:
+            dt = dl.xpath('./dt/text()').extract()
+            dds = dl.xpath('./dd')
+            for dd in dds:
+                url, = dd.xpath('a/@href').extract()
+                category, = dd.xpath('a/text()').extract()
+                item = CategoryListItem()
+                item['category'] = category
+                item['url'] = url
+                yield item
 
-#parse 分析食材百科页面 分析页面里面的每一个食材的名字，类型，对应的链接，以及得到食材页面下一页的链接，继续分析
+#parse 解析食材类别的页面(如：蔬菜，水果)，解析页面里面的每一个食材(如：菠菜，菠萝)的名字，类型，对应的链接,对应的链接可用于食材页面的解析
 class MaterialListParser(object):
     def parse(self,response):
         # 食材类别
@@ -212,7 +228,6 @@ class MaterialListParser(object):
             # url
             url, = l.xpath('./div[@class="img"]/a/@href').extract()
             item['url'] = url
-
             yield item
 
         # base url
@@ -257,6 +272,13 @@ if __name__ == '__main__':
                 print '%s=%s' % (attr, value)
             print 
 
+    url = 'http://www.meishij.net/shicai/'
+    def show_category_list(url):
+        items = CategoryListParser().parse(fetch(url))
+        for item in items:
+            for attr, value in item.iteritems():
+                print '%s = %s' % (attr, value)
+                print
 
     #for m in ('香菇',):
     for m in ('胡萝卜', '葡萄', '香菇', '猪肉'):
@@ -268,3 +290,6 @@ if __name__ == '__main__':
 
     url = "http://meishij.net/zuofa/huotuizhengluyu_1.html"
     show_food_recipe(url)
+
+    url = 'http://www.meishij.net/shicai/'
+    show_category_list(url)
