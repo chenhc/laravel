@@ -33,7 +33,7 @@ class PageItem(scrapy.Item):
     # 其他属性
     kwargs = scrapy.Field()
 
-#原材料页面解析的item
+# 原材料页面解析的item
 class FoodMaterialItem(scrapy.Item):
     # 来源
     source = scrapy.Field()
@@ -89,7 +89,7 @@ class FoodMaterialItem(scrapy.Item):
     # 烹饪小贴士
     tips = scrapy.Field()
 
-#菜谱页面解析的item
+# 菜谱页面解析的item
 class FoodRecipeItem(scrapy.Item):
     # 来源
     source = scrapy.Field()
@@ -134,15 +134,15 @@ class FoodRecipeItem(scrapy.Item):
     procedure = scrapy.Field()
 
 
-#类别列表的解析的item，url为各种原材料列表页面（如：蔬菜）的解析链接入口
-class CategoryListItem(scrapy.Item):
-    #类别
+# 类别列表的解析的item，url为各种原材料列表页面(如蔬菜)的解析链接入口
+class MaterialCategoryItem(scrapy.Item):
+    # 类别
     category = scrapy.Field()
 
-    #url
+    # url
     url = scrapy.Field()
 
-#原材料列表页面的解析的item,url为各种材料(如:菠菜）的解析链接入口
+# 原材料列表页面的解析的item，url为各种材料(如菠菜)的解析链接入口
 class MaterialListItem(scrapy.Item):
     # 类别
     category = scrapy.Field()
