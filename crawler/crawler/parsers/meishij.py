@@ -17,19 +17,22 @@ Changelog:
 if __name__ == '__main__':
     import mainenv
 
+import urlparse
+
 from crawler.items import HackItem, PageItem, FoodMaterialItem, \
         FoodRecipeItem, MaterialListItem, MaterialCategoryItem
 
 
 class HackParser(object):
+
     def parse(self, response):
         form = response.xpath('//form[@id="hack_form"]')
-        print form.extract()
         verifycode_key, = form.xpath('./input[@name="verifycode_key"]/@value').extract()
         verifycode, = form.xpath('./input[@name="verifycode"]/@value').extract()
         verifycode_shicai, = form.xpath('./input[@name="verifycode_shicai"]/@value').extract()
         verify_shicai, = form.xpath('./input[@name="verify_shicai"]/@value').extract()
         img_src, = form.xpath('.//img/@src').extract()
+        img_src = urlparse.urljoin(response.url, img_src)
         name, = form.xpath('.//p[@class="ques_p"]/strong/text()').extract()
         name = name.strip()[1:-1]
         yield HackItem(verifycode_key=verifycode_key, verifycode=verifycode,
@@ -38,6 +41,7 @@ class HackParser(object):
 
 
 class FoodMaterialParser(object):
+
     def parse(self, response, attr_map={
             u'别名': 'alias',
             u'食量建议': 'amount_rec',
@@ -86,7 +90,7 @@ class FoodMaterialParser(object):
         attr, values = None, None
         for dom in div_sccon_right_con.xpath('./strong[@class="title2"]|p'):
             if dom._root.tag == 'strong':
-                if attr is not None and value is not None:
+                if attr is not None and values is not None:
                     attr = attr_map.get(attr)
                     if attr:
                         attrs[attr] = '\n'.join(values)
@@ -100,7 +104,7 @@ class FoodMaterialParser(object):
                     values.append(value.strip().encode('utf8'))
 
         else:
-            if attr is not None and value is not None:
+            if attr is not None and values is not None:
                 attr = attr_map.get(attr)
                 if attr:
                     attrs[attr] = '\n'.join(values)
@@ -205,7 +209,7 @@ class CategoryListParser(object):
                 category, = dd.xpath('a/text()').extract()
                 item = MaterialCategoryItem()
                 item['category'] = category.encode('utf8')
-                item['url'] = url
+                item['url'] = url.encode('utf8')
                 yield item
 
 #parse 解析食材类别的页面(如：蔬菜，水果)，解析页面里面的每一个食材(如：菠菜，菠萝)的名字，类型，对应的链接,对应的链接可用于食材页面的解析
@@ -214,7 +218,7 @@ class MaterialListParser(object):
     def parse(self,response):
         # 食材类别
         div_other_c = response.xpath('//div[@class="other_c listnav_con clearfix"]')
-        category, = div_other_c.xpath('//dd[@class="current"]/h1/a/text()').extract()
+        category, = div_other_c.xpath('//dd[@class="current"]//a/text()').extract()
         category = category.encode('utf8')
 
         # 食材列表
@@ -229,7 +233,7 @@ class MaterialListParser(object):
 
             # url
             url, = l.xpath('./div[@class="img"]/a/@href').extract()
-            item['url'] = url
+            item['url'] = url.encode('utf8')
             yield item
 
         # base url
@@ -241,7 +245,7 @@ class MaterialListParser(object):
         if result:
             nxt, = result
             next_url = base_url + nxt
-            yield PageItem(url=next_url, type=MaterialListItem,
+            yield PageItem(url=str(next_url), type=MaterialListItem,
                     kwargs=dict(category=category))
 
 if __name__ == '__main__':
@@ -281,7 +285,10 @@ if __name__ == '__main__':
                 print '%s = %s' % (attr, value)
             print
 
-    #for m in ('香菇',):
+    url = "http://www.meishij.net/shicai/list.php?y=5"
+    show_material_list(url)
+
+if False:
     for m in ('胡萝卜', '葡萄', '香菇', '猪肉'):
         show_food_material(m)
         print

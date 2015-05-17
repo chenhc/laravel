@@ -8,10 +8,20 @@
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #
 
-BOT_NAME = 'crawler'
+BOT_NAME = 'ilive/crawler'
+USER_AGENT = 'ilive/crawler agent'
+
+LOG_LEVEL = 'DEBUG'
+CONCURRENT_REQUESTS = 1
+CONCURRENT_REQUESTS_PER_DOMAIN = 1
+DOWNLOAD_DELAY = 0.1
 
 SPIDER_MODULES = ['crawler.spiders']
 NEWSPIDER_MODULE = 'crawler.spiders'
+
+ITEM_PIPELINES = {
+    'crawler.pipelines.FileStorePipeline': 100,
+}
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'crawler (+http://www.yourdomain.com)'

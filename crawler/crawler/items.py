@@ -33,6 +33,7 @@ class PageItem(scrapy.Item):
     # 其他属性
     kwargs = scrapy.Field()
 
+
 # 原材料页面解析的item
 class FoodMaterialItem(scrapy.Item):
     # 来源
@@ -40,6 +41,9 @@ class FoodMaterialItem(scrapy.Item):
 
     # 名字
     name = scrapy.Field()
+
+    # 类别
+    category = scrapy.Field()
 
     # 别名
     alias = scrapy.Field()
