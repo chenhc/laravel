@@ -22,6 +22,15 @@ api_route('api/food_material', 'FoodMaterialApiController');
 api_route('api/food_recipe', 'FoodRecipeApiController');
 
 
+Route::group(['prefix' => 'api/user', 'middleware' => 'auth'], function() {
+    Route::get('/', 'UserApiController@index');
+    Route::put('/', 'UserApiController@update');
+    Route::delete('/', 'UserApiController@destroy');
+
+});
+
+Route::post('/api/user', 'UserApiController@store');
+Route::get('/api/user/{hash}', 'UserApiController@fetch');
 
 Route::get('/', 'WelcomeController@index');
 
