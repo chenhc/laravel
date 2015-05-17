@@ -21,5 +21,14 @@ function api_route($path, $controller) {
 api_route('api/food_material', 'FoodMaterialApiController');
 api_route('api/food_recipe', 'FoodRecipeApiController');
 
+
+
 Route::get('/', 'WelcomeController@index');
+
+Route::get('home', 'HomeController@index');
+
+Route::controllers([
+	'auth' => 'Auth\AuthController',
+	'password' => 'Auth\PasswordController',
+]);
 
