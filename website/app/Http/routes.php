@@ -11,6 +11,15 @@
 |
 */
 
+function api_route($path, $controller) {
+    Route::post($path, $controller . '@store');
+    Route::delete($path . '/{hash}', $controller . '@destroy');
+    Route::get($path . "/{hash}", $controller . '@fetch');
+    Route::put($path . '/{hash}', $controller . '@update');
+}
+
+api_route('api/food_material', 'FoodMaterialApiController');
+
 Route::get('/', 'WelcomeController@index');
 
 Route::get('home', 'HomeController@index');
