@@ -13,7 +13,9 @@ class FoodMaterialApiController extends Controller {
     {
         //
         $this->validate($request, [
-            'name' => 'required|max:255'
+            'name' => 'required|unique|max:255',
+            'hash' => 'required|unique|max:32',
+            'category' => 'required|max:255',
         ]);
 
         $material = new FoodMaterial($request->all());
@@ -47,6 +49,9 @@ class FoodMaterialApiController extends Controller {
     {
         //
         $this->validate($request, [
+            'name' => 'required|unique|max:255',
+            'hash' => 'required|unique|max:32',
+            'category' => 'required|max:255',
         ]);
 
         $material = FoodMaterial::where(['hash' => $hash])->first();
