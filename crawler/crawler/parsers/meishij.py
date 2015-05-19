@@ -20,7 +20,9 @@ if __name__ == '__main__':
 import urlparse
 
 from crawler.items import HackItem, PageItem, FoodMaterialItem, \
-        FoodRecipeItem, MaterialListItem, MaterialCategoryItem
+        FoodRecipeItem, MaterialListItem, MaterialCategoryItem, \
+        FamilyRecipesListItem, ChineseRecipesListItem, RegionSnacksListItem, \
+        ForeignRecipesListItem, BakeListItem
 
 
 class HackParser(object):
@@ -248,6 +250,65 @@ class MaterialListParser(object):
             yield PageItem(url=str(next_url), type=MaterialListItem,
                     kwargs=dict(category=category))
 
+# 解析家常菜谱列表，得到各种菜（如：家常菜 私家菜）的页面链接
+class FamilyRecipesListParser(object):
+
+    def parse(self, response):
+        main_w = response.xpath('//div[@class="main_w clearfix"]')
+        listnav = response.xpath('//dl[@class="listnav_dl_style1 w990 bb1 clearfix"]')
+        dds = listnav.xpath('./dd')
+        for dd in dds:
+            name, = dd.xpath('./a/text()').extract()
+            url, = dd.xpath('./a/@href').extract()
+            yield FamilyRecipesListItem(name = name, url = url)
+
+# 解析中华菜系的列表，得到各种菜系（如：川菜 粤菜）的页面链接
+class ChineseRecipesListParser(object):
+
+    def parse(self, response):
+        listnav = response.xpath('//dl[@class="listnav_dl_style1 w990 clearfix"]')
+        dds = listnav.xpath('./dd')
+        for dd in dds:
+            name, = dd.xpath('./a/text()').extract()
+            url, = dd.xpath('./a/@href').extract()
+            yield ChineseRecipesListItem(name = name, url = url)
+
+# 解析地方小吃的列表，得到各地小吃的页面链接
+class RegionSnacksListParser(object):
+    
+    def parse(self, response):
+        listnav = response.xpath('//dl[@class="listnav_dl_style1 w990 clearfix"]')
+        dds = listnav.xpath('./dd')
+        for dd in dds:
+            region, = dd.xpath('./a/text()').extract()
+            url, = dd.xpath('./a/@href').extract()
+            yield RegionSnacksListItem(region = region, url = url)
+
+# 解析外国菜谱的列表，得到各个国家菜谱的页面链接
+class ForeignRecipesListParser(object):
+
+    def parse(self, response):
+        listnav = response.xpath('//dl[@class="listnav_dl_style1 w990 bb1 clearfix"]')
+        dds = listnav.xpath('./dd')
+        for dd in dds:
+            country, = dd.xpath('./a/text()').extract()
+            url, = dd.xpath('./a/@href').extract()
+            yield ForeignRecipesListItem(country = country, url = url)
+
+# 解析烘焙的列表，得到烘焙相关的页面链接
+class BakeListParser(object):
+        
+    def parse(self, response):
+        listnav = response.xpath('//dl[@class="listnav_dl_style1 w990 clearfix"]')
+        dds = listnav.xpath('./dd')
+        for dd in dds:
+            name, = dd.xpath('./a/text()').extract()
+            #烘陪工具不需要解析
+            if name.rfind(u"工具") != -1:
+                continue
+            url, = dd.xpath('./a/@href').extract()
+            yield BakeListItem(name = name, url = url)
+
 if __name__ == '__main__':
     from crawler.utils import fetch
 
@@ -285,8 +346,58 @@ if __name__ == '__main__':
                 print '%s = %s' % (attr, value)
             print
 
+    def show_familyrecipes_list(url):
+        items = FamilyRecipesListParser().parse(fetch(url))
+        for item in items:
+            for attr, value in item.iteritems():
+                print '%s = %s' % (attr, value)
+            print 
+
+    def show_chineserecipes_list(url):
+        items = ChineseRecipesListParser().parse(fetch(url))
+        for item in items:
+            for attr, value in item.iteritems():
+                print '%s = %s' % (attr, value)
+            print 
+
+    def show_regionsnacks_list(url):
+        items = RegionSnacksListParser().parse(fetch(url))
+        for item in items:
+            for attr, value in item.iteritems():
+                print '%s = %s' % (attr, value)
+            print 
+
+    def show_foreignrecipes_list(url):
+        items = ForeignRecipesListParser().parse(fetch(url))
+        for item in items:
+            for attr, value in item.iteritems():
+                print '%s = %s' % (attr, value)
+            print
+
+    def show_bake_list(url):
+        items = BakeListParser().parse(fetch(url))
+        for item in items:
+            for attr, value in item.iteritems():
+                print '%s = %s' % (attr, value)
+            print 
+
     url = "http://www.meishij.net/shicai/list.php?y=5"
     show_material_list(url)
+
+    url = 'http://www.meishij.net/chufang/diy/'
+    show_familyrecipes_list(url)
+
+    url = 'http://www.meishij.net/china-food/caixi/'
+    show_chineserecipes_list(url)
+
+    url = 'http://www.meishij.net/china-food/xiaochi/'
+    show_regionsnacks_list(url)
+
+    url = 'http://www.meishij.net/chufang/diy/guowaicaipu1/'
+    show_foreignrecipes_list(url)
+
+    url = 'http://www.meishij.net/hongpei/'
+    show_bake_list(url)
 
 if False:
     for m in ('胡萝卜', '葡萄', '香菇', '猪肉'):

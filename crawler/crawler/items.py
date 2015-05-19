@@ -156,3 +156,39 @@ class MaterialListItem(scrapy.Item):
 
     # url
     url = scrapy.Field()
+
+class FamilyRecipesListItem(scrapy.Item):
+    #名字 如：家常菜 私家菜
+    name = scrapy.Field()
+
+    #url
+    url = scrapy.Field()
+
+class ChineseRecipesListItem(scrapy.Item):
+    #名字 如：川菜 粤菜
+    name = scrapy.Field()
+
+    #url
+    url = scrapy.Field()
+   
+class RegionSnacksListItem(scrapy.Item):
+    #地区
+    region = scrapy.Field()
+
+    #url
+    url = scrapy.Field()
+
+class ForeignRecipesListItem(scrapy.Item):
+    #国家 
+    country = scrapy.Field()
+
+    #url
+    url = scrapy.Field()
+
+class BakeListItem(scrapy.Item):
+    #名字 如：蛋糕 
+    name = scrapy.Field()
+
+    #url
+    url = scrapy.Field()
+
