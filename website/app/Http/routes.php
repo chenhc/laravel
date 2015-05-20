@@ -32,12 +32,9 @@ Route::group(['prefix' => 'api/user', 'middleware' => 'auth'], function() {
 Route::post('/api/user', 'UserApiController@store');
 Route::get('/api/user/{hash}', 'UserApiController@fetch');
 
-Route::get('/', 'WelcomeController@index');
-
-Route::get('home', 'HomeController@index');
+Route::get('/', 'DietController@index');
 
 Route::controllers([
 	'auth' => 'Auth\AuthController',
 	'password' => 'Auth\PasswordController',
 ]);
-
