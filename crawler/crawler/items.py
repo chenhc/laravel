@@ -146,6 +146,7 @@ class MaterialCategoryItem(scrapy.Item):
     # url
     url = scrapy.Field()
 
+
 # 原材料列表页面的解析的item，url为各种材料(如菠菜)的解析链接入口
 class MaterialListItem(scrapy.Item):
     # 类别
@@ -157,38 +158,42 @@ class MaterialListItem(scrapy.Item):
     # url
     url = scrapy.Field()
 
-class FamilyRecipesListItem(scrapy.Item):
-    #名字 如：家常菜 私家菜
+
+class CommonRecipesListItem(scrapy.Item):
+    # 名字 如：家常菜 私家菜
     name = scrapy.Field()
 
-    #url
+    # url
     url = scrapy.Field()
+
 
 class ChineseRecipesListItem(scrapy.Item):
-    #名字 如：川菜 粤菜
+    # 名字 如：川菜 粤菜
     name = scrapy.Field()
 
-    #url
+    # url
     url = scrapy.Field()
+
    
 class RegionSnacksListItem(scrapy.Item):
-    #地区
+    # 地区
     region = scrapy.Field()
 
-    #url
+    # url
     url = scrapy.Field()
+
 
 class ForeignRecipesListItem(scrapy.Item):
-    #国家 
+    # 国家 
     country = scrapy.Field()
 
-    #url
+    # url
     url = scrapy.Field()
+
 
 class BakeListItem(scrapy.Item):
-    #名字 如：蛋糕 
+    # 名字 如：蛋糕 
     name = scrapy.Field()
 
-    #url
+    # url
     url = scrapy.Field()
-

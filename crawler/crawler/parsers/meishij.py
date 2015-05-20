@@ -21,7 +21,7 @@ import urlparse
 
 from crawler.items import HackItem, PageItem, FoodMaterialItem, \
         FoodRecipeItem, MaterialListItem, MaterialCategoryItem, \
-        FamilyRecipesListItem, ChineseRecipesListItem, RegionSnacksListItem, \
+        CommonRecipesListItem, ChineseRecipesListItem, RegionSnacksListItem, \
         ForeignRecipesListItem, BakeListItem
 
 
@@ -251,7 +251,7 @@ class MaterialListParser(object):
                     kwargs=dict(category=category))
 
 # 解析家常菜谱列表，得到各种菜（如：家常菜 私家菜）的页面链接
-class FamilyRecipesListParser(object):
+class CommonRecipesListParser(object):
 
     def parse(self, response):
         main_w = response.xpath('//div[@class="main_w clearfix"]')
@@ -260,7 +260,7 @@ class FamilyRecipesListParser(object):
         for dd in dds:
             name, = dd.xpath('./a/text()').extract()
             url, = dd.xpath('./a/@href').extract()
-            yield FamilyRecipesListItem(name = name, url = url)
+            yield CommonRecipesListItem(name = name, url = url)
 
 # 解析中华菜系的列表，得到各种菜系（如：川菜 粤菜）的页面链接
 class ChineseRecipesListParser(object):
@@ -346,8 +346,8 @@ if __name__ == '__main__':
                 print '%s = %s' % (attr, value)
             print
 
-    def show_familyrecipes_list(url):
-        items = FamilyRecipesListParser().parse(fetch(url))
+    def show_commonrecipes_list(url):
+        items = CommonRecipesListParser().parse(fetch(url))
         for item in items:
             for attr, value in item.iteritems():
                 print '%s = %s' % (attr, value)
@@ -385,7 +385,7 @@ if __name__ == '__main__':
     show_material_list(url)
 
     url = 'http://www.meishij.net/chufang/diy/'
-    show_familyrecipes_list(url)
+    show_commonrecipes_list(url)
 
     url = 'http://www.meishij.net/china-food/caixi/'
     show_chineserecipes_list(url)
