@@ -1,0 +1,23 @@
+* {
+       vertical-align: baseline;
+       font-weight: inherit; 
+       font-family: inherit; 
+       font-style: inherit;
+       font-size: 100%;
+       outline: 0;
+       padding: 0;
+       margin: 0;
+       border: 0;
+}
+#nav_main a:visited,#nav_main a:hover,#nav_main a:link{
+	text-decoration: none;
+       color: #000000;
+}
+#path a:visited,#path a:link{
+       text-decoration: none;
+       color:#000000;
+}
+#path a:hover{
+       text-decoration: underline;
+       color:red;
+}

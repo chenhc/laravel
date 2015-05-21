@@ -1,0 +1,367 @@
+body{
+	background-color: #fae8c8;
+}
+strong{
+	display: inline-block;
+	border-bottom: 4px;
+	height: 72px;
+	font-family: 'Microsoft Yahei', 黑体;
+	font-size: 19px;
+	font-style: normal;
+	font-weight: bold;
+	line-height: 76px;
+}
+
+#header{
+	width: 100%;
+	height: 129px;
+	border: 0px;
+	background: #c90000;
+}
+#header_c{
+	width: 990px;
+	height: 129px;
+	border: 0px;
+	margin: 0 auto;
+}
+#label{ 
+	width: 214px;
+	height: 119px;
+	position: absolute;
+	margin-top: 5px;
+	background: white;
+}
+#search{
+	width: 430px;
+	height: 129px;
+	position: absolute;
+	margin-left: 252px;
+	height: 129px;
+}
+#search_text{
+	position: absolute;
+	margin-top: 46px;
+	height: 16px;
+	width: 326px;
+	padding: 8px;
+	border: 2px;
+	border-color: white;
+}
+#search_button{
+	position: absolute;
+	margin-top: 46px;
+	margin-left: 342px;
+	height: 32px;
+	width: 78px;
+	background-color: #c90000;
+	color: white;
+	border: 2px solid white;
+}
+#login{
+	width: 266px;
+	height: 129px;
+	float: right;
+}
+#nav{
+	width: 100%;
+	height: 76px;
+	box-shadow: 1px 1px 5px 0.5px #888888;
+	background-color: white;
+}
+#nav_main{
+	vertical-align: top;
+	width: 990px;
+	height: 76px;
+	margin: 0 auto;
+}
+#home_page{
+	vertical-align: top;
+	display: inline-block;
+	height: 76px;
+}
+#home_page a{
+	vertical-align: top;
+	display: inline-block;
+	padding:0px 26px;	 
+}
+#home_page a strong{
+	border-bottom:4px solid #ff3232;
+}
+.menu{
+	vertical-align: top;
+	display: inline-block;
+	height: 76px;
+}
+.menu a{
+	vertical-align: top;
+	display: inline-block;
+	padding:0px 26px;
+}
+.down{
+	z-index: 2;
+	position: absolute;
+	top: 206px;
+	left: 456.5px;
+	width: 990px;
+	height: 0px;
+	overflow: hidden;
+	transition:1s,1s;
+	background-color: black;
+}
+.menu a:hover+.down{
+	overflow: visible;
+	height: 272px;
+}
+#food{
+	vertical-align: top;
+	display: inline-block;
+	height: 76px;
+}
+#food a{
+	vertical-align: top;
+	display: inline-block;
+	padding:0px 26px;
+}
+#house{
+	vertical-align: top;
+	display: inline-block;
+	height: 76px;
+}
+#house a{
+	vertical-align: top;
+	display: inline-block;
+	padding:0px 11px;
+}
+#people{
+	vertical-align: top;
+	display: inline-block;
+	height: 76px;
+}
+#people a{
+	vertical-align: top;
+	display: inline-block;
+	padding:0px 26px;
+}
+#argument_group{
+	vertical-align: top;
+	display: inline-block;
+	height: 76px;
+}
+#argument_group a{
+	vertical-align: top;
+	display: inline-block;
+	padding:0px 26px;
+}
+#phone_download{
+	vertical-align: top;
+	display: inline-block;
+	height: 76px;
+}
+#phone_download a{
+	vertical-align: top;
+	display: inline-block;
+	padding:0px 26px;
+}
+#main{
+	width: 990px;
+	margin: 0 auto;
+}
+#path{
+	width: 990px;
+	margin: 0 auto;
+}
+.pathstyle{
+	display: inline-block;
+	vertical-align: top;
+	height: 88px;
+	padding: 0 5px;
+}
+.pathstyle a{
+	display: inline-block;
+	height: 88px;
+	font-family: 'Microsoft Yahei', 黑体;
+	font-size: 19px;
+	font-style: normal;
+	line-height: 88px;
+}
+#summary{
+	display: inline-block;
+	width: 990px;
+	height: 210px;
+	margin: 0 auto;
+	background-color: white;
+}
+#title{
+	display: inline-block;
+	width: 990px;
+	margin: 0 auto;
+	line-height: 120px;
+	font-family: 'Microsoft Yahei', 黑体;
+	font-size: 25px;
+	font-weight: bold;
+	font-style: normal;
+	text-align: center;
+}
+#detail1{
+	z-index: 1;
+	position: absolute;
+	width: 756px;
+	height: 332px;
+	top: 626px;
+}
+#detail2{
+	z-index: 1;
+	position: absolute;
+	top: 964px;
+	height: 332px;
+	width: 756px;
+}
+#detail_left{
+	z-index: 1;
+	position: absolute;
+	width: 232px;
+	height: 332px;
+}
+#detail_center{
+	z-index: 1;
+	position: absolute;
+	left: 262px;
+	height: 332px;
+	width: 232px;
+}
+#detail_right{
+	z-index: 1;
+	position: absolute;
+	left: 524px;
+	height: 332px;
+	width: 232px;
+}
+.detail_top{
+	z-index: 1;
+	position: absolute;
+	height: 232px;
+	width: 232px;
+	background-color: white;
+}
+.detail_framework{
+	z-index: 1;
+	position: absolute;
+	top: 232px;
+	height: 100px;
+	width: 232px;
+	background-color: white;
+	overflow: hidden;
+}
+@-webkit-keyframes up{
+	0%{top: 0px;}
+	20%{top: -20px;}
+	40%{top: -40px;}
+	60%{top: -60px;}
+	80%{top: -80px;}
+	100%{top: -100px;}
+}
+.detail_bottom{
+	z-index: 1;
+	position: absolute;
+	height: 200px;
+	width: 232px;
+	transition: 1s;
+}
+.white{
+	z-index: 1;
+	position: absolute;
+	height: 100px;
+	width: 232px;
+	background-color: white;
+}
+.black{
+	z-index: 1;
+	position: absolute;
+	top: 100px;
+	height: 100px;
+	width: 232px;
+	background-color: black;
+}
+
+.detail_top:hover+.detail_framework .detail_bottom,.detail_bottom:hover{
+	-webkit-animation-name: up;
+	-webkit-animation-duration: 0.4s;
+	-webkit-animation-timing-function: linear;
+	-webkit-animation-fill-mode: forwards;
+}
+#float_right{
+	z-index: 2;
+	position: absolute;
+	top: 626px;
+	right: 456.5px;
+	height: 670px;
+	width: 204px;
+	background-color: white;
+	overflow: hidden;
+	transition: 1s, 1s;
+}
+#float_right:hover{
+	height: 670px;
+	width: 670px;
+	overflow: scroll;
+	background-color: white;
+}
+#change_page{
+	position: relative;
+	top: 710px;
+	width: 756px;
+}
+#page_first{
+	display: inline-block;
+	height: 34px;
+	width: 34px;
+	text-align: center;
+	font-weight: bold;
+	color: white;
+	line-height: 34px;
+	margin-left: 247px;
+	margin-bottom: 40px;
+	background-color: black;
+}
+.page{
+	display: inline-block;
+	text-align: center;
+	font-weight: bold;
+	height: 34px;
+	width: 34px;
+	line-height: 34px;
+	margin-bottom: 40px;
+	background-color: white;
+}
+#page_last{
+	display: inline-block;
+	text-align: center;
+	font-weight: bold;
+	height: 34px;
+	width: 34px;
+	line-height: 34px;
+	margin-bottom: 40px;
+	background-color: white;
+}
+#next{
+	display: inline-block;
+	text-align: center;
+	font-weight: bold;
+	margin-left: 20px;
+	height: 34px;
+	width: 66px;
+	line-height: 34px;
+	margin-bottom: 40px;
+	background-color: white;
+}
+.page:hover,#page_last:hover,#next:hover{
+	background-color: black;
+	color: white;
+}
+footer{
+	position: relative;
+	top: 715px;
+	width: 100%;
+	height: 300px;
+	background-color: rgb(160, 156, 156);
+}
