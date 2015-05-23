@@ -55,6 +55,8 @@ def parse_args():
 
 
 def main():
+    import logging
+    logging.basicConfig(level=logging.INFO)
     json_file, mysql_uri, image_dir = parse_args()
     FoodMaterialCleaner(source_file=file(json_file), 
             mysqldb=uri2service(mysql_uri), image_dir=image_dir).process()
