@@ -33,6 +33,7 @@ Route::post('/api/user', 'UserApiController@store');
 Route::get('/api/user/{hash}', 'UserApiController@fetch');
 
 Route::get('/', 'DietController@index');
+Route::get('/diet', 'DietController@index');
 
 Route::controllers([
 	'auth' => 'Auth\AuthController',

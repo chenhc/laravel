@@ -2,7 +2,7 @@
 # -*- encoding=utf8 -*-
 
 '''
-FileName:   browser.py
+FileName:   http.py
 Author:     Chen Yanfei
 @contact:   fasionchan@gmail.com
 @version:   $Id$
@@ -17,6 +17,23 @@ import urllib
 import urlparse
 import requests
 
+from common import random_ip
+
+class RequestWithRandomIp(object):
+
+    def __init__(self):
+        for method in ('get', 'post', 'put', 'delete'):
+            setattr(self, method,
+                    self.with_random_ip(getattr(requests, method)))
+
+    def with_random_ip(self, func):
+        def method(url, *args, **kwargs):
+            headers = kwargs.setdefault('headers', {})
+            headers['X-Forwarded-For'] = random_ip()
+            return func(url, *args, **kwargs)
+        return method
+
+requests_with_random_ip = RequestWithRandomIp()
 
 class Browser(object):
 

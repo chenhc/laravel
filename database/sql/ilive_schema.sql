@@ -19,6 +19,7 @@ CREATE TABLE `user` (
     `telephone` VARCHAR(255) DEFAULT NULL,
     `birthday` DATE DEFAULT NULL,
     `sex` ENUM("男", "女") DEFAULT NULL,
+    `tags` VARCHAR(255) DEFAULT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     `updated_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     UNIQUE KEY (`username`),
@@ -43,6 +44,7 @@ CREATE TABLE `food_material` (
     `hash` CHAR(32) NOT NULL,
     `category` VARCHAR(255) NOT NULL,
     `alias` VARCHAR(255) DEFAULT NULL,
+    `tags` VARCHAR(255) DEFAULT NULL,
     `image_hash` CHAR(32) DEFAULT NULL,
     `amount_rec` VARCHAR(255) DEFAULT NULL,
     `suit_crowds` VARCHAR(255) DEFAULT NULL,
@@ -105,6 +107,7 @@ CREATE TABLE `food_recipe_material` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+-- 中医体质
 CREATE TABLE `tcm_consitution` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
