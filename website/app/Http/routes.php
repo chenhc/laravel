@@ -16,6 +16,7 @@ function api_route($path, $controller) {
     Route::delete($path . '/{hash}', $controller . '@destroy');
     Route::get($path . "/{hash}", $controller . '@fetch');
     Route::put($path . '/{hash}', $controller . '@update');
+    Route::get($path, $controller . '@index');
 }
 
 api_route('api/food_material', 'FoodMaterialApiController');

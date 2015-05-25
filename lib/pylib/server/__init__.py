@@ -14,12 +14,14 @@ Changelog:
 '''
 
 import urllib
-import MySQLdb
 
 from urlparse import urlparse, parse_qsl
 
-URI_SERVICE_SUPPORTED = {
-    'mysql': (
+URI_SERVICE_SUPPORTED = {}
+
+try:
+    import MySQLdb
+    URI_SERVICE_SUPPORTED['mysql'] = (
         MySQLdb.connect,
         {
             'host': 'hostname',
@@ -35,17 +37,9 @@ URI_SERVICE_SUPPORTED = {
             'db': lambda args: args[0],
             'use_unicode': lambda kwargs: eval(kwargs.get('use_unicode', 'True')),
         },
-    ),
-    'mongo': (
-
-    ),
-    'amqp': (
-        
-    ),
-    'rabbitmq': (
-
-    ),
-}
+    )
+except:
+    pass
 
 
 def uriparse(uri):
@@ -66,11 +60,11 @@ def uri2service(uri, scheme_conf=None, **kwargs):
         raise Exception('no scheme conf')
 
     cls, mapping, converts = scheme_conf
-    kwargs.update(getattr(params, mapping.pop('__kwargs__', '__nosuch__'), {}))
+    all_kwargs = getattr(params, mapping.pop('__kwargs__', '__nosuch__'), {})
     for dst, src in mapping.iteritems():
         value = getattr(params, src, None)
         convert = converts.get(dst)
-        kwargs[dst] = convert(value) if convert else value
+        all_kwargs[dst] = convert(value) if convert else value
+    all_kwargs.update(kwargs)
 
-    print kwargs
-    return cls(**kwargs)
+    return cls(**all_kwargs)
