@@ -21,20 +21,15 @@ function api_route($path, $controller) {
 
 api_route('api/food_material', 'FoodMaterialApiController');
 api_route('api/food_recipe', 'FoodRecipeApiController');
+api_route('api/user', 'UserApiController');
 
+Route::post('/api/login', 'UserApiController@login');
+Route::get('/api/logout', 'UserApiController@logout');
 
-Route::group(['prefix' => 'api/user', 'middleware' => 'auth'], function() {
-    Route::get('/', 'UserApiController@index');
-    Route::put('/', 'UserApiController@update');
-    Route::delete('/', 'UserApiController@destroy');
-
-});
-
-Route::post('/api/user', 'UserApiController@store');
-Route::get('/api/user/{hash}', 'UserApiController@fetch');
 
 Route::get('/', 'DietController@index');
 Route::get('/diet', 'DietController@index');
+
 
 Route::controllers([
 	'auth' => 'Auth\AuthController',

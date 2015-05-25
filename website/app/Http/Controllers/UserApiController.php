@@ -11,6 +11,26 @@ use Auth, Redirect, Input;
 
 class UserApiController extends Controller {
 
+    public function login(Request $request)
+    {
+        $email = Input::get('email');
+        $password = Input::get('password');
+        if (Auth::attempt(['email' => $email, 'password' => $password]))
+        {
+            return response()->json(['result'=> 'login success']);
+        }
+        else
+            return response()->json(['result'=> 'login fail', 'reason'=>'用户名或密码不正确']);
+
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return json_encode('You are logged out');
+
+    }
+
     public function store(Request $request)
     {
         //
