@@ -197,3 +197,140 @@ class BakeListItem(scrapy.Item):
 
     # url
     url = scrapy.Field()
+
+# 人群膳食页面各种人群和url
+class CrowdListItem(scrapy.Item):
+    # 人群
+    crowd = scrapy.Field()
+
+    # url
+    url = scrapy.Field()
+
+# 人群对应的适合以及禁忌的食材，适合的食谱
+class CrowdItem(scrapy.Item):
+    # 人群 比如：孕妇 小孩
+    crowd = scrapy.Field()
+    
+    # 适合做的tips 比如：多吃含蛋白质的食物
+    suit_tips = scrapy.Field()
+
+    # 适宜食材名字&url的列表 
+    suit_material_list = scrapy.Field()
+
+    # 不推荐做的tips 比如：不能喝酒
+    avoid_tips = scrapy.Field()
+
+    # 禁忌食材&url的列表
+    avoid_material_list = scrapy.Field()
+
+    # 适合的食谱&url的列表
+    suit_recipe_list = scrapy.Field()
+
+    # 下一页链接，方便解析往后的推荐食用菜谱
+    nxtpage = scrapy.Field()
+ 
+
+class IllListItem(scrapy.Item):
+    # 疾病名字
+    ill = scrapy.Field()
+
+    # url
+    url = scrapy.Field()
+
+
+class IllItem(scrapy.Item):
+    # 疾病
+    ill = scrapy.Field()
+
+    # 适合做的tips 比如：多吃含蛋白质的食物
+    suit_tips = scrapy.Field()
+
+    # 适宜食材名字适宜食材url的列表 
+    suit_material_list = scrapy.Field()
+
+    # 不推荐做的tips 比如：不能喝酒
+    avoid_tips = scrapy.Field()
+
+    # 禁忌食材禁忌食材url的列表
+    avoid_material_list = scrapy.Field()
+
+    # 适合的食谱&url对应的列表
+    suit_recipe_list = scrapy.Field()
+    
+    # 下一页链接，方便解析往后的推荐食用菜谱
+    nxtpage = scrapy.Field()
+
+class FunctionalityListItem(scrapy.Item):
+    # 功能
+    functionality = scrapy.Field()
+
+    # url
+    url = scrapy.Field()
+
+
+class FunctionalityItem(scrapy.Item):
+    # 功能 比如：美容 减肥
+    functionality = scrapy.Field()
+
+    # 适合做的tips 比如：多吃含蛋白质的食物
+    suit_tips = scrapy.Field()
+
+    # 适宜食材名字适宜食材url的列表 
+    suit_material_list = scrapy.Field()
+
+    # 不推荐做的tips 比如：不能喝酒
+    avoid_tips = scrapy.Field()
+
+    # 禁忌食材禁忌食材url的列表
+    avoid_material_list = scrapy.Field()
+
+    # 适合的食谱&url对应的列表
+    suit_recipe_list = scrapy.Field()
+
+    # 下一页链接，方便解析往后的推荐食用菜谱
+    nxtpage = scrapy.Field()
+
+
+class OrganEfctListItem(scrapy.Item):
+    # 功效 例如：补心， 胃调养
+    effect = scrapy.Field()
+
+    # url
+    url = scrapy.Field()
+
+
+class OrganEfctItem(scrapy.Item):
+    # 功效 比如:补肾 补心
+    effect = scrapy.Field()
+
+    # 适合做的tips 比如：多吃含蛋白质的食物
+    suit_tips = scrapy.Field()
+
+    # 适宜食材名字适宜食材url的列表 
+    suit_material_list = scrapy.Field()
+
+    # 不推荐做的tips 比如：不能喝酒
+    avoid_tips = scrapy.Field()
+
+    # 禁忌食材禁忌食材url的列表
+    avoid_material_list = scrapy.Field()
+
+    # 适合的食谱&url对应的列表
+    suit_recipe_list = scrapy.Field()
+
+    # 下一页链接，方便解析往后的推荐食用菜谱
+    nxtpage = scrapy.Field()
+
+
+class RecipeItem(scrapy.Item):
+    
+    name = scrapy.Field()
+
+    url = scrapy.Field()
+
+
+class MaterialItem(scrapy.Item):
+    
+    name = scrapy.Field()
+
+    url = scrapy.Field()

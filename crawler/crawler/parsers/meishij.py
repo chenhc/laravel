@@ -22,8 +22,9 @@ import urlparse
 from crawler.items import HackItem, PageItem, FoodMaterialItem, \
         FoodRecipeItem, MaterialListItem, MaterialCategoryItem, \
         CommonRecipesListItem, ChineseRecipesListItem, RegionSnacksListItem, \
-        ForeignRecipesListItem, BakeListItem
-
+        ForeignRecipesListItem, BakeListItem, CrowdListItem, CrowdItem, \
+        IllListItem, IllItem, FunctionalityListItem, FunctionalityItem, \
+        OrganEfctListItem, OrganEfctItem, MaterialItem, RecipeItem
 
 class HackParser(object):
 
@@ -303,11 +304,355 @@ class BakeListParser(object):
         dds = listnav.xpath('./dd')
         for dd in dds:
             name, = dd.xpath('./a/text()').extract()
-            #烘陪工具不需要解析
+            # 烘陪工具不需要解析
             if name.rfind(u"工具") != -1:
                 continue
             url, = dd.xpath('./a/@href').extract()
             yield BakeListItem(name = name, url = url)
+
+class CrowdItemListParser(object):
+
+    def parse(self, response):
+        dds = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']/dd")
+        for dd in dds:
+            crowd, = dd.xpath('./a/text()').extract()
+            crowd = crowd.encode('utf8')
+            url, = dd.xpath('./a/@href').extract()
+            url = url.encode('utf8')
+            yield CrowdListItem(crowd = crowd, url = url)
+
+# 解析人群膳食页面的各个人群的具体信息，得到各种人群适/忌的食材和适合的食谱
+class CrowdItemParser(object):
+
+    def parse(self, response):
+        listnav = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']")
+        crowd, = listnav.xpath('./dd[@class="current"]/h1/a/text()').extract()
+        crowd = crowd.encode('utf8')
+        main_w = response.xpath('//div[@class="main_w clearfix"]')
+        slys_con = main_w.xpath('//div[@class="slys_con"]')
+        p2s = slys_con.xpath('./p[@class="p2"]')
+        suit_tips = []
+        suit_material_list = []
+        avoid_tips = []
+        avoid_material_list = []
+        suit_recipe_list = []
+        # 解析推荐的tips 以及 不推荐的tips
+        for x in xrange(2):
+            p2 = p2s[x]
+            spans = p2.xpath('./span')
+            for span in spans:
+                tip, = span.xpath('./text()').extract()
+                tip = tip.encode('utf8')
+                if x % 2:
+                    suit_tips.append(tip)
+                else:
+                    avoid_tips.append(tip)
+        # 解析适宜食用的食材
+        uls = slys_con.xpath('//ul[@class="clearfix"]')
+        lis = uls[0].xpath('./li')
+        for li in lis:
+            temp = li.xpath('./a/strong/text()').extract()
+            if len(temp):
+                name = temp[0].encode('utf8')
+            temp = li.xpath('./a/@href').extract()
+            if len(temp):
+                url = temp[0].encode('utf8')
+            item = MaterialItem()
+            item['name'] = name
+            item['url'] = url
+            suit_material_list.append(item)
+        # 解析禁忌食用的食材
+        lis = uls[1].xpath('./li') 
+        for li in lis:
+            temp = li.xpath('./a/strong/text()').extract()
+            if len(temp):
+                name = temp[0].encode('utf8')
+            temp = li.xpath('./a/@href').extract()
+            if len(temp):
+                url = temp[0].encode('utf8')
+            item = MaterialItem()
+            item['name'] = name
+            item['url'] = url
+            avoid_material_list.append(item)
+        # 解析推荐的菜谱
+        listtyle1_list = main_w.xpath('//div[@id="listtyle1_list"] [@class="listtyle1_list clearfix"]')
+        divs = listtyle1_list.xpath('./div')
+        for div in divs:
+            temp = div.xpath('./a/@title').extract()
+            if len(temp):
+                name = temp[0].encode('utf8')
+            temp = div.xpath('./a/@href').extract()
+            if len(temp):
+                url = temp[0].encode('utf8')
+            item = RecipeItem()
+            item['name'] = name
+            item['url'] = url
+            suit_recipe_list.append(item)
+            # 下一页的解析
+            pageitem = PageItem()
+            url, = response.xpath('//a[@class="next"]/@href').extract()
+            pageitem['url'] = url
+            pageitem['type'] = CrowdItem
+            pageitem['kwargs'] = crowd
+
+        yield CrowdItem(crowd = crowd,suit_tips = suit_tips, avoid_tips = avoid_tips, suit_material_list = suit_material_list, \
+                avoid_material_list = avoid_material_list, suit_recipe_list = suit_recipe_list, nxtpage = pageitem)
+
+class IllItemListParser(object):
+
+    def parse(self, response):
+        dds = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']/dd")
+        for dd in dds:
+            ill, = dd.xpath('./a/text()').extract()
+            ill = ill.encode('utf8')
+            url, = dd.xpath('./a/@href').extract()
+            url = url.encode('utf8')
+            yield IllListItem(ill = ill, url = url)
+
+# 解析疾病调理页面里面每个疾病的具体信息，得到各种病患者适/忌的食材和适合的食谱
+class IllItemParser(object):
+
+    def parse(self, response):
+        listnav = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']")
+        ill, = listnav.xpath('./dd[@class="current"]/h1/a/text()').extract()
+        ill = ill.encode('utf8')
+        main_w = response.xpath('//div[@class="main_w clearfix"]')
+        slys_con = main_w.xpath('//div[@class="slys_con"]')
+        p2s = slys_con.xpath('./p[@class="p2"]')
+        suit_tips = []
+        suit_material_list = []
+        avoid_tips = []
+        avoid_material_list = []
+        suit_recipe_list = []
+        for x in xrange(2):
+            p2 = p2s[x]
+            spans = p2.xpath('./span')
+            for span in spans:
+                tip, = span.xpath('./text()').extract()
+                tip = tip.encode('utf8')
+                if x % 2:
+                    suit_tips.append(tip)
+                else:
+                    avoid_tips.append(tip)
+
+        uls = slys_con.xpath('//ul[@class="clearfix"]')
+        lis = uls[0].xpath('./li')
+        for li in lis:
+            temp = li.xpath('./a/strong/text()').extract()
+            if len(temp):
+                name = temp[0].encode('utf8')
+            temp = li.xpath('./a/@href').extract()
+            if len(temp):
+                url = temp[0].encode('utf8')
+            item = MaterialItem()
+            item['name'] = name
+            item['url'] = url
+            suit_material_list.append(item)
+        lis = uls[1].xpath('./li') 
+        for li in lis:
+            temp = li.xpath('./a/strong/text()').extract()
+            if len(temp):
+                name = temp[0].encode('utf8')
+            temp = li.xpath('./a/@href').extract()
+            if len(temp):
+                url = temp[0].encode('utf8')
+            item = MaterialItem()
+            item['name'] = name
+            item['url'] = url
+            avoid_material_list.append(item)
+        listtyle1_list = main_w.xpath('//div[@id="listtyle1_list"] [@class="listtyle1_list clearfix"]')
+        divs = listtyle1_list.xpath('./div')
+        for div in divs:
+            temp = div.xpath('./a/@title').extract()
+            if len(temp):
+                name = temp[0].encode('utf8')
+            temp = div.xpath('./a/@href').extract()
+            if len(temp):
+                url = temp[0].encode('utf8')
+            item = RecipeItem()
+            item['name'] = name
+            item['url'] = url
+            suit_recipe_list.append(item)
+            # 下一页的解析
+            pageitem = PageItem()
+            url, = response.xpath('//a[@class="next"]/@href').extract()
+            pageitem['url'] = url
+            pageitem['type'] = ill
+            pageitem['kwargs'] = IllItem
+
+        yield IllItem(ill = ill,suit_tips = suit_tips, avoid_tips = avoid_tips, suit_material_list = suit_material_list, \
+                avoid_material_list = avoid_material_list, suit_recipe_list = suit_recipe_list, nxtpage = pageitem)
+
+class FunctionalityItemListParser(object):
+
+    def parse(self, response):
+        dds = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']/dd")
+        for dd in dds:
+            functionality, = dd.xpath('./a/text()').extract()
+            functioality = functionality.encode('utf8')
+            url, = dd.xpath('./a/@href').extract()
+            url = url.encode('utf8')
+            yield FunctionalityListItem(functionality = functionality, url = url)
+
+# 解析功能性调理页面里面每个功能性的具体信息，得到各种功效性适/忌的食材和适合的食谱
+class FunctionalityItemParser(object):
+    def parse(self, response):
+        listnav = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']")
+        functionality, = listnav.xpath('./dd[@class="current"]/h1/a/text()').extract()
+        functionality = functionality.encode('utf8')
+        main_w = response.xpath('//div[@class="main_w clearfix"]')
+        slys_con = main_w.xpath('//div[@class="slys_con"]')
+        p2s = slys_con.xpath('./p[@class="p2"]')
+        suit_tips = []
+        suit_material_list = []
+        avoid_tips = []
+        avoid_material_list = []
+        suit_recipe_list = []
+        for x in xrange(2):
+            p2 = p2s[x]
+            spans = p2.xpath('./span')
+            for span in spans:
+                tip, = span.xpath('./text()').extract()
+                tip = tip.encode('utf8')
+                if x % 2:
+                    suit_tips.append(tip)
+                else:
+                    avoid_tips.append(tip)
+
+        uls = slys_con.xpath('//ul[@class="clearfix"]')
+        lis = uls[0].xpath('./li')
+        for li in lis:
+            temp = li.xpath('./a/strong/text()').extract()
+            if len(temp):
+                name = temp[0].encode('utf8')
+            temp = li.xpath('./a/@href').extract()
+            if len(temp):
+                url = temp[0].encode('utf8')
+            item = MaterialItem()
+            item['name'] = name
+            item['url'] = url
+            suit_material_list.append(item)
+        lis = uls[1].xpath('./li') 
+        for li in lis:
+            temp = li.xpath('./a/strong/text()').extract()
+            if len(temp):
+                name = temp[0].encode('utf8')
+            temp = li.xpath('./a/@href').extract()
+            if len(temp):
+                url = temp[0].encode('utf8')
+            item = MaterialItem()
+            item['name'] = name
+            item['url'] = url
+            avoid_material_list.append(item)
+        listtyle1_list = main_w.xpath('//div[@id="listtyle1_list"] [@class="listtyle1_list clearfix"]')
+        divs = listtyle1_list.xpath('./div')
+        for div in divs:
+            temp = div.xpath('./a/@title').extract()
+            if len(temp):
+                name = temp[0].encode('utf8')
+            temp = div.xpath('./a/@href').extract()
+            if len(temp):
+                url = temp[0].encode('utf8')
+            item = RecipeItem()
+            item['name'] = name
+            item['url'] = url
+            suit_recipe_list.append(item)
+            # 下一页的解析
+            pageitem = PageItem()
+            url, = response.xpath('//a[@class="next"]/@href').extract()
+            pageitem['url'] = url
+            pageitem['type'] = FunctionalityItem
+            pageitem['kwargs'] = functionality
+
+        yield FunctionalityItem(functionality = functionality,suit_tips = suit_tips, avoid_tips = avoid_tips, \
+                suit_material_list = suit_material_list, avoid_material_list = avoid_material_list, \
+                suit_recipe_list = suit_recipe_list, nxtpage = pageitem)
+
+
+class OrganItemListParser(object):
+    
+    def parse(self, response):
+        dds = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']/dd")
+        for dd in dds:
+            effect, = dd.xpath('./a/text()').extract()
+            effect = effect.encode('utf8')
+            url, = dd.xpath('./a/@href').extract()
+            url = url.encode('utf8')
+            yield OrganEfctListItem(effect = effect, url = url)
+
+# 解析脏腑调理页面里面每个脏腑功效的具体信息，得到各种脏腑调理适/禁的食材和适合的食谱
+class OrganItemParser(object):
+
+    def parse(self, response):
+        listnav = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']")
+        effect, = listnav.xpath('./dd[@class="current"]/h1/a/text()').extract()
+        main_w = response.xpath('//div[@class="main_w clearfix"]')
+        slys_con = main_w.xpath('//div[@class="slys_con"]')
+        p2s = slys_con.xpath('./p[@class="p2"]')
+        suit_tips = []
+        suit_material_list = []
+        avoid_tips = []
+        avoid_material_list = []
+        suit_recipe_list = []
+        for x in xrange(2):
+            p2 = p2s[x]
+            spans = p2.xpath('./span')
+            for span in spans:
+                tip, = span.xpath('./text()').extract()
+                tip.encode('utf8')
+                if x % 2:
+                    suit_tips.append(tip)
+                else:
+                    avoid_tips.append(tip)
+
+        uls = slys_con.xpath('//ul[@class="clearfix"]')
+        lis = uls[0].xpath('./li')
+        for li in lis:
+            temp = li.xpath('./a/strong/text()').extract()
+            if len(temp):
+                name = temp[0].encode('utf8')
+            temp = li.xpath('./a/@href').extract()
+            if len(temp):
+                url = temp[0].encode('utf8')
+            temp = li.xpath('./a/@href').extract()
+            item = MaterialItem()
+            item['name'] = name
+            item['url'] = url
+            suit_material_list.append(item)
+        lis = uls[1].xpath('./li') 
+        for li in lis:
+            temp = li.xpath('./a/strong/text()').extract()
+            if len(temp):
+                name = temp[0].encode('utf8')
+            temp = li.xpath('./a/@href').extract()
+            if len(temp):
+                url = temp[0].encode('utf8')
+            item = MaterialItem()
+            item['name'] = name
+            item['url'] = url
+            avoid_material_list.append(item)
+        listtyle1_list = main_w.xpath('//div[@id="listtyle1_list"] [@class="listtyle1_list clearfix"]')
+        divs = listtyle1_list.xpath('./div')
+        for div in divs:
+            temp = div.xpath('./a/@title').extract()
+            if len(temp):
+                name = temp[0].encode('utf8')
+            temp = div.xpath('./a/@href').extract()
+            if len(temp):
+                url = temp[0].encode('utf8')
+            item = RecipeItem()
+            item['name'] = name
+            item['url'] = url
+            suit_recipe_list.append(item)
+            # 下一页的解析
+            pageitem = PageItem()
+            url, = response.xpath('//a[@class="next"]/@href').extract()
+            pageitem['url'] = url
+            pageitem['type'] = OrganEfctItem
+            pageitem['kwargs'] = effect
+
+        yield OrganEfctItem(effect = effect, suit_tips = suit_tips, avoid_tips = avoid_tips, suit_material_list = suit_material_list, \
+                avoid_material_list = avoid_material_list, suit_recipe_list = suit_recipe_list, nxtpage = pageitem)
 
 if __name__ == '__main__':
     from crawler.utils import fetch
@@ -381,7 +726,105 @@ if __name__ == '__main__':
                 print '%s = %s' % (attr, value)
             print 
 
-    url = "http://www.meishij.net/shicai/list.php?y=5"
+    def show_crowditem(url):
+        items = CrowdItemParser().parse(fetch(url))
+        for item in items:
+            for attr, value in item.iteritems():
+                print '%s = %s' % (attr, value)
+                print 
+            print
+
+    def show_illitem(url):
+        items = IllItemParser().parse(fetch(url))
+        for item in items:
+            for attr, value in item.iteritems():
+                print '%s = %s' % (attr, value)
+                print 
+            print
+            
+    def show_functionalityitem(url):
+        items = FunctionalityItemParser().parse(fetch(url))
+        for item in items:
+            for attr, value in item.iteritems():
+                print '%s = %s' % (attr, value)
+                print 
+            print
+
+    def show_organefctitem(url):
+        items = OrganItemParser().parse(fetch(url))
+        for item in items:
+            for attr, value in item.iteritems():
+                print '%s = %s' % (attr, value)
+                print 
+            print
+
+    def show_crowd_list_item(url):
+        items = CrowdItemListParser().parse(fetch(url))
+        for item in items:
+            for attr, value in item.iteritems():
+                print '%s = %s' % (attr, value)
+            print
+    
+    def show_ill_list_item(url):
+        items = IllItemListParser().parse(fetch(url))
+        for item in items:
+            for attr, value in item.iteritems():
+                print '%s = %s' % (attr, value)
+            print
+                
+    def show_functionality_list_item(url):
+        items = FunctionalityItemListParser().parse(fetch(url))
+        for item in items:
+            for attr, value in item.iteritems():
+                print '%s = %s' % (attr, value)
+            print
+
+    def show_organefct_list_item(url):
+        items = OrganItemListParser().parse(fetch(url))
+        for item in items:
+            for attr, value in item.iteritems():
+                print '%s = %s' % (attr, value)
+            print
+
+    url = "http://www.meishij.net/yaoshanshiliao/renqunshanshi/yunfu/"
+    show_crowditem(url)
+    
+    url = "http://www.meishij.net/yaoshanshiliao/jibingtiaoli/qianliexian/"
+    show_illitem(url)
+
+    url = "http://www.meishij.net/yaoshanshiliao/gongnengxing/meirong/"
+    show_functionalityitem(url)
+
+    url = "http://www.meishij.net/yaoshanshiliao/zangfu/xintiaoli/"
+    show_organefctitem(url)
+    
+    url = "http://www.meishij.net/yaoshanshiliao/renqunshanshi/"
+    show_crowd_list_item(url)
+    
+    url = "http://www.meishij.net/yaoshanshiliao/jibingtiaoli/"
+    show_ill_list_item(url)
+
+    url = "http://www.meishij.net/yaoshanshiliao/gongnengxing/"
+    show_functionality_list_item(url)
+
+    url = "http://www.meishij.net/yaoshanshiliao/zangfu/"
+    show_organefct_list_item(url)
+
+if False:
+    for m in ('胡萝卜', '葡萄', '香菇', '猪肉'):
+        show_food_material(m)
+        print
+
+    url = "http://www.meishij.net/shicai/shucai_list"
+    show_material_list(url)
+
+    url = "http://meishij.net/zuofa/huotuizhengluyu_1.html"
+    show_food_recipe(url)
+
+    url = 'http://www.meishij.net/shicai/'
+    show_category_list(url)
+
+    url = "http://www.meishij.net/shicai/list.php?y=5"         
     show_material_list(url)
 
     url = 'http://www.meishij.net/chufang/diy/'
@@ -399,16 +842,5 @@ if __name__ == '__main__':
     url = 'http://www.meishij.net/hongpei/'
     show_bake_list(url)
 
-if False:
-    for m in ('胡萝卜', '葡萄', '香菇', '猪肉'):
-        show_food_material(m)
-        print
-
-    url = "http://www.meishij.net/shicai/shucai_list"
-    show_material_list(url)
-
     url = "http://meishij.net/zuofa/huotuizhengluyu_1.html"
     show_food_recipe(url)
-
-    url = 'http://www.meishij.net/shicai/'
-    show_category_list(url)
