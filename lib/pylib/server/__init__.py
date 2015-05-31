@@ -21,6 +21,7 @@ URI_SERVICE_SUPPORTED = {}
 
 try:
     import MySQLdb
+    import MySQLdb.cursors
     URI_SERVICE_SUPPORTED['mysql'] = (
         MySQLdb.connect,
         {
@@ -30,12 +31,31 @@ try:
             'passwd': 'password',
             'db': 'args',
             'use_unicode': 'kwargs',
+            'cursorclass': 'kwargs',
             '__kwargs__': 'kwargs'
         },
         {
             'port': lambda port: port or 3306,
             'db': lambda args: args[0],
             'use_unicode': lambda kwargs: eval(kwargs.get('use_unicode', 'True')),
+            'cursorclass': lambda kwargs: eval('MySQLdb.cursors.' + kwargs.get('cursorclass', 'Cursor')),
+        },
+    )
+except:
+    pass
+
+try:
+    import redis
+    URI_SERVICE_SUPPORTED['redis'] = (
+        redis.client.StrictRedis,
+        {
+            'host': 'hostname',
+            'port': 'port',
+            'db': 'args',
+        },
+        {
+            'port': lambda port: port or 6379,
+            'db': lambda args: args[0],
         },
     )
 except:
