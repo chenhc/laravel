@@ -4,7 +4,9 @@
 '''
 FileName:   meishiji.py
 Author:     Chen Yanfei
+            Liu dongqiang
 @contact:   fasionchan@gmail.com
+            18819451607@163.com
 @version:   $Id$
 
 Description:
@@ -24,7 +26,7 @@ from scrapy import log
 from scrapy.spider import Spider
 from scrapy.http import Request
 
-from crawler.items import PageItem
+from crawler.items import PageItem, Category_Material
 from crawler.parsers.meishij import HackParser, CategoryListParser, \
         MaterialListParser, FoodMaterialParser
 from crawler.data.jpg_set import jpg_set
@@ -191,6 +193,11 @@ class MeishijSpider(Spider):
 
             log.msg('[ENQUEUE][food_material] category=%s url=%s' %
                     (category, url), log.INFO)
+
+            yield Category_Material(category = category, material = name)
+
+            log.msg('[ENQUEUE][category_material] category=%s material=%s' %
+                    (category, name), log.INFO)
 
         if False:
             yield

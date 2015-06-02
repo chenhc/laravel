@@ -334,3 +334,9 @@ class MaterialItem(scrapy.Item):
     name = scrapy.Field()
 
     url = scrapy.Field()
+
+class Category_Material(scrapy.Item):
+    
+    category = scrapy.Field()
+
+    material = scrapy.Field()
