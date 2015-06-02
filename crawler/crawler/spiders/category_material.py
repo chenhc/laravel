@@ -2,9 +2,11 @@
 # -*- encoding=utf8 -*-
 
 '''
-FileName:   meishiji.py
-Author:     Chen Yanfei
+FileName:   category_material.py
+Author:     Chen Yanfei 
+            Liu dongqiang
 @contact:   fasionchan@gmail.com
+            18819451607@163.com
 @version:   $Id$
 
 Description:
