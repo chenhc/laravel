@@ -19,7 +19,7 @@ from pylib.multirun.cron import run_cron
 from pylib.server import uri2service
 from modules.index import IndexCacher
 
-from config.database.cache import MYSQL_URI, REDIS_URI
+from config.database import CACHE_MYSQL_URI, CACHE_REDIS_URI
 
 def parse_args():
     from optparse import OptionParser
@@ -31,11 +31,11 @@ def parse_args():
 
     mysql_uri = options.mysql_uri
     if not mysql_uri:
-        mysql_uri = MYSQL_URI
+        mysql_uri = CACHE_MYSQL_URI
 
     redis_uri = options.redis_uri
     if not redis_uri:
-        redis_uri = REDIS_URI
+        redis_uri = CACHE_REDIS_URI
 
     return mysql_uri, redis_uri
 
