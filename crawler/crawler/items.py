@@ -147,8 +147,8 @@ class MaterialCategoryItem(scrapy.Item):
     url = scrapy.Field()
 
 
-# 原材料列表页面的解析的item，url为各种材料(如菠菜)的解析链接入口
-class MaterialListItem(scrapy.Item):
+# 食材列表页面和菜谱列表页面的解析得到的食材或菜谱的item
+class ListItem(scrapy.Item):
     # 类别
     category = scrapy.Field()
 

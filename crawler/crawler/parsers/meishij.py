@@ -44,7 +44,7 @@ if __name__ == '__main__':
 import urlparse
 
 from crawler.items import HackItem, PageItem, FoodMaterialItem, \
-        FoodRecipeItem, MaterialListItem, MaterialCategoryItem, \
+        FoodRecipeItem, ListItem, MaterialCategoryItem, \
         CommonRecipesCategoryListItem, ChineseRecipesCategoryListItem, RegionSnacksCategoryListItem, \
         ForeignRecipesCategoryListItem, BakeCategoryListItem, CrowdListItem, CrowdItem, \
         IllListItem, IllItem, FunctionalityListItem, FunctionalityItem, \
@@ -251,7 +251,7 @@ class MaterialListParser(object):
         div_listtyle1 = response.xpath('//div[@class="listtyle1"]')
         for l in div_listtyle1:
             # 类别
-            item = MaterialListItem(category=category)
+            item = ListItem(category=category)
 
             # 名字
             name, = l.xpath('./div[@class="info1"]/h3/a/text()').extract()
@@ -271,7 +271,7 @@ class MaterialListParser(object):
         if result:
             nxt, = result
             next_url = base_url + nxt
-            yield PageItem(url=str(next_url), type=MaterialListItem,
+            yield PageItem(url=str(next_url), type=ListItem,
                     kwargs=dict(category=category))
 
 # 解析家常菜谱列表，得到各种菜（如：家常菜 私家菜）的页面链接
@@ -347,7 +347,7 @@ class RecipeListParser(object):
         div_listtyle1 = response.xpath('//div[@class="listtyle1"]')
         for l in div_listtyle1:
             # 类别
-            item = MaterialListItem(category=category)
+            item = ListItem(category=category)
 
             # 名字
             name, = l.xpath('./a[@class="big"]/@title').extract()
@@ -367,7 +367,7 @@ class RecipeListParser(object):
         if result:
             nxt, = result
             next_url = base_url + nxt
-            yield PageItem(url=str(next_url), type=MaterialListItem,
+            yield PageItem(url=str(next_url), type=ListItem,
                     kwargs=dict(category=category))
 
 
@@ -860,7 +860,7 @@ if __name__ == '__main__':
     show_recipe_list(url)
 
 if False:
-
+    
     url = "http://www.meishij.net/yaoshanshiliao/renqunshanshi/yunfu/"
     show_crowditem(url)
     
