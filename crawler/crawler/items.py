@@ -159,7 +159,7 @@ class MaterialListItem(scrapy.Item):
     url = scrapy.Field()
 
 
-class CommonRecipesListItem(scrapy.Item):
+class CommonRecipesCategoryListItem(scrapy.Item):
     # 名字 如：家常菜 私家菜
     name = scrapy.Field()
 
@@ -167,7 +167,8 @@ class CommonRecipesListItem(scrapy.Item):
     url = scrapy.Field()
 
 
-class ChineseRecipesListItem(scrapy.Item):
+class ChineseRecipesCategoryListItem(scrapy.Item):
+    # 名字 如：家常菜 私家菜
     # 名字 如：川菜 粤菜
     name = scrapy.Field()
 
@@ -175,7 +176,7 @@ class ChineseRecipesListItem(scrapy.Item):
     url = scrapy.Field()
 
    
-class RegionSnacksListItem(scrapy.Item):
+class RegionSnacksCategoryListItem(scrapy.Item):
     # 地区
     region = scrapy.Field()
 
@@ -183,7 +184,7 @@ class RegionSnacksListItem(scrapy.Item):
     url = scrapy.Field()
 
 
-class ForeignRecipesListItem(scrapy.Item):
+class ForeignRecipesCategoryListItem(scrapy.Item):
     # 国家 
     country = scrapy.Field()
 
@@ -191,7 +192,7 @@ class ForeignRecipesListItem(scrapy.Item):
     url = scrapy.Field()
 
 
-class BakeListItem(scrapy.Item):
+class BakeCategoryListItem(scrapy.Item):
     # 名字 如：蛋糕 
     name = scrapy.Field()
 
@@ -229,7 +230,6 @@ class CrowdItem(scrapy.Item):
     # 下一页链接，方便解析往后的推荐食用菜谱
     nxtpage = scrapy.Field()
  
-
 class IllListItem(scrapy.Item):
     # 疾病名字
     ill = scrapy.Field()
