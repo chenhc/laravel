@@ -30,7 +30,7 @@ class IndexCacher(object):
                 'image_hash': material['image_hash'],
             })
 
-        self.redisdb.hmset('food_material_info', infos)
+        self.redisdb.hmset('food_material', infos)
 
     def build(self):
         cursor = self.mysqldb.cursor()
