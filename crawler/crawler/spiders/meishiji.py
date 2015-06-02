@@ -189,7 +189,6 @@ class MeishijSpider(Spider):
             request._msj_category = category
             yield request
 
-            yield Category_Material(category = category, material = name)
             #self.enqueue_request(request)
 
             log.msg('[ENQUEUE][food_material] category=%s url=%s' %
