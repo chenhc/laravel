@@ -78,4 +78,14 @@ class FoodRecipeApiController extends Controller {
         $Recipe->save();
     }
 
+    public function index(Request $request) {
+        $category = $request->input('category');
+        $pagesize = $request->input('pagesize', 10);
+        $page = $request->input('page', 1);
+        $offset = $pagesize * ($page - 1);
+        $recipes = FoodRecipe::where(['category' => $category])
+            ->skip($offset)->take($pagesize)->get();
+        return response()->json($recipes);
+    }
+
 }
