@@ -19,6 +19,10 @@ function api_route($path, $controller) {
     Route::get($path, $controller . '@index');
 }
 
+function weixin_route($path, $controller) {
+    Route::get('/wx/' . $path . '/{hash}', 'Weixin\\' . $controller . '@display');
+}
+
 api_route('api/food_material', 'FoodMaterialApiController');
 api_route('api/food_recipe', 'FoodRecipeApiController');
 api_route('api/user', 'UserApiController');
@@ -26,6 +30,7 @@ api_route('api/user', 'UserApiController');
 Route::post('/api/login', 'UserApiController@login');
 Route::get('/api/logout', 'UserApiController@logout');
 
+weixin_route('food_material', 'FoodMaterialWeixinController');
 
 Route::get('/', 'DietController@index');
 Route::get('/diet', 'DietController@index');
