@@ -23,19 +23,14 @@ Content Structure:
     食材列表页面解析器(解析对每个食材类别(如:蔬菜)的具体食材列表页面，得到具体食材的名字(如:花生)和url)
         5. MaterialListParser
     菜谱类别解析器(解析各种菜系(如:中华菜系),得到类别的名字(如:川菜)和对应的url)
-        6. CommonRecipesCategoryListParser
-        7. ChineseRecipeCategoryListParser
-        8. RegionSnacksCategoryListParser
-        9. ForignRercipesCategoryListParser
-        10. BakeCategoryParser
+        6. RecipeCategoryListParser
     菜谱列表页面解析器(解析对每种菜系类别(如:川菜)的具体菜谱列表页面，得到具体的菜谱名字(如:番茄炒西红柿)和url)
-        11. RecipeListParser
+        7. RecipeListParser
     饮食健康标签下各种列表的解析器
-        12. CrowdItemListParser # 人群类别列表解析器
-        13. IllItemListParser   # 疾病类别列表解析器
-        14. FunctionalityItemParser # 功能性调理类别列表解析器
-        15. OrganItemListParser     # 脏腑调理类别列表解析器  
-
+        8. CrowdItemListParser # 人群类别列表解析器
+        9. IllItemListParser   # 疾病类别列表解析器
+        10. FunctionalityItemParser # 功能性调理类别列表解析器
+        11. OrganItemListParser     # 脏腑调理类别列表解析器  
 '''
 
 if __name__ == '__main__':
@@ -45,8 +40,7 @@ import urlparse
 
 from crawler.items import HackItem, PageItem, FoodMaterialItem, \
         FoodRecipeItem, ListItem, MaterialCategoryItem, \
-        CommonRecipesCategoryListItem, ChineseRecipesCategoryListItem, RegionSnacksCategoryListItem, \
-        ForeignRecipesCategoryListItem, BakeCategoryListItem, CrowdListItem, CrowdItem, \
+        RecipeCategoryListItem, CrowdListItem, CrowdItem, \
         IllListItem, IllItem, FunctionalityListItem, FunctionalityItem, \
         OrganEfctListItem, OrganEfctItem, MaterialItem, RecipeItem
 
@@ -177,9 +171,11 @@ class FoodRecipeParser(object):
         recipe['method'] = method.encode('utf8')
 
         # 难度
-        difficulty, = div_info2.xpath('.//li[2]/div/a/text()').extract()
+        try:
+            difficulty, = div_info2.xpath('.//li[2]/div/a/text()').extract()
+        except ValueError:
+            difficulty = ""
         recipe['difficulty'] = difficulty.encode('utf8')
-
         # 份量（人数）
         amount, = div_info2.xpath('//li[3]/div/a/text()').extract()
         recipe['amount'] = amount.encode('utf8')
@@ -193,8 +189,8 @@ class FoodRecipeParser(object):
         recipe['setup_time'] = setup_time.encode('utf8')
 
         # 烹饪时间
-        cook_time, = div_info2.xpath('.//li[6]/div/a/text').extract() or ['']
-        recipe['cook_time'] = cook_time.encode('utf8')
+#        cook_time, = div_info2.xpath('.//li[6]/div/a/text').extract() or ['']
+#        recipe['cook_time'] = cook_time.encode('utf8')
 
         # 主料
         primaries = []
@@ -214,7 +210,10 @@ class FoodRecipeParser(object):
         # 做法
         procedure = []
         div_measure = response.xpath('//div[@class="measure"]')
-        for step in div_measure.xpath('//div[@class="content clearfix"]/div[@class="c"]/p/text()').extract():
+        steps = div_measure.xpath('//div[@class="content clearfix"]/div[@class="c"]/p/text()').extract()
+        if len(steps) == 0:
+            steps = div_measure.xpath('//div[@class="edit"]/p/text()').extract()
+        for step in steps:
             step = step.strip().encode('utf8')
             procedure.append(step)
         recipe['procedure'] = '\n'.join(procedure)
@@ -274,64 +273,18 @@ class MaterialListParser(object):
             yield PageItem(url=str(next_url), type=ListItem,
                     kwargs=dict(category=category))
 
-# 解析家常菜谱列表，得到各种菜（如：家常菜 私家菜）的页面链接
-class CommonRecipesCategoryListParser(object):
-
+# 菜谱类别解析器
+class RecipeCategoryListParser(object):
     def parse(self, response):
-        main_w = response.xpath('//div[@class="main_w clearfix"]')
+        category = response.xpath('//li[@class="current hover"]/h1/a/text()').extract()
         listnav = response.xpath('//dl[@class="listnav_dl_style1 w990 bb1 clearfix"]')
+        if len(listnav) == 0:
+            listnav = response.xpath('//dl[@class="listnav_dl_style1 w990 clearfix"]')
         dds = listnav.xpath('./dd')
         for dd in dds:
-            name, = dd.xpath('./a/text()').extract()
+            name = dd.xpath('./a/text()').extract()
             url, = dd.xpath('./a/@href').extract()
-            yield CommonRecipesCategoryListItem(name = name, url = url)
-
-# 解析中华菜系的列表，得到各种菜系（如：川菜 粤菜）的页面链接
-class ChineseRecipesCategoryListParser(object):
-
-    def parse(self, response):
-        listnav = response.xpath('//dl[@class="listnav_dl_style1 w990 clearfix"]')
-        dds = listnav.xpath('./dd')
-        for dd in dds:
-            name, = dd.xpath('./a/text()').extract()
-            url, = dd.xpath('./a/@href').extract()
-            yield ChineseRecipesCategoryListItem(name = name, url = url)
-
-# 解析地方小吃的列表，得到各地小吃的页面链接
-class RegionSnacksCategoryListParser(object):
-    
-    def parse(self, response):
-        listnav = response.xpath('//dl[@class="listnav_dl_style1 w990 clearfix"]')
-        dds = listnav.xpath('./dd')
-        for dd in dds:
-            region, = dd.xpath('./a/text()').extract()
-            url, = dd.xpath('./a/@href').extract()
-            yield RegionSnacksCategoryListItem(region = region, url = url)
-
-# 解析外国菜谱的列表，得到各个国家菜谱的页面链接
-class ForeignRecipesCategoryListParser(object):
-
-    def parse(self, response):
-        listnav = response.xpath('//dl[@class="listnav_dl_style1 w990 bb1 clearfix"]')
-        dds = listnav.xpath('./dd')
-        for dd in dds:
-            country, = dd.xpath('./a/text()').extract()
-            url, = dd.xpath('./a/@href').extract()
-            yield ForeignRecipesCategoryListItem(country = country, url = url)
-
-# 解析烘焙的列表，得到烘焙相关的页面链接
-class BakeCategoryListParser(object):
-        
-    def parse(self, response):
-        listnav = response.xpath('//dl[@class="listnav_dl_style1 w990 clearfix"]')
-        dds = listnav.xpath('./dd')
-        for dd in dds:
-            name, = dd.xpath('./a/text()').extract()
-            # 烘陪工具不需要解析
-            if name.rfind(u"工具") != -1:
-                continue
-            url, = dd.xpath('./a/@href').extract()
-            yield BakeCategoryListItem(name = name, url = url)
+            yield RecipeCategoryListItem(category = category, name = name, url = url)
 
 # 分析菜谱列表, 得到每一道菜的菜名以及url，url可是调用具体菜谱分析器进行分析
 class RecipeListParser(object):
@@ -339,8 +292,11 @@ class RecipeListParser(object):
     def parse(self,response):
         # 菜谱的种类
         dl_style1 = response.xpath('//dl[@class="listnav_dl_style1 w990 bb1 clearfix"]')
+        if len(dl_style1) ==0:
+            dl_style1 = response.xpath('//dl[@class="listnav_dl_style1 w990 clearfix"]')
 
-        category, = dl_style1.xpath('//dd[@class="current"]//a/text()').extract()
+        category, = dl_style1.xpath('//dd[@class="current"]/h1/a/text()').extract()
+        print category
         category = category.encode('utf8')
 
         # 菜谱列表
@@ -358,15 +314,13 @@ class RecipeListParser(object):
             item['url'] = url.encode('utf8')
             yield item
 
-        # base url
-        base_url = response.url.split(u'?', 1)[0]
-
-        # 下一页解析
+        # 下一页解析,和食材页面的下一页的href有所不同
         page_w = response.xpath('//div[@class="listtyle1_page_w"]')
-        result = page_w.xpath('a[@class="next"]/@href').extract()
+        result, = page_w.xpath('a[@class="next"]/@href').extract()
+        result.strip()
         if result:
-            nxt, = result
-            next_url = base_url + nxt
+            next_url = result
+            print next_url
             yield PageItem(url=str(next_url), type=ListItem,
                     kwargs=dict(category=category))
 
@@ -759,15 +713,23 @@ if __name__ == '__main__':
                 print '%s=%s' % (attr, value)
             print 
     
-    def show_commonrecipes_category_list(url):
-        items = CommonRecipesCategoryListParser().parse(fetch(url))
+    def show_recipe_category_list(url):
+        items = RecipeCategoryListParser().parse(fetch(url))
         for item in items:
             for attr, value in item.iteritems():
                 print '%s = %s' % (attr, value)
             print 
 
-    def show_chineserecipes_category_list(url):
-        items = ChineseRecipesCategoryListParser().parse(fetch(url))
+
+    def show_commonrecipe_category_list(url):
+        items = CommonRecipeCategoryListParser().parse(fetch(url))
+        for item in items:
+            for attr, value in item.iteritems():
+                print '%s = %s' % (attr, value)
+            print 
+
+    def show_chineserecipe_category_list(url):
+        items = ChineseRecipeCategoryListParser().parse(fetch(url))
         for item in items:
             for attr, value in item.iteritems():
                 print '%s = %s' % (attr, value)
@@ -780,8 +742,8 @@ if __name__ == '__main__':
                 print '%s = %s' % (attr, value)
             print 
 
-    def show_foreignrecipes_category_list(url):
-        items = ForeignRecipesCategoryListParser().parse(fetch(url))
+    def show_foreignrecipe_category_list(url):
+        items = ForeignRecipeCategoryListParser().parse(fetch(url))
         for item in items:
             for attr, value in item.iteritems():
                 print '%s = %s' % (attr, value)
@@ -854,10 +816,32 @@ if __name__ == '__main__':
                 print '%s = %s' % (attr, value)
             print
 
+    url = 'http://www.meishij.net/chufang/diy/'
+    show_recipe_category_list(url)
 
+    url = 'http://www.meishij.net/china-food/caixi/'
+    show_recipe_category_list(url)
 
-    url = 'http://www.meishij.net/chufang/diy/jiangchangcaipu/'
+    url = 'http://www.meishij.net/china-food/xiaochi/'
+    show_recipe_category_list(url)
+
+    url = 'http://www.meishij.net/chufang/diy/guowaicaipu1/'
+    show_recipe_category_list(url)
+
+    url = 'http://www.meishij.net/hongpei/'
+    show_recipe_category_list(url)
+
+    url = 'http://www.meishij.net/china-food/caixi/gangtai/'
     show_recipe_list(url)
+
+    url = 'http://www.meishij.net/china-food/caixi/other/'
+    show_recipe_list(url)
+
+    url = 'http://www.meishij.net/china-food/caixi/gangtai/'
+    show_recipe_list(url)
+
+    url = "http://meishij.net/zuofa/huotuizhengluyu_1.html"
+    show_food_recipe(url)
 
 if False:
     
@@ -900,21 +884,6 @@ if False:
 
     url = "http://www.meishij.net/shicai/list.php?y=5"         
     show_material_list(url)
-
-    url = 'http://www.meishij.net/chufang/diy/'
-    show_commonrecipes_category_list(url)
-
-    url = 'http://www.meishij.net/china-food/caixi/'
-    show_chineserecipes_category_list(url)
-
-    url = 'http://www.meishij.net/china-food/xiaochi/'
-    show_regionsnacks_category_list(url)
-
-    url = 'http://www.meishij.net/chufang/diy/guowaicaipu1/'
-    show_foreignrecipes_category_list(url)
-
-    url = 'http://www.meishij.net/hongpei/'
-    show_bake_category_list(url)
 
     url = "http://meishij.net/zuofa/huotuizhengluyu_1.html"
     show_food_recipe(url)

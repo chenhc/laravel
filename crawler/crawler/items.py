@@ -123,7 +123,7 @@ class FoodRecipeItem(scrapy.Item):
     setup_time = scrapy.Field()
 
     # 烹饪时间
-    cook_time = scrapy.Field()
+#    cook_time = scrapy.Field()
 
     # 晒客
     sharer = scrapy.Field()
@@ -158,42 +158,11 @@ class ListItem(scrapy.Item):
     # url
     url = scrapy.Field()
 
+class RecipeCategoryListItem(scrapy.Item):
+    # 类别 如：家常菜谱，国外菜谱
+    category = scrapy.Field()
 
-class CommonRecipesCategoryListItem(scrapy.Item):
-    # 名字 如：家常菜 私家菜
-    name = scrapy.Field()
-
-    # url
-    url = scrapy.Field()
-
-
-class ChineseRecipesCategoryListItem(scrapy.Item):
-    # 名字 如：家常菜 私家菜
-    # 名字 如：川菜 粤菜
-    name = scrapy.Field()
-
-    # url
-    url = scrapy.Field()
-
-   
-class RegionSnacksCategoryListItem(scrapy.Item):
-    # 地区
-    region = scrapy.Field()
-
-    # url
-    url = scrapy.Field()
-
-
-class ForeignRecipesCategoryListItem(scrapy.Item):
-    # 国家 
-    country = scrapy.Field()
-
-    # url
-    url = scrapy.Field()
-
-
-class BakeCategoryListItem(scrapy.Item):
-    # 名字 如：蛋糕 
+    # 名字 如：川菜 贵州小吃 美国家常菜 甜品蛋糕
     name = scrapy.Field()
 
     # url
