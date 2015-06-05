@@ -11,12 +11,24 @@ use Auth, Redirect, Input;
 
 class UserApiController extends Controller {
 
+
+    public function __construct(Request $request)
+    {
+        $this->session=$request->session();
+    }
+
+
+
     public function login(Request $request)
     {
         $email = Input::get('email');
         $password = Input::get('password');
         if (Auth::attempt(['email' => $email, 'password' => $password]))
         {
+
+            $user=Auth::user();
+            $this->session->put($user-attributesToArray());
+
             return response()->json(['result'=> 'login success']);
         }
         else
@@ -26,6 +38,8 @@ class UserApiController extends Controller {
 
     public function logout()
     {
+        $this->session->flush();
+
         Auth::logout();
         return json_encode('You are logged out');
 
