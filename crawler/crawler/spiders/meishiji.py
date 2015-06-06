@@ -26,7 +26,7 @@ from scrapy import log
 from scrapy.spider import Spider
 from scrapy.http import Request
 
-from crawler.items import PageItem, Category_Material
+from crawler.items import PageItem, CategoryMaterialPairItem
 from crawler.parsers.meishij import HackParser, CategoryListParser, \
         MaterialListParser, FoodMaterialParser
 from crawler.data.jpg_set import jpg_set
@@ -187,16 +187,16 @@ class MeishijSpider(Spider):
             request = Request(url, callback=self.parse_food_material,
                     headers=headers)
             request._msj_category = category
-            yield request
+            #yield request
 
             #self.enqueue_request(request)
 
             log.msg('[ENQUEUE][food_material] category=%s url=%s' %
                     (category, url), log.INFO)
 
-            yield Category_Material(category = category, material = name)
+            yield CategoryMaterialPairItem(category=category, material=name)
 
-            log.msg('[ENQUEUE][category_material] category=%s material=%s' %
+            log.msg('[PIPE][category_material_pair] category=%s material=%s' %
                     (category, name), log.INFO)
 
         if False:

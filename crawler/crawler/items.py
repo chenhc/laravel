@@ -123,7 +123,7 @@ class FoodRecipeItem(scrapy.Item):
     setup_time = scrapy.Field()
 
     # 烹饪时间
-#    cook_time = scrapy.Field()
+    #cook_time = scrapy.Field()
 
     # 晒客
     sharer = scrapy.Field()
@@ -180,11 +180,11 @@ class CrowdListItem(scrapy.Item):
 class CrowdItem(scrapy.Item):
     # 人群 比如：孕妇 小孩
     crowd = scrapy.Field()
-    
+
     # 适合做的tips 比如：多吃含蛋白质的食物
     suit_tips = scrapy.Field()
 
-    # 适宜食材名字&url的列表 
+    # 适宜食材名字&url的列表
     suit_material_list = scrapy.Field()
 
     # 不推荐做的tips 比如：不能喝酒
@@ -198,7 +198,7 @@ class CrowdItem(scrapy.Item):
 
     # 下一页链接，方便解析往后的推荐食用菜谱
     nxtpage = scrapy.Field()
- 
+
 class IllListItem(scrapy.Item):
     # 疾病名字
     ill = scrapy.Field()
@@ -214,7 +214,7 @@ class IllItem(scrapy.Item):
     # 适合做的tips 比如：多吃含蛋白质的食物
     suit_tips = scrapy.Field()
 
-    # 适宜食材名字适宜食材url的列表 
+    # 适宜食材名字适宜食材url的列表
     suit_material_list = scrapy.Field()
 
     # 不推荐做的tips 比如：不能喝酒
@@ -225,7 +225,7 @@ class IllItem(scrapy.Item):
 
     # 适合的食谱&url对应的列表
     suit_recipe_list = scrapy.Field()
-    
+
     # 下一页链接，方便解析往后的推荐食用菜谱
     nxtpage = scrapy.Field()
 
@@ -244,7 +244,7 @@ class FunctionalityItem(scrapy.Item):
     # 适合做的tips 比如：多吃含蛋白质的食物
     suit_tips = scrapy.Field()
 
-    # 适宜食材名字适宜食材url的列表 
+    # 适宜食材名字适宜食材url的列表
     suit_material_list = scrapy.Field()
 
     # 不推荐做的tips 比如：不能喝酒
@@ -275,7 +275,7 @@ class OrganEfctItem(scrapy.Item):
     # 适合做的tips 比如：多吃含蛋白质的食物
     suit_tips = scrapy.Field()
 
-    # 适宜食材名字适宜食材url的列表 
+    # 适宜食材名字适宜食材url的列表
     suit_material_list = scrapy.Field()
 
     # 不推荐做的tips 比如：不能喝酒
@@ -292,20 +292,20 @@ class OrganEfctItem(scrapy.Item):
 
 
 class RecipeItem(scrapy.Item):
-    
+
     name = scrapy.Field()
 
     url = scrapy.Field()
 
 
 class MaterialItem(scrapy.Item):
-    
+
     name = scrapy.Field()
 
     url = scrapy.Field()
 
-class Category_Material(scrapy.Item):
-    
+class CategoryMaterialPairItem(scrapy.Item):
+
     category = scrapy.Field()
 
     material = scrapy.Field()
