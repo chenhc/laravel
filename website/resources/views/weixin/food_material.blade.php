@@ -60,10 +60,9 @@
         pass_ticket = encodeURIComponent(pass_ticket.html(false).html(false).replace(/\s/g,"+"));
     </script>
     <title>{{ $name  }}</title>
-    <link rel="stylesheet" type="text/css" href="http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/style/page/appmsg/page_mp_article_improve260530.css">
-    <link rel="stylesheet" type="text/css" href="http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/style/page/appmsg/not_in_mm260530.css">
-     <link rel="stylesheet" type="text/css" href="http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/style/page/appmsg/page_mp_article_improve261b9c.css">
-    <link rel="stylesheet" type="text/css" href="http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/style/page/appmsg/page_mp_article_improve_combo261b9c.css">
+    <link rel="stylesheet" type="text/css" href="/css/vendor/weixin/page_mp_article_improve263725.css">
+    <link rel="stylesheet" type="text/css" href="/css/vendor/weixin/not_in_mm263725.css">
+    <link rel="stylesheet" type="text/css" href="/css/vendor/weixin/page_mp_article_improve_combo263725.css">
     <style></style>
     <!--[if lt IE 9]><link rel="stylesheet" type="text/css" href="http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/style/page/appmsg/page_mp_article_improve_pc260530.css"><![endif]-->
 </head>
@@ -112,7 +111,7 @@
                         <div id="js_profile_qrcode" class="profile_container" style="display:none;">
                             <div class="profile_inner">
                                 <strong class="profile_nickname">爱生活ilive</strong>
-                                <img class="profile_avatar" id="js_profile_qrcode_img" src="../static/img/qrcode.bmp" alt="">
+                                <img class="profile_avatar" id="js_profile_qrcode_img" src="/images/qrcode.bmp" alt="">
                                 <p class="profile_meta"><label class="profile_meta_label">微信号</label><span class="profile_meta_value">ilive-wx</span></p>
                                 <p class="profile_meta"><label class="profile_meta_label">功能介绍</label><span class="profile_meta_value">生活小助手</span></p>
                             </div>
@@ -127,13 +126,9 @@
                             })();
                         </script>
                     </div>
-                    <div class="rich_media_content" id="js_content">
-                        <p><span style="color: rgb(102, 102, 102); font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 24px;  background-color: rgb(255, 255, 255);">明明还没到六月，可是小编却老是恍惚已经到了夏天了。没办法，天气实在是太热了，所以我就开始做冰淇淋吃啦！芒果冰淇淋，提前过夏天哦~</span></p>
-                        <p><span style="color: rgb(102, 102, 102); font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 24px;  background-color: rgb(255, 255, 255);"><img data-s="300,640" data-type="jpeg" data-src="http://mmbiz.qpic.cn/mmbiz/JhSTLBPRic8MfuvvKfJ8fric0QuCzicVLicF0efoyia0iaLDuhCBMp0MLxRbwuiaW4AxkgugDDBA9mm9IEaWlcymbqNpw/0?wx_fmt=jpeg" data-ratio="0.6673040152963671" data-w=""  /><br /><span style="color: rgb(102, 102, 102); font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 24px;  background-color: rgb(255, 255, 255);">准备好所有的材料：芒果、牛奶、芒果冰淇淋粉</span></span></p>
-                        <p><span style="color: rgb(102, 102, 102); font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 24px;  background-color: rgb(255, 255, 255);"><img data-s="300,640" data-type="jpeg" data-src="http://mmbiz.qpic.cn/mmbiz/JhSTLBPRic8MfuvvKfJ8fric0QuCzicVLicFbdIt7uRhLAO2y1DW2iaC1kdicjGHMXMZ28J8siaOxNeMBq5cPKicc0lfxg/0?wx_fmt=jpeg" data-ratio="0.6673040152963671" data-w=""  /><br /><span style="color: rgb(102, 102, 102); font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 24px;  background-color: rgb(255, 255, 255);">将300g牛奶倒入100g冰淇淋粉当中，用手动打蛋器搅匀，搅匀后倒入不锈钢锅内,外层加入冰块与水将不锈钢锅放置其上维持冷度</span></span></p>
-                        <p><span style="color: rgb(102, 102, 102); font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 24px;  background-color: rgb(255, 255, 255);"><img data-s="300,640" data-type="jpeg" data-src="http://mmbiz.qpic.cn/mmbiz/JhSTLBPRic8MfuvvKfJ8fric0QuCzicVLicF0iauK9d0MDOkrysG1ibsVsypiaPxGeJZ7g7HdMGibUZMfgF3eVHemrny5A/0?wx_fmt=jpeg" data-ratio="0.6673040152963671" data-w=""  /><br /><span style="color: rgb(102, 102, 102); font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 24px;  background-color: rgb(255, 255, 255);">将打好的冰淇淋液放置冷冻库6-10小时之后，挖出冰淇淋，再加上芒果果肉就好啦，当然加别的喜欢的水果也可以哦</span></span></p>
-                        <p><span style="color: rgb(102, 102, 102); font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 24px;  background-color: rgb(255, 255, 255);"><img data-s="300,640" data-type="jpeg" data-src="http://mmbiz.qpic.cn/mmbiz/JhSTLBPRic8MfuvvKfJ8fric0QuCzicVLicFJlEG1fd2ZREkOp2wB4icaJRmOYxRib0BcWqic9rQGvvhHBQyJY00fWfXA/0?wx_fmt=jpeg" data-ratio="0.6673040152963671" data-w=""  /><br /><span style="color: rgb(102, 102, 102); font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 24px;  background-color: rgb(255, 255, 255);">将打好的冰淇淋液放置冷冻库6-10小时之后，挖出冰淇淋，再加上芒果果肉就好啦，当然加别的喜欢的水果也可以哦</span></span></p>
-                        <p><span style="color: rgb(102, 102, 102); font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 24px;  background-color: rgb(255, 255, 255);"><img data-s="300,640" data-type="jpeg" data-src="http://mmbiz.qpic.cn/mmbiz/JhSTLBPRic8MfuvvKfJ8fric0QuCzicVLicFLMsS6GbSuOjuUBzE3gKJbLwlNkGpGKcB433y8NTvQw80Z8riadQuOicg/0?wx_fmt=jpeg" data-ratio="0.6673040152963671" data-w=""  /><br /><span style="color: rgb(102, 102, 102); font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 24px;  background-color: rgb(255, 255, 255);">不放水果也很好吃哒</span></span></p>
+                    <div class="rich_media_content" id="js_content">@foreach (explode("\n", $brief) as $paragraph)
+                        <p><span style="color: rgb(102, 102, 102); font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 24px;  background-color: rgb(255, 255, 255);">{{ $paragraph }}</span></p>@endforeach
+                        <!--<p><span style="color: rgb(102, 102, 102); font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 24px;  background-color: rgb(255, 255, 255);"><img data-s="300,640" data-type="jpeg" data-src="http://mmbiz.qpic.cn/mmbiz/JhSTLBPRic8MfuvvKfJ8fric0QuCzicVLicF0efoyia0iaLDuhCBMp0MLxRbwuiaW4AxkgugDDBA9mm9IEaWlcymbqNpw/0?wx_fmt=jpeg" data-ratio="0.6673040152963671" data-w=""  /><br /><span style="color: rgb(102, 102, 102); font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 24px;  background-color: rgb(255, 255, 255);">准备好所有的材料：芒果、牛奶、芒果冰淇淋粉</span></span></p>-->
                     </div>
                     <script type="text/javascript">
                         var first_sceen__time = (+new Date());
@@ -153,7 +148,7 @@
             <div id="js_pc_qr_code" class="qr_code_pc_outer" style="display:none;">
                 <div class="qr_code_pc_inner">
                     <div class="qr_code_pc">
-                        <img id="js_pc_qr_code_img" class="qr_code_pc_img" src="../static/img/qrcode.bmp">
+                        <img id="js_pc_qr_code_img" class="qr_code_pc_img" src="/images/qrcode.bmp">
                         <p>微信扫一扫<br>关注该公众号</p>
                     </div>
                 </div>
@@ -178,7 +173,7 @@
         //window.moon_map = {"a/gotoappdetail.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/a/gotoappdetail260530.js","a/ios.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/a/ios24a769.js","a/android.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/a/android22772d.js","a/profile.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/a/profile260530.js","biz_common/utils/report.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_common/utils/report224ef3.js","biz_common/utils/cookie.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_common/utils/cookie224ef3.js","pages/report.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/pages/report25ded2.js","pages/love_comment.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/pages/love_comment25ded2.js","biz_wap/utils/localstorage.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_wap/utils/localstorage25ded2.js","biz_wap/utils/qqmusic_player.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_wap/utils/qqmusic_player25ded2.js","appmsg/reward_entry.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/appmsg/reward_entry25de14.js","appmsg/comment.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/appmsg/comment260530.js","appmsg/like.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/appmsg/like2340dc.js","appmsg/a.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/appmsg/a260530.js","pages/version4video.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/pages/version4video25ded2.js","biz_common/tmpl.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_common/tmpl224ef3.js","biz_common/ui/imgonepx.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_common/ui/imgonepx224ef3.js","biz_common/dom/attr.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_common/dom/attr22f190.js","biz_wap/utils/ajax.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_wap/utils/ajax25888e.js","biz_common/utils/string/html.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_common/utils/string/html224ef3.js","appmsg/report.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/appmsg/report23c757.js","biz_common/dom/class.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_common/dom/class236751.js","appmsg/report_and_source.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/appmsg/report_and_source23a582.js","appmsg/page_pos.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/appmsg/page_pos25de14.js","appmsg/cdn_speed_report.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/appmsg/cdn_speed_report224ef3.js","appmsg/qqmusic.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/appmsg/qqmusic25ded2.js","appmsg/iframe.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/appmsg/iframe25f45f.js","appmsg/review_image.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/appmsg/review_image2480be.js","appmsg/outer_link.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/appmsg/outer_link25ded2.js","biz_wap/jsapi/core.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_wap/jsapi/core25ded2.js","biz_common/dom/event.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_common/dom/event24f08a.js","appmsg/async.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/appmsg/async25ffc9.js","biz_wap/ui/lazyload_img.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_wap/ui/lazyload_img23354e.js","biz_common/log/jserr.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_common/log/jserr22589f.js","appmsg/share.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/appmsg/share25ded2.js","biz_wap/utils/mmversion.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_wap/utils/mmversion224ef3.js","appmsg/cdn_img_lib.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/appmsg/cdn_img_lib23c757.js","biz_common/utils/url/parse.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_common/utils/url/parse25b6ff.js","appmsg/index.js":"http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/appmsg/index25ded2.js"};
     </script>
     <!--<script type="text/javascript" src="http://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/biz_wap/moon230eaa.js"></script>-->
-    // <script id="qqmusic_tpl" type="text/html">
+    <script id="qqmusic_tpl" type="text/html">
     //     <span id="qqmusic_main_<#=comment_id#>_<#=posIndex#>" class="db qqmusic_area <#if(!musicSupport){#> unsupport<#}#>">
     //         <span class="tc tips_global unsupport_tips" <#if(!musicSupport&&posIndex!=0){#>style="display:none;"<#}#>>当前浏览器不支持播放音乐，请在微信或其他浏览器中播放</span>
     //         <span class="db qqmusic_wrp">
@@ -195,7 +190,7 @@
     //             </span>
     //         </span>
     //     </span>
-    // </script>
+    </script>
     <script id="t_cmt" type="text/html">
         // <li class="discuss_item" id="cid<# if (is_from_me == 1) { #><#=my_id#><# } else { #><#=content_id#><# } #>">
         //     <# if(is_elected == 1){ #>
@@ -346,14 +341,14 @@
 
         var itemidx = "";
         var nickname = "爱生活ilive";
-        var ct = "1432907205";
+        var ct = "{{ time() }}";
         var user_name = "gh_6b462cdd6f98";
         var user_name_new = "";
         var fakeid   = "";
         var version   = "";
         var is_limit_user   = "0";
-        var msg_title = "天热了，来点芒果冰淇淋压压惊";
-        var msg_desc = "明明还没到六月，可是小编却老是恍惚已经到了夏天了。没办法，天气实在是太热了，所以我就开始做冰淇淋吃啦！芒果冰";
+        var msg_title = "{{ $name }}";
+        var msg_desc = "";
         var msg_cdn_url = "http://mmbiz.qpic.cn/mmbiz/JhSTLBPRic8MfuvvKfJ8fric0QuCzicVLicFGWeV1ibGvkufny8MHfNPMtukJxlL5KXcdYNjiaU2WichfNsIPRdEzvdgw/0?wx_fmt=jpeg";
         var msg_link = "http://mp.weixin.qq.com/s?__biz=MzA4MTk1NzU4Mw==&amp;mid=347159934&amp;idx=1&amp;sn=5407d5110bfba5dcf15966830a803d74#rd";
         var user_uin = "0"*1;
