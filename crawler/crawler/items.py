@@ -93,6 +93,7 @@ class FoodMaterialItem(scrapy.Item):
     # 烹饪小贴士
     tips = scrapy.Field()
 
+
 # 菜谱页面解析的item
 class FoodRecipeItem(scrapy.Item):
     # 来源
@@ -123,7 +124,7 @@ class FoodRecipeItem(scrapy.Item):
     setup_time = scrapy.Field()
 
     # 烹饪时间
-    #cook_time = scrapy.Field()
+    cook_time = scrapy.Field()
 
     # 晒客
     sharer = scrapy.Field()
@@ -134,12 +135,15 @@ class FoodRecipeItem(scrapy.Item):
     # 辅料
     accessories = scrapy.Field()
 
+    # 简介
+    brief = scrapy.Field()
+
     # 做法
     procedure = scrapy.Field()
 
 
-# 类别列表的解析的item，url为各种原材料列表页面(如蔬菜)的解析链接入口
-class MaterialCategoryItem(scrapy.Item):
+# 食材类别列表解析得到的类别入口，url为各种原材料列表页面(如蔬菜)的解析链接入口
+class MaterialCategoryEntryItem(scrapy.Item):
     # 类别
     category = scrapy.Field()
 
@@ -147,8 +151,8 @@ class MaterialCategoryItem(scrapy.Item):
     url = scrapy.Field()
 
 
-# 食材列表页面和菜谱列表页面的解析得到的食材或菜谱的item
-class ListItem(scrapy.Item):
+# 食材列表页面解析得到的食材入口
+class MaterialEntryItem(scrapy.Item):
     # 类别
     category = scrapy.Field()
 
@@ -158,28 +162,37 @@ class ListItem(scrapy.Item):
     # url
     url = scrapy.Field()
 
-class RecipeCategoryListItem(scrapy.Item):
-    # 类别 如：家常菜谱，国外菜谱
+
+class RecipeCategoryEntryItem(scrapy.Item):
+    # 总纲 如：家常菜谱，国外菜谱
+    classification = scrapy.Field()
+
+    # 类别 如：川菜 贵州小吃 美国家常菜 甜品蛋糕
     category = scrapy.Field()
 
-    # 名字 如：川菜 贵州小吃 美国家常菜 甜品蛋糕
+    # url
+    url = scrapy.Field()
+
+
+class RecipeEntryItem(scrapy.Item):
+    # 类别
+    category = scrapy.Field()
+
+    # 名字
     name = scrapy.Field()
 
     # url
     url = scrapy.Field()
 
-# 人群膳食页面各种人群和url
-class CrowdListItem(scrapy.Item):
-    # 人群
-    crowd = scrapy.Field()
 
-    # url
-    url = scrapy.Field()
+# 分类对应适合以及禁忌的食材，适合的食谱
+class RecipeCategoryDetailItem(scrapy.Item):
 
-# 人群对应的适合以及禁忌的食材，适合的食谱
-class CrowdItem(scrapy.Item):
-    # 人群 比如：孕妇 小孩
-    crowd = scrapy.Field()
+    # 分类
+    category = scrapy.Field()
+
+    # 简介
+    brief = scrapy.Field()
 
     # 适合做的tips 比如：多吃含蛋白质的食物
     suit_tips = scrapy.Field()
@@ -193,119 +206,23 @@ class CrowdItem(scrapy.Item):
     # 禁忌食材&url的列表
     avoid_material_list = scrapy.Field()
 
-    # 适合的食谱&url的列表
-    suit_recipe_list = scrapy.Field()
-
-    # 下一页链接，方便解析往后的推荐食用菜谱
-    nxtpage = scrapy.Field()
-
-class IllListItem(scrapy.Item):
-    # 疾病名字
-    ill = scrapy.Field()
-
-    # url
-    url = scrapy.Field()
-
-
-class IllItem(scrapy.Item):
-    # 疾病
-    ill = scrapy.Field()
-
-    # 适合做的tips 比如：多吃含蛋白质的食物
-    suit_tips = scrapy.Field()
-
-    # 适宜食材名字适宜食材url的列表
-    suit_material_list = scrapy.Field()
-
-    # 不推荐做的tips 比如：不能喝酒
-    avoid_tips = scrapy.Field()
-
-    # 禁忌食材禁忌食材url的列表
-    avoid_material_list = scrapy.Field()
-
-    # 适合的食谱&url对应的列表
-    suit_recipe_list = scrapy.Field()
-
-    # 下一页链接，方便解析往后的推荐食用菜谱
-    nxtpage = scrapy.Field()
-
-class FunctionalityListItem(scrapy.Item):
-    # 功能
-    functionality = scrapy.Field()
-
-    # url
-    url = scrapy.Field()
-
-
-class FunctionalityItem(scrapy.Item):
-    # 功能 比如：美容 减肥
-    functionality = scrapy.Field()
-
-    # 适合做的tips 比如：多吃含蛋白质的食物
-    suit_tips = scrapy.Field()
-
-    # 适宜食材名字适宜食材url的列表
-    suit_material_list = scrapy.Field()
-
-    # 不推荐做的tips 比如：不能喝酒
-    avoid_tips = scrapy.Field()
-
-    # 禁忌食材禁忌食材url的列表
-    avoid_material_list = scrapy.Field()
-
-    # 适合的食谱&url对应的列表
-    suit_recipe_list = scrapy.Field()
-
-    # 下一页链接，方便解析往后的推荐食用菜谱
-    nxtpage = scrapy.Field()
-
-
-class OrganEfctListItem(scrapy.Item):
-    # 功效 例如：补心， 胃调养
-    effect = scrapy.Field()
-
-    # url
-    url = scrapy.Field()
-
-
-class OrganEfctItem(scrapy.Item):
-    # 功效 比如:补肾 补心
-    effect = scrapy.Field()
-
-    # 适合做的tips 比如：多吃含蛋白质的食物
-    suit_tips = scrapy.Field()
-
-    # 适宜食材名字适宜食材url的列表
-    suit_material_list = scrapy.Field()
-
-    # 不推荐做的tips 比如：不能喝酒
-    avoid_tips = scrapy.Field()
-
-    # 禁忌食材禁忌食材url的列表
-    avoid_material_list = scrapy.Field()
-
-    # 适合的食谱&url对应的列表
-    suit_recipe_list = scrapy.Field()
-
-    # 下一页链接，方便解析往后的推荐食用菜谱
-    nxtpage = scrapy.Field()
-
-
-class RecipeItem(scrapy.Item):
-
-    name = scrapy.Field()
-
-    url = scrapy.Field()
-
-
-class MaterialItem(scrapy.Item):
-
-    name = scrapy.Field()
-
-    url = scrapy.Field()
 
 class CategoryMaterialPairItem(scrapy.Item):
 
     category = scrapy.Field()
 
     material = scrapy.Field()
+
+
+class CategoryRecipePairItem(scrapy.Item):
+
+    category = scrapy.Field()
+
+    recipe = scrapy.Field()
+
+
+class RecipeCategoryPairItem(scrapy.Item):
+
+    category = scrapy.Field()
+
+    sub_category = scrapy.Field()

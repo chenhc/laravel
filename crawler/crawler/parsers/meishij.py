@@ -30,7 +30,7 @@ Content Structure:
         8. CrowdItemListParser # 人群类别列表解析器
         9. IllItemListParser   # 疾病类别列表解析器
         10. FunctionalityItemParser # 功能性调理类别列表解析器
-        11. OrganItemListParser     # 脏腑调理类别列表解析器  
+        11. OrganItemListParser     # 脏腑调理类别列表解析器
 '''
 
 if __name__ == '__main__':
@@ -38,11 +38,10 @@ if __name__ == '__main__':
 
 import urlparse
 
-from crawler.items import HackItem, PageItem, FoodMaterialItem, \
-        FoodRecipeItem, ListItem, MaterialCategoryItem, \
-        RecipeCategoryListItem, CrowdListItem, CrowdItem, \
-        IllListItem, IllItem, FunctionalityListItem, FunctionalityItem, \
-        OrganEfctListItem, OrganEfctItem, MaterialItem, RecipeItem
+from crawler.items import HackItem, PageItem, \
+        FoodMaterialItem, MaterialCategoryEntryItem, MaterialEntryItem, \
+        FoodRecipeItem, RecipeCategoryEntryItem, RecipeEntryItem, \
+        RecipeCategoryDetailItem
 
 class HackParser(object):
 
@@ -88,7 +87,7 @@ class FoodMaterialParser(object):
         attr_names.reverse()
         for record in div_sc_header_con1.xpath('.//p[@class="p2"]/text()').extract():
             attr_value = record.split(u'：',1)
-            if len(attr_value) == 1: 
+            if len(attr_value) == 1:
                 continue
             attr, value = attr_value
             attr = attr.strip() or attr_names.pop().strip()
@@ -148,6 +147,12 @@ class FoodRecipeParser(object):
         recipe = FoodRecipeItem()
         recipe['source'] = response.url
 
+        body = response.body
+        body = body[body.find('icon_pr'):]
+        body = body[body.find('<a'):]
+        body = body[body.find('>')+1:]
+        cook_time = body[:body.find('</a>')]
+
         # 名字
         div_info1 = response.xpath('//div[@class="info1"]')
         name, = div_info1.xpath('.//h1/a/text()').extract()
@@ -189,8 +194,11 @@ class FoodRecipeParser(object):
         recipe['setup_time'] = setup_time.encode('utf8')
 
         # 烹饪时间
-#        cook_time, = div_info2.xpath('.//li[6]/div/a/text').extract() or ['']
-#        recipe['cook_time'] = cook_time.encode('utf8')
+        recipe['cook_time'] = cook_time
+
+        # 简介
+        briefs = response.xpath('//div[@class="materials"]/p/text()').extract()
+        recipe['brief'] = '\n'.join([b.strip() for b in briefs]).encode('utf8')
 
         # 主料
         primaries = []
@@ -210,17 +218,21 @@ class FoodRecipeParser(object):
         # 做法
         procedure = []
         div_measure = response.xpath('//div[@class="measure"]')
-        steps = div_measure.xpath('//div[@class="content clearfix"]/div[@class="c"]/p/text()').extract()
-        if len(steps) == 0:
-            steps = div_measure.xpath('//div[@class="edit"]/p/text()').extract()
-        for step in steps:
-            step = step.strip().encode('utf8')
-            procedure.append(step)
+        p_steps = div_measure.xpath('//div[@class="content clearfix"]/div[@class="c"]/p')
+        if len(p_steps) == 0:
+            p_steps = div_measure.xpath('//div[@class="edit"]/p')
+        for p_step in p_steps:
+            steps = p_step.xpath('./text()').extract()
+            if not steps:
+                steps = p_step.xpath('./img/@src').extract()
+            for step in steps:
+                step = step.strip().encode('utf8')
+                procedure.append(step)
         recipe['procedure'] = '\n'.join(procedure)
         yield recipe
 
 # 解析食材百科类别栏 得到每一个类别的名字(如:蔬菜)与对应的链接,对应的链接可用于每种食材类别页面解析的入口,也包括了维生素类别，体质类别的入口
-class CategoryListParser(object):
+class MaterialCategoryListParser(object):
 
     def parse(self,response):
         div_other_c = response.xpath('//div[@class="other_c listnav_con clearfix"]')
@@ -232,7 +244,7 @@ class CategoryListParser(object):
             for dd in dds:
                 url, = dd.xpath('a/@href').extract()
                 category, = dd.xpath('a/text()').extract()
-                item = MaterialCategoryItem()
+                item = MaterialCategoryEntryItem()
                 item['category'] = category.encode('utf8')
                 item['url'] = url.encode('utf8')
                 yield item
@@ -240,17 +252,27 @@ class CategoryListParser(object):
 #parse 解析食材类别的页面(如：蔬菜，水果)，解析页面里面的每一个食材(如：菠菜，菠萝)的名字，类型，对应的链接,对应的链接可用于食材页面的解析
 class MaterialListParser(object):
 
-    def parse(self,response):
+    def parse(self, response):
+        # 食材子类别
+        div_fliterstyle1 = response.xpath('//div[@class="fliterstyle1"]')
+        for a in div_fliterstyle1.xpath('.//dd/a'):
+            url, = a.xpath('./@href').extract()
+            new_category, = a.xpath('./text()').extract()
+            yield MaterialCategoryEntryItem(url=url.encode('utf8'),
+                    category=new_category.encode('utf8'))
+
         # 食材类别
         div_other_c = response.xpath('//div[@class="other_c listnav_con clearfix"]')
-        category, = div_other_c.xpath('//dd[@class="current"]//a/text()').extract()
-        category = category.encode('utf8')
+        category = getattr(response.request, '_msj_cateogry', '')
+        if not category:
+            category, = div_other_c.xpath('//dd[@class="current"]//a/text()').extract()[:1] or ['']
+            category = category.encode('utf8')
 
         # 食材列表
         div_listtyle1 = response.xpath('//div[@class="listtyle1"]')
         for l in div_listtyle1:
             # 类别
-            item = ListItem(category=category)
+            item = MaterialEntryItem(category=category)
 
             # 名字
             name, = l.xpath('./div[@class="info1"]/h3/a/text()').extract()
@@ -270,25 +292,34 @@ class MaterialListParser(object):
         if result:
             nxt, = result
             next_url = base_url + nxt
-            yield PageItem(url=str(next_url), type=ListItem,
+            yield PageItem(url=str(next_url), type=MaterialEntryItem,
                     kwargs=dict(category=category))
+
 
 # 菜谱类别解析器
 class RecipeCategoryListParser(object):
+
     def parse(self, response):
-        category = response.xpath('//li[@class="current hover"]/h1/a/text()').extract()
-        listnav = response.xpath('//dl[@class="listnav_dl_style1 w990 bb1 clearfix"]')
-        if len(listnav) == 0:
-            listnav = response.xpath('//dl[@class="listnav_dl_style1 w990 clearfix"]')
-        dds = listnav.xpath('./dd')
-        for dd in dds:
-            name = dd.xpath('./a/text()').extract()
-            url, = dd.xpath('./a/@href').extract()
-            yield RecipeCategoryListItem(category = category, name = name, url = url)
+        menu_div = response.xpath('//div[@class="other_c listnav_con clearfix"]')
+        if not len(menu_div):
+            menu_div = response.xpath('//div[@class="listnav_con clearfix"]')
+
+        for menu_dl in menu_div.xpath('./dl'):
+            classification, = menu_dl.xpath('./dt/text()').extract()
+
+            dds = menu_dl.xpath('./dd')
+            for dd in dds:
+                category, = dd.xpath('./a/text()').extract()
+                url, = dd.xpath('./a/@href').extract()
+                yield RecipeCategoryEntryItem(
+                        classification=classification.encode('utf8'),
+                        category=category.encode('utf8'),
+                        url=url.encode('utf8'))
+
 
 # 分析菜谱列表, 得到每一道菜的菜名以及url，url可是调用具体菜谱分析器进行分析
 class RecipeListParser(object):
- 
+
     def parse(self,response):
         # 菜谱的种类
         dl_style1 = response.xpath('//dl[@class="listnav_dl_style1 w990 bb1 clearfix"]')
@@ -303,7 +334,7 @@ class RecipeListParser(object):
         div_listtyle1 = response.xpath('//div[@class="listtyle1"]')
         for l in div_listtyle1:
             # 类别
-            item = ListItem(category=category)
+            item = RecipeEntryItem(category=category)
 
             # 名字
             name, = l.xpath('./a[@class="big"]/@title').extract()
@@ -321,75 +352,20 @@ class RecipeListParser(object):
         if result:
             next_url = result
             print next_url
-            yield PageItem(url=str(next_url), type=ListItem,
+            yield PageItem(url=str(next_url), type=RecipeCategoryEntryItem,
                     kwargs=dict(category=category))
+        return
 
 
-class CrowdItemListParser(object):
-
-    def parse(self, response):
-        dds = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']/dd")
-        for dd in dds:
-            crowd, = dd.xpath('./a/text()').extract()
-            crowd = crowd.encode('utf8')
-            url, = dd.xpath('./a/@href').extract()
-            url = url.encode('utf8')
-            yield CrowdListItem(crowd = crowd, url = url)
-
-# 解析人群膳食页面的各个人群的具体信息，得到各种人群适/忌的食材和适合的食谱
-class CrowdItemParser(object):
+class FunctionalRecipeListParser(object):
 
     def parse(self, response):
-        listnav = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']")
-        crowd, = listnav.xpath('./dd[@class="current"]/h1/a/text()').extract()
-        crowd = crowd.encode('utf8')
-        main_w = response.xpath('//div[@class="main_w clearfix"]')
-        slys_con = main_w.xpath('//div[@class="slys_con"]')
-        p2s = slys_con.xpath('./p[@class="p2"]')
-        suit_tips = []
-        suit_material_list = []
-        avoid_tips = []
-        avoid_material_list = []
-        suit_recipe_list = []
-        # 解析推荐的tips 以及 不推荐的tips
-        for x in xrange(2):
-            p2 = p2s[x]
-            spans = p2.xpath('./span')
-            for span in spans:
-                tip, = span.xpath('./text()').extract()
-                tip = tip.encode('utf8')
-                if x % 2:
-                    suit_tips.append(tip)
-                else:
-                    avoid_tips.append(tip)
-        # 解析适宜食用的食材
-        uls = slys_con.xpath('//ul[@class="clearfix"]')
-        lis = uls[0].xpath('./li')
-        for li in lis:
-            temp = li.xpath('./a/strong/text()').extract()
-            if len(temp):
-                name = temp[0].encode('utf8')
-            temp = li.xpath('./a/@href').extract()
-            if len(temp):
-                url = temp[0].encode('utf8')
-            item = MaterialItem()
-            item['name'] = name
-            item['url'] = url
-            suit_material_list.append(item)
-        # 解析禁忌食用的食材
-        lis = uls[1].xpath('./li') 
-        for li in lis:
-            temp = li.xpath('./a/strong/text()').extract()
-            if len(temp):
-                name = temp[0].encode('utf8')
-            temp = li.xpath('./a/@href').extract()
-            if len(temp):
-                url = temp[0].encode('utf8')
-            item = MaterialItem()
-            item['name'] = name
-            item['url'] = url
-            avoid_material_list.append(item)
         # 解析推荐的菜谱
+        listnav = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']")
+        category, = listnav.xpath('./dd[@class="current"]/h1/a/text()').extract()
+        category = category.strip().encode('utf8')
+
+        main_w = response.xpath('//div[@class="main_w clearfix"]')
         listtyle1_list = main_w.xpath('//div[@id="listtyle1_list"] [@class="listtyle1_list clearfix"]')
         divs = listtyle1_list.xpath('./div')
         for div in divs:
@@ -399,275 +375,93 @@ class CrowdItemParser(object):
             temp = div.xpath('./a/@href').extract()
             if len(temp):
                 url = temp[0].encode('utf8')
-            item = RecipeItem()
+            item = RecipeEntryItem()
             item['name'] = name
             item['url'] = url
-            suit_recipe_list.append(item)
-            # 下一页的解析
-            pageitem = PageItem()
-            url, = response.xpath('//a[@class="next"]/@href').extract()
-            pageitem['url'] = url
-            pageitem['type'] = CrowdItem
-            pageitem['kwargs'] = crowd
+            yield item
 
-        yield CrowdItem(crowd = crowd,suit_tips = suit_tips, avoid_tips = avoid_tips, suit_material_list = suit_material_list, \
-                avoid_material_list = avoid_material_list, suit_recipe_list = suit_recipe_list, nxtpage = pageitem)
+        # 下一页的解析
+        next_url, = response.xpath('//a[@class="next"]/@href').extract()
+        yield PageItem(url=str(next_url), type=RecipeEntryItem,
+                kwargs=dict(category=category))
 
-class IllItemListParser(object):
 
-    def parse(self, response):
-        dds = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']/dd")
-        for dd in dds:
-            ill, = dd.xpath('./a/text()').extract()
-            ill = ill.encode('utf8')
-            url, = dd.xpath('./a/@href').extract()
-            url = url.encode('utf8')
-            yield IllListItem(ill = ill, url = url)
-
-# 解析疾病调理页面里面每个疾病的具体信息，得到各种病患者适/忌的食材和适合的食谱
-class IllItemParser(object):
+# 解析人群、疾病、功能、脏腑膳食页面的具体信息，得到各种适/忌的食材
+class RecipeCategoryDetailParser(object):
 
     def parse(self, response):
         listnav = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']")
-        ill, = listnav.xpath('./dd[@class="current"]/h1/a/text()').extract()
-        ill = ill.encode('utf8')
+        category, = listnav.xpath('./dd[@class="current"]/h1/a/text()').extract()
+        category = category.strip().encode('utf8')
+
         main_w = response.xpath('//div[@class="main_w clearfix"]')
         slys_con = main_w.xpath('//div[@class="slys_con"]')
-        p2s = slys_con.xpath('./p[@class="p2"]')
+        brief, = slys_con.xpath('./p[@class="p1"]/text()').extract()
+        brief = brief.strip().encode('utf8')
+
+        # 解析推荐的tips 以及 不推荐的tips
         suit_tips = []
-        suit_material_list = []
         avoid_tips = []
-        avoid_material_list = []
-        suit_recipe_list = []
+
+        p2s = slys_con.xpath('./p[@class="p2"]')
+
         for x in xrange(2):
             p2 = p2s[x]
             spans = p2.xpath('./span')
             for span in spans:
                 tip, = span.xpath('./text()').extract()
-                tip = tip.encode('utf8')
+                tip = tip.strip().encode('utf8')
                 if x % 2:
                     suit_tips.append(tip)
                 else:
                     avoid_tips.append(tip)
 
-        uls = slys_con.xpath('//ul[@class="clearfix"]')
-        lis = uls[0].xpath('./li')
-        for li in lis:
-            temp = li.xpath('./a/strong/text()').extract()
-            if len(temp):
-                name = temp[0].encode('utf8')
-            temp = li.xpath('./a/@href').extract()
-            if len(temp):
-                url = temp[0].encode('utf8')
-            item = MaterialItem()
-            item['name'] = name
-            item['url'] = url
-            suit_material_list.append(item)
-        lis = uls[1].xpath('./li') 
-        for li in lis:
-            temp = li.xpath('./a/strong/text()').extract()
-            if len(temp):
-                name = temp[0].encode('utf8')
-            temp = li.xpath('./a/@href').extract()
-            if len(temp):
-                url = temp[0].encode('utf8')
-            item = MaterialItem()
-            item['name'] = name
-            item['url'] = url
-            avoid_material_list.append(item)
-        listtyle1_list = main_w.xpath('//div[@id="listtyle1_list"] [@class="listtyle1_list clearfix"]')
-        divs = listtyle1_list.xpath('./div')
-        for div in divs:
-            temp = div.xpath('./a/@title').extract()
-            if len(temp):
-                name = temp[0].encode('utf8')
-            temp = div.xpath('./a/@href').extract()
-            if len(temp):
-                url = temp[0].encode('utf8')
-            item = RecipeItem()
-            item['name'] = name
-            item['url'] = url
-            suit_recipe_list.append(item)
-            # 下一页的解析
-            pageitem = PageItem()
-            url, = response.xpath('//a[@class="next"]/@href').extract()
-            pageitem['url'] = url
-            pageitem['type'] = ill
-            pageitem['kwargs'] = IllItem
+        avoid_tips = '\n'.join(avoid_tips)
+        suit_tips = '\n'.join(suit_tips)
 
-        yield IllItem(ill = ill,suit_tips = suit_tips, avoid_tips = avoid_tips, suit_material_list = suit_material_list, \
-                avoid_material_list = avoid_material_list, suit_recipe_list = suit_recipe_list, nxtpage = pageitem)
-
-class FunctionalityItemListParser(object):
-
-    def parse(self, response):
-        dds = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']/dd")
-        for dd in dds:
-            functionality, = dd.xpath('./a/text()').extract()
-            functioality = functionality.encode('utf8')
-            url, = dd.xpath('./a/@href').extract()
-            url = url.encode('utf8')
-            yield FunctionalityListItem(functionality = functionality, url = url)
-
-# 解析功能性调理页面里面每个功能性的具体信息，得到各种功效性适/忌的食材和适合的食谱
-class FunctionalityItemParser(object):
-    def parse(self, response):
-        listnav = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']")
-        functionality, = listnav.xpath('./dd[@class="current"]/h1/a/text()').extract()
-        functionality = functionality.encode('utf8')
-        main_w = response.xpath('//div[@class="main_w clearfix"]')
-        slys_con = main_w.xpath('//div[@class="slys_con"]')
-        p2s = slys_con.xpath('./p[@class="p2"]')
-        suit_tips = []
+        # 解析适宜食用的食材
         suit_material_list = []
-        avoid_tips = []
         avoid_material_list = []
-        suit_recipe_list = []
-        for x in xrange(2):
-            p2 = p2s[x]
-            spans = p2.xpath('./span')
-            for span in spans:
-                tip, = span.xpath('./text()').extract()
-                tip = tip.encode('utf8')
-                if x % 2:
-                    suit_tips.append(tip)
-                else:
-                    avoid_tips.append(tip)
 
         uls = slys_con.xpath('//ul[@class="clearfix"]')
         lis = uls[0].xpath('./li')
+
         for li in lis:
             temp = li.xpath('./a/strong/text()').extract()
             if len(temp):
                 name = temp[0].encode('utf8')
+
             temp = li.xpath('./a/@href').extract()
             if len(temp):
                 url = temp[0].encode('utf8')
-            item = MaterialItem()
+
+            item = MaterialEntryItem()
             item['name'] = name
             item['url'] = url
+
             suit_material_list.append(item)
-        lis = uls[1].xpath('./li') 
+
+        # 解析禁忌食用的食材
+        lis = uls[1].xpath('./li')
         for li in lis:
             temp = li.xpath('./a/strong/text()').extract()
             if len(temp):
                 name = temp[0].encode('utf8')
+
             temp = li.xpath('./a/@href').extract()
             if len(temp):
                 url = temp[0].encode('utf8')
-            item = MaterialItem()
+
+            item = MaterialEntryItem()
             item['name'] = name
             item['url'] = url
+
             avoid_material_list.append(item)
-        listtyle1_list = main_w.xpath('//div[@id="listtyle1_list"] [@class="listtyle1_list clearfix"]')
-        divs = listtyle1_list.xpath('./div')
-        for div in divs:
-            temp = div.xpath('./a/@title').extract()
-            if len(temp):
-                name = temp[0].encode('utf8')
-            temp = div.xpath('./a/@href').extract()
-            if len(temp):
-                url = temp[0].encode('utf8')
-            item = RecipeItem()
-            item['name'] = name
-            item['url'] = url
-            suit_recipe_list.append(item)
-            # 下一页的解析
-            pageitem = PageItem()
-            url, = response.xpath('//a[@class="next"]/@href').extract()
-            pageitem['url'] = url
-            pageitem['type'] = FunctionalityItem
-            pageitem['kwargs'] = functionality
 
-        yield FunctionalityItem(functionality = functionality,suit_tips = suit_tips, avoid_tips = avoid_tips, \
-                suit_material_list = suit_material_list, avoid_material_list = avoid_material_list, \
-                suit_recipe_list = suit_recipe_list, nxtpage = pageitem)
-
-
-class OrganItemListParser(object):
-    
-    def parse(self, response):
-        dds = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']/dd")
-        for dd in dds:
-            effect, = dd.xpath('./a/text()').extract()
-            effect = effect.encode('utf8')
-            url, = dd.xpath('./a/@href').extract()
-            url = url.encode('utf8')
-            yield OrganEfctListItem(effect = effect, url = url)
-
-# 解析脏腑调理页面里面每个脏腑功效的具体信息，得到各种脏腑调理适/禁的食材和适合的食谱
-class OrganItemParser(object):
-
-    def parse(self, response):
-        listnav = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']")
-        effect, = listnav.xpath('./dd[@class="current"]/h1/a/text()').extract()
-        main_w = response.xpath('//div[@class="main_w clearfix"]')
-        slys_con = main_w.xpath('//div[@class="slys_con"]')
-        p2s = slys_con.xpath('./p[@class="p2"]')
-        suit_tips = []
-        suit_material_list = []
-        avoid_tips = []
-        avoid_material_list = []
-        suit_recipe_list = []
-        for x in xrange(2):
-            p2 = p2s[x]
-            spans = p2.xpath('./span')
-            for span in spans:
-                tip, = span.xpath('./text()').extract()
-                tip.encode('utf8')
-                if x % 2:
-                    suit_tips.append(tip)
-                else:
-                    avoid_tips.append(tip)
-
-        uls = slys_con.xpath('//ul[@class="clearfix"]')
-        lis = uls[0].xpath('./li')
-        for li in lis:
-            temp = li.xpath('./a/strong/text()').extract()
-            if len(temp):
-                name = temp[0].encode('utf8')
-            temp = li.xpath('./a/@href').extract()
-            if len(temp):
-                url = temp[0].encode('utf8')
-            temp = li.xpath('./a/@href').extract()
-            item = MaterialItem()
-            item['name'] = name
-            item['url'] = url
-            suit_material_list.append(item)
-        lis = uls[1].xpath('./li') 
-        for li in lis:
-            temp = li.xpath('./a/strong/text()').extract()
-            if len(temp):
-                name = temp[0].encode('utf8')
-            temp = li.xpath('./a/@href').extract()
-            if len(temp):
-                url = temp[0].encode('utf8')
-            item = MaterialItem()
-            item['name'] = name
-            item['url'] = url
-            avoid_material_list.append(item)
-        listtyle1_list = main_w.xpath('//div[@id="listtyle1_list"] [@class="listtyle1_list clearfix"]')
-        divs = listtyle1_list.xpath('./div')
-        for div in divs:
-            temp = div.xpath('./a/@title').extract()
-            if len(temp):
-                name = temp[0].encode('utf8')
-            temp = div.xpath('./a/@href').extract()
-            if len(temp):
-                url = temp[0].encode('utf8')
-            item = RecipeItem()
-            item['name'] = name
-            item['url'] = url
-            suit_recipe_list.append(item)
-            # 下一页的解析
-            pageitem = PageItem()
-            url, = response.xpath('//a[@class="next"]/@href').extract()
-            pageitem['url'] = url
-            pageitem['type'] = OrganEfctItem
-            pageitem['kwargs'] = effect
-
-        yield OrganEfctItem(effect = effect, suit_tips = suit_tips, avoid_tips = avoid_tips, suit_material_list = suit_material_list, \
-                avoid_material_list = avoid_material_list, suit_recipe_list = suit_recipe_list, nxtpage = pageitem)
+        yield RecipeCategoryDetailItem(category=category, brief=brief,
+                suit_tips=suit_tips, avoid_tips=avoid_tips,
+                suit_material_list=suit_material_list,
+                avoid_material_list=avoid_material_list)
 
 if __name__ == '__main__':
     from crawler.utils import fetch
@@ -685,22 +479,22 @@ if __name__ == '__main__':
         for attr, value in item.iteritems():
             print '%s=%s' % (attr, value)
             print
-            
+
     def show_food_recipe(url):
         item, = FoodRecipeParser().parse(fetch(url))
         for attr, value in item.iteritems():
             print '%s=%s' % (attr, value)
             print
-   
+
     def show_material_list(url):
         items = MaterialListParser().parse(fetch(url))
         for item in items:
             for attr, value in item.iteritems():
                 print '%s=%s' % (attr, value)
-            print 
+            print
 
     def show_category_list(url):
-        items = CategoryListParser().parse(fetch(url))
+        items = MaterialCategoryListParser().parse(fetch(url))
         for item in items:
             for attr, value in item.iteritems():
                 print '%s = %s' % (attr, value)
@@ -711,14 +505,14 @@ if __name__ == '__main__':
         for item in items:
             for attr, value in item.iteritems():
                 print '%s=%s' % (attr, value)
-            print 
-    
+            print
+
     def show_recipe_category_list(url):
         items = RecipeCategoryListParser().parse(fetch(url))
         for item in items:
             for attr, value in item.iteritems():
                 print '%s = %s' % (attr, value)
-            print 
+            print
 
 
     def show_commonrecipe_category_list(url):
@@ -726,21 +520,21 @@ if __name__ == '__main__':
         for item in items:
             for attr, value in item.iteritems():
                 print '%s = %s' % (attr, value)
-            print 
+            print
 
     def show_chineserecipe_category_list(url):
         items = ChineseRecipeCategoryListParser().parse(fetch(url))
         for item in items:
             for attr, value in item.iteritems():
                 print '%s = %s' % (attr, value)
-            print 
+            print
 
     def show_regionsnacks_category_list(url):
         items = RegionSnacksCategoryListParser().parse(fetch(url))
         for item in items:
             for attr, value in item.iteritems():
                 print '%s = %s' % (attr, value)
-            print 
+            print
 
     def show_foreignrecipe_category_list(url):
         items = ForeignRecipeCategoryListParser().parse(fetch(url))
@@ -754,68 +548,36 @@ if __name__ == '__main__':
         for item in items:
             for attr, value in item.iteritems():
                 print '%s = %s' % (attr, value)
-            print 
-
-    def show_crowditem(url):
-        items = CrowdItemParser().parse(fetch(url))
-        for item in items:
-            for attr, value in item.iteritems():
-                print '%s = %s' % (attr, value)
-                print 
             print
 
-    def show_illitem(url):
-        items = IllItemParser().parse(fetch(url))
+    def show_recipe_category_detail(url):
+        items = RecipeCategoryDetailParser().parse(fetch(url))
         for item in items:
             for attr, value in item.iteritems():
+                if attr in ('suit_material_list', 'avoid_material_list'):
+                    print '%s = ' % (attr,)
+                    for material in value:
+                        for mattr, mvalue in material.iteritems():
+                            print '%s=%s' % (mattr, mvalue)
+                    continue
                 print '%s = %s' % (attr, value)
-                print 
-            print
-            
-    def show_functionalityitem(url):
-        items = FunctionalityItemParser().parse(fetch(url))
-        for item in items:
-            for attr, value in item.iteritems():
-                print '%s = %s' % (attr, value)
-                print 
+                print
             print
 
-    def show_organefctitem(url):
-        items = OrganItemParser().parse(fetch(url))
-        for item in items:
-            for attr, value in item.iteritems():
-                print '%s = %s' % (attr, value)
-                print 
-            print
-
-    def show_crowd_list_item(url):
-        items = CrowdItemListParser().parse(fetch(url))
-        for item in items:
-            for attr, value in item.iteritems():
-                print '%s = %s' % (attr, value)
-            print
-    
-    def show_ill_list_item(url):
-        items = IllItemListParser().parse(fetch(url))
-        for item in items:
-            for attr, value in item.iteritems():
-                print '%s = %s' % (attr, value)
-            print
-                
-    def show_functionality_list_item(url):
-        items = FunctionalityItemListParser().parse(fetch(url))
+    def show_functional_recipe_list(url):
+        items = FunctionalRecipeListParser().parse(fetch(url))
         for item in items:
             for attr, value in item.iteritems():
                 print '%s = %s' % (attr, value)
             print
 
-    def show_organefct_list_item(url):
-        items = OrganItemListParser().parse(fetch(url))
-        for item in items:
-            for attr, value in item.iteritems():
-                print '%s = %s' % (attr, value)
-            print
+    for m in ('胡萝卜', '葡萄', '香菇', '猪肉'):
+        show_food_material(m)
+        print
 
+if False:
+
+    # 食谱总纲
     url = 'http://www.meishij.net/chufang/diy/'
     show_recipe_category_list(url)
 
@@ -831,6 +593,32 @@ if __name__ == '__main__':
     url = 'http://www.meishij.net/hongpei/'
     show_recipe_category_list(url)
 
+    url = "http://www.meishij.net/yaoshanshiliao/renqunshanshi/"
+    show_recipe_category_list(url)
+
+    url = 'http://www.meishij.net/yaoshanshiliao/jibingtiaoli/'
+    show_recipe_category_list(url)
+
+    url = 'http://www.meishij.net/yaoshanshiliao/gongnengxing/'
+    show_recipe_category_list(url)
+
+    url = 'http://www.meishij.net/yaoshanshiliao/zangfu/'
+    show_recipe_category_list(url)
+
+    # 功能性分类简介
+    url = "http://www.meishij.net/yaoshanshiliao/renqunshanshi/yunfu/"
+    show_recipe_category_detail(url)
+
+    url = "http://www.meishij.net/yaoshanshiliao/jibingtiaoli/qianliexian/"
+    show_recipe_category_detail(url)
+
+    url = "http://www.meishij.net/yaoshanshiliao/gongnengxing/meirong/"
+    show_recipe_category_detail(url)
+
+    url = "http://www.meishij.net/yaoshanshiliao/zangfu/xintiaoli/"
+    show_recipe_category_detail(url)
+
+    # 食谱列表
     url = 'http://www.meishij.net/china-food/caixi/gangtai/'
     show_recipe_list(url)
 
@@ -840,50 +628,46 @@ if __name__ == '__main__':
     url = 'http://www.meishij.net/china-food/caixi/gangtai/'
     show_recipe_list(url)
 
-    url = "http://meishij.net/zuofa/huotuizhengluyu_1.html"
-    show_food_recipe(url)
-
-if False:
-    
+    # 功能食谱列表
     url = "http://www.meishij.net/yaoshanshiliao/renqunshanshi/yunfu/"
-    show_crowditem(url)
-    
+    show_functional_recipe_list_detail(url)
+
     url = "http://www.meishij.net/yaoshanshiliao/jibingtiaoli/qianliexian/"
-    show_illitem(url)
+    show_functional_recipe_list_detail(url)
 
     url = "http://www.meishij.net/yaoshanshiliao/gongnengxing/meirong/"
-    show_functionalityitem(url)
+    show_functional_recipe_list_detail(url)
 
     url = "http://www.meishij.net/yaoshanshiliao/zangfu/xintiaoli/"
-    show_organefctitem(url)
-    
-    url = "http://www.meishij.net/yaoshanshiliao/renqunshanshi/"
-    show_crowd_list_item(url)
-    
-    url = "http://www.meishij.net/yaoshanshiliao/jibingtiaoli/"
-    show_ill_list_item(url)
+    show_functional_recipe_list_detail(url)
 
-    url = "http://www.meishij.net/yaoshanshiliao/gongnengxing/"
-    show_functionality_list_item(url)
-
-    url = "http://www.meishij.net/yaoshanshiliao/zangfu/"
-    show_organefct_list_item(url)
+    # 食谱
+    url = "http://meishij.net/zuofa/huotuizhengluyu_1.html"
+    show_food_recipe(url)
 
     for m in ('胡萝卜', '葡萄', '香菇', '猪肉'):
         show_food_material(m)
         print
 
-    url = "http://www.meishij.net/shicai/shucai_list"
+    # 食材列表
+    url = 'http://www.meishij.net/shicai/shucai_list'
     show_material_list(url)
 
-    url = "http://meishij.net/zuofa/huotuizhengluyu_1.html"
-    show_food_recipe(url)
+    url = 'http://www.meishij.net/shicai/xurou_list'
+    show_material_list(url)
 
+    url = 'http://www.meishij.net/shicai/gulei_list'
+    show_material_list(url)
+
+    url = 'http://www.meishij.net/shicai/sushishipin_list'
+    show_material_list(url)
+
+    url = 'http://www.meishij.net/shicai/list.php?y=5'
+    show_material_list(url)
+
+    url = 'http://www.meishij.net/shicai/list.php?y=15'
+    show_material_list(url)
+
+    # 食材分类列表
     url = 'http://www.meishij.net/shicai/'
     show_category_list(url)
-
-    url = "http://www.meishij.net/shicai/list.php?y=5"         
-    show_material_list(url)
-
-    url = "http://meishij.net/zuofa/huotuizhengluyu_1.html"
-    show_food_recipe(url)
