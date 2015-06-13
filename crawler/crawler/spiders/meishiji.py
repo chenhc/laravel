@@ -319,6 +319,7 @@ class MeishijSpider(Spider):
             log.msg('[PARSE][food_recipe] category=%s url=%s' %
                     (category, url ), log.INFO)
 
+    @check_response
     def parse_effect_recipe_detail_and_list(self, response):
         for item in self.effect_detail_parser.parse(response):
             if not item.get('category'):
@@ -328,6 +329,7 @@ class MeishijSpider(Spider):
         for item in self.parse_effect_recipe_list(response):
             yield item
 
+    @check_response
     def parse_effect_recipe_list(self, response):
         log.msg('[PARSE][recipe_list] url=%s' %(response.url), log.INFO)
 

@@ -333,7 +333,6 @@ class RecipeListParser(object):
             dl_style1 = response.xpath('//dl[@class="listnav_dl_style1 w990 clearfix"]')
 
         category, = dl_style1.xpath('//dd[@class="current"]/h1/a/text()').extract()
-        print category
         category = category.encode('utf8')
 
         # 菜谱列表
