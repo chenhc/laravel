@@ -276,7 +276,7 @@ class MeishijSpider(Spider):
 
             callback = self.parse_recipe_list
             if getattr(response, '_msj_is_effect', False):
-                callback = self.parse_effect_recipe_detail_and_list
+                callback = self.parse_effect_detail_and_recipe_list
 
             headers = {'X-Farwarded-For': random_ip()}
             request = Request(url, callback=callback, headers=headers)
@@ -320,11 +320,14 @@ class MeishijSpider(Spider):
                     (category, url ), log.INFO)
 
     @check_response
-    def parse_effect_recipe_detail_and_list(self, response):
+    def parse_effect_detail_and_recipe_list(self, response):
         for item in self.effect_detail_parser.parse(response):
             if not item.get('category'):
                 item['category'] = response.request._msj_category
             yield item
+
+            log.msg('[PIPE][effect_detail] category=%s' %
+                    (item['category'],), level=log.INFO)
 
         for item in self.parse_effect_recipe_list(response):
             yield item

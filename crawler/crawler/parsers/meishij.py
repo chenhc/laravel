@@ -442,7 +442,7 @@ class EffectDetailParser(object):
             if len(temp):
                 url = temp[0].encode('utf8')
 
-            item = MaterialEntryItem()
+            item = {}
             item['name'] = name
             item['url'] = url
 
@@ -459,7 +459,7 @@ class EffectDetailParser(object):
             if len(temp):
                 url = temp[0].encode('utf8')
 
-            item = MaterialEntryItem()
+            item = {}
             item['name'] = name
             item['url'] = url
 
