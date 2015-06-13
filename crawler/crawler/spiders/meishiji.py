@@ -27,11 +27,12 @@ from scrapy.spider import Spider
 from scrapy.http import Request
 
 from crawler.items import PageItem, \
-        CategoryMaterialPairItem, MaterialCategoryEntryItem,\
-        CategoryRecipePairItem, RecipeCategoryPairItem
+        CategoryMaterialPairItem, CategoryRecipePairItem, \
+        RecipeClassificationCategoryPairItem
 from crawler.parsers.meishij import HackParser, MaterialCategoryListParser, \
-        MaterialListParser, FoodMaterialParser, RecipeCategoryListParser, \
-        RecipeListParser, FoodRecipeParser
+        MaterialListParser, FoodMaterialParser, \
+        RecipeCategoryListParser, RecipeListParser, FoodRecipeParser, \
+        EffectDetailParser, EffectRecipeListParser
 from crawler.data.jpg_set import jpg_set
 
 def random_ip():
@@ -80,13 +81,18 @@ class MeishijSpider(Spider):
     functional_recipe_list_url = 'http://www.meishij.net/yaoshanshiliao/gongnengxing/'
     organ_recipe_list_url = 'http://www.meishij.net/yaoshanshiliao/zangfu/'
 
-    detail_recipe_category_list_urls = set([crowd_recipe_list_url,
+    effect_recipe_category_list_urls = set([crowd_recipe_list_url,
         disease_recipe_list_url, functional_recipe_list_url,
         organ_recipe_list_url])
 
     start_urls = [
         #hack_url,
-        food_material_category_list_url,
+
+        #food_material_category_list_url,
+
+        x for x in list(recipe_category_list_urls) + list(effect_recipe_category_list_urls)
+        #x for x in list(effect_recipe_category_list_urls)
+        #x for x in list(recipe_category_list_urls)
     ]
 
     def __init__(self, *args, **kwargs):
@@ -103,6 +109,8 @@ class MeishijSpider(Spider):
 
         self.recipe_category_list_parser = RecipeCategoryListParser()
         self.recipe_list_parser = RecipeListParser()
+        self.effect_recipe_list_parser = EffectRecipeListParser()
+        self.effect_detail_parser = EffectDetailParser()
         self.food_recipe_parser = FoodRecipeParser()
 
     def enqueue_request(self, request):
@@ -266,9 +274,12 @@ class MeishijSpider(Spider):
             yield RecipeClassificationCategoryPairItem(
                     classification=classification, category=category)
 
+            callback = self.parse_recipe_list
+            if getattr(response, '_msj_is_effect', False):
+                callback = self.parse_effect_recipe_detail_and_list
+
             headers = {'X-Farwarded-For': random_ip()}
-            request = Request(url, callback=self.parse_recipe_list,
-                    headers=headers)
+            request = Request(url, callback=callback, headers=headers)
             request._msj_category = category
             yield request
 
@@ -277,26 +288,68 @@ class MeishijSpider(Spider):
 
     @check_response
     def parse_recipe_list(self, response):
-        log.msg('[PARSE][recipe_list] url=%s' %(response.url),log.INFO)
+        log.msg('[PARSE][recipe_list] url=%s' %(response.url), log.INFO)
 
+        category = response.request._msj_category
         for item in self.recipe_list_parser.parse(response):
             if isinstance(item, PageItem):
                 url = item['url']
-                category = item['kwargs']['category']
                 headers = {'X-Forwarded-For': random_ip()}
-                request = Request(url, callback=self.parse_recipes_list,
+                request = Request(url, callback=self.parse_recipe_list,
                         headers=headers)
-                request._msg_category = category
+                request._msj_category = category
                 yield request
 
                 log.msg('[ENQUEUE][recipes_list] category=%s url=%s' %
-                        (category, url),log.INFO)
+                        (category, url), log.INFO)
 
                 continue
 
+            yield CategoryRecipePairItem(category=category, recipe=item['name'])
+
             url = item['url']
             name = item['name']
-            category = item['category']
+            headers = {'X-Forwarded-For': random_ip()}
+            request = Request(url, callback=self.parse_food_recipe,
+                    headers=headers)
+            request._msj_category  = category
+
+            yield request
+
+            log.msg('[PARSE][food_recipe] category=%s url=%s' %
+                    (category, url ), log.INFO)
+
+    def parse_effect_recipe_detail_and_list(self, response):
+        for item in self.effect_detail_parser.parse(response):
+            if not item.get('category'):
+                item['category'] = response.request._msj_category
+            yield item
+
+        for item in self.parse_effect_recipe_list(response):
+            yield item
+
+    def parse_effect_recipe_list(self, response):
+        log.msg('[PARSE][recipe_list] url=%s' %(response.url), log.INFO)
+
+        category = response.request._msj_category
+        for item in self.recipe_list_parser.parse(response):
+            if isinstance(item, PageItem):
+                url = item['url']
+                headers = {'X-Forwarded-For': random_ip()}
+                request = Request(url, callback=self.parse_effect_recipe_list,
+                        headers=headers)
+                request._msj_category = category
+                yield request
+
+                log.msg('[ENQUEUE][recipes_list] category=%s url=%s' %
+                        (category, url), log.INFO)
+
+                continue
+
+            yield CategoryRecipePairItem(category=category, recipe=item['name'])
+
+            url = item['url']
+            name = item['name']
             headers = {'X-Forwarded-For': random_ip()}
             request = Request(url, callback=self.parse_food_recipe,
                     headers=headers)
@@ -325,6 +378,10 @@ class MeishijSpider(Spider):
             return self.parse_material_category_list(response)
 
         if response.url in self.recipe_category_list_urls:
+            return self.parse_recipe_category_list(response)
+
+        if response.url in self.effect_recipe_category_list_urls:
+            response._msj_is_effect = True
             return self.parse_recipe_category_list(response)
 
         log.msg('[URL][new] url=%s' % (response.url,), log.CRITICAL)

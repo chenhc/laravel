@@ -102,6 +102,9 @@ class FoodRecipeItem(scrapy.Item):
     # 名字
     name = scrapy.Field()
 
+    # 收藏
+    likes = scrapy.Field()
+
     # 菜系
     area = scrapy.Field()
 
@@ -186,7 +189,7 @@ class RecipeEntryItem(scrapy.Item):
 
 
 # 分类对应适合以及禁忌的食材，适合的食谱
-class RecipeCategoryDetailItem(scrapy.Item):
+class EffectDetailItem(scrapy.Item):
 
     # 分类
     category = scrapy.Field()
@@ -221,8 +224,8 @@ class CategoryRecipePairItem(scrapy.Item):
     recipe = scrapy.Field()
 
 
-class RecipeCategoryPairItem(scrapy.Item):
+class RecipeClassificationCategoryPairItem(scrapy.Item):
+
+    classification = scrapy.Field()
 
     category = scrapy.Field()
-
-    sub_category = scrapy.Field()

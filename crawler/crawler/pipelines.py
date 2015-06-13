@@ -9,8 +9,8 @@ import json
 from scrapy import log
 
 from crawler.items import FoodMaterialItem, CategoryMaterialPairItem, \
-        FoodRecipeItem, CategoryRecipePairItem, RecipeCategoryPairItem, \
-        RecipeCategoryDetailItem
+        FoodRecipeItem, CategoryRecipePairItem, \
+        RecipeClassificationCategoryPairItem, EffectDetailItem
 
 
 class FileStorePipeline(object):
@@ -21,8 +21,8 @@ class FileStorePipeline(object):
 
         self.food_recipe = file('/tmp/food_recipe','w+')
         self.category_recipe = file('/tmp/category_recipe', 'w+')
-        self.recipe_category_pair = file('/tmp/recipe_category_pair', 'w+')
-        self.recipe_category_detail = file('/tmp/recipe_category_detail', 'w+')
+        self.recipe_classification_category = file('/tmp/recipe_classification_category', 'w+')
+        self.effect_detail = file('/tmp/effect_detail', 'w+')
 
 
     def store_into(self, item, f):
@@ -51,15 +51,15 @@ class FileStorePipeline(object):
                     (item['category'], item['recipe'],), level=log.INFO)
             self.store_into(item, self.category_recipe)
 
-        if isinstance(item, RecipeCategoryPairItem):
+        if isinstance(item, RecipeClassificationCategoryPairItem):
             log.msg('[STORE][file][recipe_category_pair] classification=%s category=%s' %
                     (item['classification'], item['category'],), level=log.INFO)
-            self.store_into(item, self.recipe_category_pair)
+            self.store_into(item, self.recipe_classification_category)
 
-        if isinstance(item, RecipeCategoryDetailItem):
-            log.msg('[STORE][file][recipe_category_detail] category=%s' %
+        if isinstance(item, EffectDetailItem):
+            log.msg('[STORE][file][effect_detail] category=%s' %
                     (item['category'],), level=log.INFO)
-            self.store_into(item, self.recipe_category_detail)
+            self.store_into(item, self.effect_detail)
 
         return item
 

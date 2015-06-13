@@ -41,7 +41,7 @@ import urlparse
 from crawler.items import HackItem, PageItem, \
         FoodMaterialItem, MaterialCategoryEntryItem, MaterialEntryItem, \
         FoodRecipeItem, RecipeCategoryEntryItem, RecipeEntryItem, \
-        RecipeCategoryDetailItem
+        EffectDetailItem
 
 class HackParser(object):
 
@@ -148,15 +148,23 @@ class FoodRecipeParser(object):
         recipe['source'] = response.url
 
         body = response.body
-        body = body[body.find('icon_pr'):]
-        body = body[body.find('<a'):]
-        body = body[body.find('>')+1:]
-        cook_time = body[:body.find('</a>')]
+        try:
+            body = body[body.find('icon_pr'):]
+            body = body[body.find('<a'):]
+            body = body[body.find('>')+1:]
+            cook_time = body[:body.find('</a>')]
+        except:
+            cook_time = ''
 
         # 名字
         div_info1 = response.xpath('//div[@class="info1"]')
-        name, = div_info1.xpath('.//h1/a/text()').extract()
+        name, = div_info1.xpath('.//h1/a/text()').extract() or ['']
         recipe['name'] = name.strip().encode('utf8')
+
+        # 收藏
+        #print response.xpath('//span[@class="favbtns"]/a/span').extract()
+        #likes, = response.xpath('//span[@class="favbtns"]//span[@id="f_num"]/text()').extract() or ["(0)"]
+        #recipe['likes'] = int(likes[1:-1])
 
         # 标签：热菜、家常菜
         tags = []
@@ -172,21 +180,19 @@ class FoodRecipeParser(object):
 
         # 工艺
         div_info2 = response.xpath('//div[@class="info2"]')
-        method, = div_info2.xpath('.//li[1]/a/text()').extract()
+        method, = div_info2.xpath('.//li[1]/a/text()').extract() or ['']
         recipe['method'] = method.encode('utf8')
 
         # 难度
-        try:
-            difficulty, = div_info2.xpath('.//li[2]/div/a/text()').extract()
-        except ValueError:
-            difficulty = ""
+        difficulty, = div_info2.xpath('.//li[2]/div/a/text()').extract() or ['']
         recipe['difficulty'] = difficulty.encode('utf8')
+
         # 份量（人数）
-        amount, = div_info2.xpath('//li[3]/div/a/text()').extract()
+        amount, = div_info2.xpath('//li[3]/div/a/text()').extract() or ['']
         recipe['amount'] = amount.encode('utf8')
 
         # 口味
-        taste, = div_info2.xpath('.//li[4]/a/text()').extract()
+        taste, = div_info2.xpath('.//li[4]/a/text()').extract() or ['']
         recipe['taste'] = taste.encode('utf8')
 
         # 准备时间
@@ -347,17 +353,16 @@ class RecipeListParser(object):
 
         # 下一页解析,和食材页面的下一页的href有所不同
         page_w = response.xpath('//div[@class="listtyle1_page_w"]')
-        result, = page_w.xpath('a[@class="next"]/@href').extract()
+        result, = page_w.xpath('a[@class="next"]/@href').extract() or ['']
         result.strip()
         if result:
-            next_url = result
-            print next_url
+            next_url = urlparse.urljoin(response.url, result)
             yield PageItem(url=str(next_url), type=RecipeCategoryEntryItem,
                     kwargs=dict(category=category))
         return
 
 
-class FunctionalRecipeListParser(object):
+class EffectRecipeListParser(object):
 
     def parse(self, response):
         # 解析推荐的菜谱
@@ -381,13 +386,16 @@ class FunctionalRecipeListParser(object):
             yield item
 
         # 下一页的解析
-        next_url, = response.xpath('//a[@class="next"]/@href').extract()
+        result, = response.xpath('//a[@class="next"]/@href').extract() or ['']
+        result.strip()
+        if result:
+            next_url = urlparse.urljoin(response.url, result)
         yield PageItem(url=str(next_url), type=RecipeEntryItem,
                 kwargs=dict(category=category))
 
 
 # 解析人群、疾病、功能、脏腑膳食页面的具体信息，得到各种适/忌的食材
-class RecipeCategoryDetailParser(object):
+class EffectDetailParser(object):
 
     def parse(self, response):
         listnav = response.xpath("//dl[@class='listnav_dl_style1 w990 clearfix']")
@@ -458,7 +466,7 @@ class RecipeCategoryDetailParser(object):
 
             avoid_material_list.append(item)
 
-        yield RecipeCategoryDetailItem(category=category, brief=brief,
+        yield EffectDetailItem(category=category, brief=brief,
                 suit_tips=suit_tips, avoid_tips=avoid_tips,
                 suit_material_list=suit_material_list,
                 avoid_material_list=avoid_material_list)
@@ -551,7 +559,7 @@ if __name__ == '__main__':
             print
 
     def show_recipe_category_detail(url):
-        items = RecipeCategoryDetailParser().parse(fetch(url))
+        items = EffectDetailParser().parse(fetch(url))
         for item in items:
             for attr, value in item.iteritems():
                 if attr in ('suit_material_list', 'avoid_material_list'):
@@ -571,9 +579,13 @@ if __name__ == '__main__':
                 print '%s = %s' % (attr, value)
             print
 
-    for m in ('胡萝卜', '葡萄', '香菇', '猪肉'):
-        show_food_material(m)
-        print
+    # 食谱
+    url = "http://meishij.net/zuofa/huotuizhengluyu_1.html"
+    show_food_recipe(url)
+
+    # 食谱
+    url = "http://www.meishij.net/china-food/xiaochi/heilongjiang/14269.html"
+    show_food_recipe(url)
 
 if False:
 
