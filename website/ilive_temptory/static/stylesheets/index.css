@@ -1,0 +1,291 @@
+/* line 5, C:/Ruby193/lib/ruby/gems/1.9.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/* line 22, C:/Ruby193/lib/ruby/gems/1.9.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+html {
+  line-height: 1;
+}
+
+/* line 24, C:/Ruby193/lib/ruby/gems/1.9.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 26, C:/Ruby193/lib/ruby/gems/1.9.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 28, C:/Ruby193/lib/ruby/gems/1.9.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 30, C:/Ruby193/lib/ruby/gems/1.9.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 103, C:/Ruby193/lib/ruby/gems/1.9.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 32, C:/Ruby193/lib/ruby/gems/1.9.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 116, C:/Ruby193/lib/ruby/gems/1.9.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
+  display: block;
+}
+
+/* line 10, ../sass/index.scss */
+body {
+  font-family: "Helvetica Neue",Helvetica,"Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+}
+
+/* line 13, ../sass/index.scss */
+a {
+  text-decoration: none;
+}
+
+/* line 16, ../sass/index.scss */
+body {
+  font-size: 16px;
+}
+
+/* line 20, ../sass/index.scss */
+.hxy-nav {
+  border: 1px solid;
+  border-top: 7px solid #19AD8C;
+  padding: 15px 20px 0px;
+  border-bottom: 7px solid #19AD8C;
+  text-align: center;
+}
+/* line 27, ../sass/index.scss */
+.hxy-nav .hxy-logo {
+  font-size: 33px;
+  margin-top: 10px;
+  color: #19AD8C;
+}
+/* line 33, ../sass/index.scss */
+.hxy-nav ul.hxy-ul {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+}
+/* line 37, ../sass/index.scss */
+.hxy-nav ul.hxy-ul li {
+  display: inline-block;
+}
+/* line 42, ../sass/index.scss */
+.hxy-nav .hxy-login, .hxy-nav .hxy-register {
+  display: inline-block;
+}
+/* line 46, ../sass/index.scss */
+.hxy-nav .hxy-search {
+  float: right;
+  position: relative;
+}
+/* line 51, ../sass/index.scss */
+.hxy-nav span.glyphicon.glyphicon-search {
+  position: absolute;
+  right: 4px;
+  top: 5px;
+}
+
+/* line 58, ../sass/index.scss */
+.hxy-content .breadcrumb {
+  font-size: 13px;
+  background: #fff;
+  margin: 5px 10px;
+}
+/* line 63, ../sass/index.scss */
+.hxy-content .hxy-subnav {
+  margin: auto;
+  width: 60%;
+  min-width: 400px;
+}
+/* line 67, ../sass/index.scss */
+.hxy-content .hxy-subnav .hxy-subcontent {
+  border: 1px solid #DDDDDD;
+  min-height: 100px;
+  border-top: none;
+}
+/* line 72, ../sass/index.scss */
+.hxy-content .hxy-subnav .tab-content {
+  border: 1px solid #ddd;
+  border-top: none;
+  text-align: center;
+  padding: 40px;
+}
+/* line 78, ../sass/index.scss */
+.hxy-content .hxy-subnav .tab-content ul li {
+  display: inline-block;
+}
+/* line 81, ../sass/index.scss */
+.hxy-content .hxy-subnav .tab-content ul a {
+  display: inline-block;
+  padding: 5px 15px;
+  margin: 0 10px;
+  border: 1px solid;
+}
+/* line 90, ../sass/index.scss */
+.hxy-content .hxy-recommand {
+  border: 1px solid #DDDDDD;
+  width: 60%;
+  min-width: 400px;
+  min-height: 200px;
+  margin: 50px auto;
+}
+/* line 97, ../sass/index.scss */
+.hxy-content h2 {
+  font-size: 25px;
+}
+/* line 100, ../sass/index.scss */
+.hxy-content .hxy-maincontent {
+  text-align: center;
+  width: 80%;
+  margin: 0 auto;
+  padding: 10px;
+  min-height: 300px;
+}
+/* line 106, ../sass/index.scss */
+.hxy-content .hxy-maincontent .hxy-row {
+  margin: 0 auto;
+}
+/* line 109, ../sass/index.scss */
+.hxy-content .hxy-maincontent .hxy-thumbnail {
+  border: none;
+  width: 210px;
+  border: 2px solid #fff;
+}
+/* line 113, ../sass/index.scss */
+.hxy-content .hxy-maincontent .hxy-thumbnail:hover {
+  border: 2px solid #33C1FF;
+  cursor: pointer;
+}
+/* line 118, ../sass/index.scss */
+.hxy-content .hxy-maincontent .hxy-caption {
+  border: 1px solid #dddddd;
+}
+/* line 121, ../sass/index.scss */
+.hxy-content .hxy-maincontent .hxy-brief {
+  white-space: nowrap;
+  width: 190px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 10px auto;
+  font-size: 13px;
+}
+/* line 131, ../sass/index.scss */
+.hxy-content nav {
+  text-align: center;
+}
+
+/* line 135, ../sass/index.scss */
+.hxy-intro {
+  width: 80%;
+  margin: 30px auto;
+  border: 2px solid #ddd;
+}
+/* line 139, ../sass/index.scss */
+.hxy-intro img {
+  width: 18%;
+  height: 210px;
+}
+
+/* line 144, ../sass/index.scss */
+.hxy-label {
+  display: inline-block;
+  vertical-align: top;
+  width: 50%;
+}
+/* line 148, ../sass/index.scss */
+.hxy-label ul {
+  line-height: 2;
+}
+
+/* line 152, ../sass/index.scss */
+h4.title {
+  font-size: 30px;
+  margin: 16px;
+}
+
+/* line 156, ../sass/index.scss */
+.hxy-constitution {
+  display: inline-block;
+  vertical-align: top;
+  float: right;
+  margin: 10px 20px;
+  width: 20%;
+}
+/* line 162, ../sass/index.scss */
+.hxy-constitution span {
+  display: inline-block;
+  margin: 8px 5px;
+}
+
+/* line 167, ../sass/index.scss */
+.hxy-fooddetail {
+  border: 1px solid #ddd;
+  min-height: 300px;
+  width: 80%;
+  margin: 20px auto;
+  position: relative;
+}
+
+/* line 174, ../sass/index.scss */
+.hxy-title {
+  border: 1px solid;
+  padding: 10px 20px;
+  position: absolute;
+  top: -20px;
+  left: 43%;
+  text-align: center;
+  color: #fff;
+  background-color: #19AD8C;
+  font-size: 20px;
+}
+
+/* line 185, ../sass/index.scss */
+.hxy-detail {
+  margin: 35px;
+}
+/* line 187, ../sass/index.scss */
+.hxy-detail h3 {
+  font-size: 18px;
+  color: #CC0000;
+}
+/* line 191, ../sass/index.scss */
+.hxy-detail p, .hxy-detail ul {
+  font-size: 16px;
+  line-height: 1.5;
+  width: 94%;
+  margin: 0 auto;
+}
