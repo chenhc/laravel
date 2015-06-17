@@ -23,33 +23,47 @@ class IndexCacher(object):
         self.redisdb = redisdb
 
     def build_food_material_cache(self, food_materials):
-        infos = {}
-        category = []
+        material_infos = {}
+        classification2material = {}
+        category2material = {}
+        tag2material = {}
         for material in food_materials:
-            category.append(material['category'])
-            infos[material['name']] = json.dumps({
+            material_infos[material['name']] = json.dumps({
                 'hash': material['hash'],
                 'image_hash': material['image_hash'],
                 'alias': material['alias']
             })
-        category_set = set(category)
-        category = list(category_set)
-        self.redisdb.hmset('food_material', infos)
-        
-        tags = {}
-        for item in category:
-            for material in food_materials:	
-                if material['tags']: 
-	                if item in material['tags']:
-	                    if item not in infos.keys():
-	                        tags[item] = []
-	                    tags[item].append(material['id'])
-        	tags[item] = json.dumps(tags[item])
-        self.redisdb.hmset('food_material_tag', tags)
 
-    def build(self):     
+            # 分类
+            classification = material['classification']
+            if classification:
+                classification2material.setdefault(classification, set())\
+                        .add(material['id'])
+
+            # 子分类
+            category = material['category']
+            if category:
+                category2material.setdefault(category, set())\
+                        .add(material['id'])
+
+            # 标签
+            for tag in (material['tags'] or '').split(','):
+                if tag:
+                    tag2material.setdefault(tag, set()).add(material['id'])
+
+        # 写food_material索引
+        self.redisdb.hmset('food_material', material_infos)
+
+        # json序列化material_list
+        for tag, material_list in tag2material.iteritems():
+            tag2material[tag] = json.dumps(list(material_list))
+
+        # 写tag2material索引
+        self.redisdb.hmset('tag2material', tag2material)
+
+    def build(self):
         cursor = self.mysqldb.cursor()
         cursor.execute('SELECT * FROM `food_material`')
         food_materials = cursor.fetchall()
-        self.build_food_material_cache(food_materials)        
-        
+
+        self.build_food_material_cache(food_materials)

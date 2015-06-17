@@ -8,6 +8,12 @@ Author:     Chen Yanfei
 @version:   $Id$
 
 Description:
+    uri2service
+
+    uri2service('schema://uesrname:password@host:port/path1/path2?arg1=value1&arg2=value2')
+
+    uri2service('mysql://test:test@127.0.0.1:3306/test?charset=utf8&use_unicode=False&cursorclass=DictCursor')
+    uri2service('redis://127.0.0.1:6379/0')
 
 Changelog:
 
