@@ -53,7 +53,7 @@ class FoodMaterialCleaner(object):
             '鸡类', '鸭类', '鹅类', '火鸡类', '其它禽肉类',
             '鱼类', '虾类', '蟹类', '贝类', '其它水产类',
             '鸡蛋类', '鸭蛋类', '鹅蛋类', '鹌鹑蛋类',
-            '小麦类', '稻米类', '玉米类', '大麦类', '小米，黄米类', '其它谷类',
+            '小麦类', '稻米类', '玉米类', '大麦类', '小米、黄米类', '其它谷类',
             '大豆类', '绿豆类', '赤豆类', '芸豆类', '蚕豆类', '其它干豆类',
             '树坚果类', '种子类',
             '快餐食品类', '方便食品类', '休闲食品类',
@@ -69,7 +69,7 @@ class FoodMaterialCleaner(object):
         # 处理category_material
         for line in self.category_file:
             pair = json.loads(line.strip())
-            category = pair['category'].encode('utf8')
+            category = pair['category'].encode('utf8').replace('，', '、')
             material = pair['material'].encode('utf8')
 
             self.material2category.setdefault(material, set()).add(category)
@@ -105,6 +105,7 @@ class FoodMaterialCleaner(object):
             material['tags'] = ','.join(tags)
 
             # 分类以及子类
+            material['category'] = None
             for tag in tags:
                 if tag in self.category_list:
                     material['category'] = tag
