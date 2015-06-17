@@ -29,6 +29,8 @@ def parse_args():
     parser = OptionParser()
     parser.add_option('-j', '--json-file', dest='json_file', type='string',
             action='callback', callback=opt_ensure_file)
+    parser.add_option('-p','--category-file',dest='category_file',tpye='string',
+            action='callback',callback=opt_ensure_file)
     parser.add_option('-m', '--mysql-uri', dest='mysql_uri', type='string',)
     parser.add_option('-i', '--image_dir', dest='image_dir', type='string')
 
@@ -37,6 +39,10 @@ def parse_args():
     json_file = options.json_file
     if not json_file:
         parser.error('-j|--json-file not specified')
+
+    category_file = options.category_file
+    if not category_file:
+        parser.error('-p|--category-file not specified')
 
     mysql_uri = options.mysql_uri
     if not mysql_uri:
@@ -51,15 +57,14 @@ def parse_args():
             if not ensure_dir(image_dir):
                 parser.error('can not create directory %s' % (image_dir,))
 
-    return json_file, mysql_uri, image_dir
-
-
+    return json_file, category_file, mysql_uri, image_dir
+    
 def main():
     import logging
     logging.basicConfig(level=logging.INFO)
-    json_file, mysql_uri, image_dir = parse_args()
-    FoodMaterialCleaner(source_file=file(json_file), 
-            mysqldb=uri2service(mysql_uri), image_dir=image_dir).process()
+    json_file, category_file, mysql_uri, image_dir = parse_args()
+#    FoodMaterialCleaner(source_file=file(json_file),mysqldb=uri2service(mysql_uri), image_dir=image_dir).process()
+    FoodMaterialCleaner(source_file=file(json_file),category_file=file(category_file),mysqldb=uri2service(mysql_uri), image_dir=image_dir).process()
 
 if __name__ == '__main__':
     main()
