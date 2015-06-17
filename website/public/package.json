@@ -1,0 +1,21 @@
+{
+    "name"   : "ilive",
+    "version": "0.0.1",
+    "private": true,
+    "devDependencies": {
+        "bower"               : "*",
+        "grunt"               : "*",
+        "grunt-cli"           : "*",
+        "grunt-contrib-jshint": "*",
+        "grunt-contrib-watch" : "*",
+        "grunt-contrib-uglify": "*",
+        "grunt-contrib-concat": "*",
+        "grunt-contrib-clean" : "*",
+        "matchdep"            : "*",
+        "grunt-sass"          : "*",
+        "grunt-autoprefixer"  : "*",
+        "grunt-shell"         : "*",
+        "grunt-replace"       : "*",
+        "time-grunt"          : "*"
+    }
+}

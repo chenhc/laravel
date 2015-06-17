@@ -1,0 +1,12 @@
+{
+    "name"   : "ilive",
+    "version": "0.0.1",
+    "dependencies": {
+        "angular"         : "latest",
+        "angular-route"   : "latest",
+        "angular-resource": "latest",
+        "angular-animate" : "latest",
+        "jquery"          : "latest",
+        "bootstrap"       : "latest"
+    }
+}
