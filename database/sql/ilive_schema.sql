@@ -10,6 +10,7 @@
 --
 
 
+-- 用户
 CREATE TABLE `user` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `username` VARCHAR(255) NOT NULL,
@@ -29,6 +30,27 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+-- 收货地址
+CREATE TABLE `delivery_address` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `user_id` INTEGER NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `telephone` VARCHAR(255) NOT NULL,
+    `country` VARCHAR(255) NOT NULL,
+    `province` VARCHAR(255) NOT NULL,
+    `city` VARCHAR(255) NOT NULL,
+    `district` VARCHAR(255) NOT NULL,
+    `street` VARCHAR(255) NOT NULL,
+    `full_address` VARCHAR(255) NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `updated_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    KEY `user_id` (`user_id`),
+    CONSTRAINT `da_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+    PRIMARY KEY(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- 营养素
 CREATE TABLE `nutrient` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
@@ -38,6 +60,7 @@ CREATE TABLE `nutrient` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+-- 食材
 CREATE TABLE `food_material` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
@@ -70,6 +93,44 @@ CREATE TABLE `food_material` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+-- 食材营养价值
+CREATE TABLE `food_material_nutrient` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `material_id` INTEGER NOT NULL,
+    `nutrient_id` INTEGER NOT NULL,
+    `content_amount` VARCHAR(255) DEFAULT NULL,
+    `content_unit` VARCHAR(255) DEFAULT NULL,
+    `content_unit_readable` VARCHAR(255) DEFAULT NULL,
+    `content_readable` VARCHAR(255) DEFAULT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `updated_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    KEY `material_id` (`material_id`),
+    KEY `nutrient_id` (`nutrient_id`),
+    CONSTRAINT `fmn_material_id_fk` FOREIGN KEY (`material_id`) REFERENCES `food_material` (`id`),
+    CONSTRAINT `fmn_nutrient_id_fk` FOREIGN KEY (`nutrient_id`) REFERENCES `nutrient` (`id`),
+    PRIMARY KEY(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- 用户喜欢食材
+CREATE TABLE `user_like_material` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `user_id` INTEGER NOT NULL,
+    `material_id` INTEGER NOT NULL,
+    KEY `user_id` (`user_id`),
+    KEY `material_id` (`material_id`),
+    `created_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `updated_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    CONSTRAINT `ulm_material_id_fk` FOREIGN KEY (`material_id`) REFERENCES `food_material` (`id`),
+    CONSTRAINT `ulm_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+    PRIMARY KEY(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- 用户收藏食材
+
+
+-- 食谱
 CREATE TABLE `food_recipe` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
@@ -94,18 +155,41 @@ CREATE TABLE `food_recipe` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+-- 食谱食材构成
 CREATE TABLE `food_recipe_material` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `recipe_id` INTEGER NOT NULL,
     `material_id` INTEGER NOT NULL,
+    `dosage_amount` VARCHAR(255) DEFAULT NULL,
+    `dosage_unit` VARCHAR(255) DEFAULT NULL,
+    `dosage_unit_readable` VARCHAR(255) DEFAULT NULL,
+    `dosage_readable` VARCHAR(255) DEFAULT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     `updated_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     KEY `recipe_id` (`recipe_id`),
     KEY `material_id` (`material_id`),
-    CONSTRAINT `recipe_id_fk` FOREIGN KEY (`recipe_id`) REFERENCES `food_recipe` (`id`),
-    CONSTRAINT `material_id_fk` FOREIGN KEY (`material_id`) REFERENCES `food_material` (`id`),
+    CONSTRAINT `frm_recipe_id_fk` FOREIGN KEY (`recipe_id`) REFERENCES `food_recipe` (`id`),
+    CONSTRAINT `frm_material_id_fk` FOREIGN KEY (`material_id`) REFERENCES `food_material` (`id`),
     PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- 用户喜欢食谱
+CREATE TABLE `user_like_recipe` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `user_id` INTEGER NOT NULL,
+    `recipe_id` INTEGER NOT NULL,
+    KEY `recipe_id` (`recipe_id`),
+    KEY `user_id` (`user_id`),
+    `created_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `updated_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    CONSTRAINT `ulr_recipe_id_fk` FOREIGN KEY (`recipe_id`) REFERENCES `food_recipe` (`id`),
+    CONSTRAINT `ulr_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+    PRIMARY KEY(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- 用户收藏食谱
 
 
 -- 中医体质
@@ -118,21 +202,37 @@ CREATE TABLE `tcm_consitution` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+-- 中医药材
 CREATE TABLE `tcm_material` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL,
+    `alias` VARCHAR(255) DEFAULT NULL,
+    `efficacy` VARCHAR(255) DEFAULT NULL,
+    `toxicity` VARCHAR(255) DEFAULT NULL,
+    `tropism` VARCHAR(255) DEFAULT NULL,
+    `property` VARCHAR(255) DEFAULT NULL,
+    `taste` VARCHAR(255) DEFAULT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     `updated_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+-- 中医症状
 CREATE TABLE `tcm_symptom` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `updated_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `tcm_effect` (
+-- 中医功效
+CREATE TABLE `tcm_efficacy` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `updated_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
