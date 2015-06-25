@@ -8,6 +8,7 @@
 -- Changelog:
 --
 --
+
 -- 国家
 CREATE TABLE `country` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
@@ -59,7 +60,6 @@ CREATE TABLE `street` (
     CONSTRAINT `st_district_id_fk` FOREIGN KEY (`district_id`) REFERENCES `district` (`id`),
     PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 -- 用户
 CREATE TABLE `user` (
