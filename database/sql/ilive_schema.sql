@@ -13,7 +13,13 @@
 CREATE TABLE `country` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `country` VARCHAR(255) NOT NULL,
+    `zh_cn` VARCHAR(255) DEFAULT NULL,
+    `zh_hk` VARCHAR(255) DEFAULT NULL,
+    `en_us` VARCHAR(255) DEFAULT NULL,
     KEY (`country`),
+    KEY (`zh_cn`),
+    KEY (`zh_hk`),
+    KEY (`en_us`),
     PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -21,8 +27,16 @@ CREATE TABLE `country` (
 CREATE TABLE `province` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `province` VARCHAR(255) NOT NULL,
+    `govern_no` VARCHAR(255) NOT NULL,
+    `zh_cn` VARCHAR(255) DEFAULT NULL,
+    `zh_hk` VARCHAR(255) DEFAULT NULL,
+    `en_us` VARCHAR(255) DEFAULT NULL,
     `country_id` INTEGER NOT NULL,
-    KEY (`province`),
+    KEY (`province`, `country_id`),
+    KEY (`govern_no`, `country_id`),
+    KEY (`zh_cn`),
+    KEY (`zh_hk`),
+    KEY (`en_us`),
     KEY `country_id` (`country_id`),
     CONSTRAINT `prvc_country_id_fk` FOREIGN KEY (`country_id`) REFERENCES `country` (`id`),
     PRIMARY KEY(`id`)
@@ -32,8 +46,16 @@ CREATE TABLE `province` (
 CREATE TABLE `city` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `city` VARCHAR(255) NOT NULL,
+    `govern_no` VARCHAR(255) NOT NULL,
+    `zh_cn` VARCHAR(255) DEFAULT NULL,
+    `zh_hk` VARCHAR(255) DEFAULT NULL,
+    `en_us` VARCHAR(255) DEFAULT NULL,
     `province_id` INTEGER NOT NULL,
-    KEY (`city`),
+    KEY (`city`, `province_id`),
+    KEY (`govern_no`, `province_id`),
+    KEY (`zh_cn`),
+    KEY (`zh_hk`),
+    KEY (`en_us`),
     KEY `province_id` (`province_id`),
     CONSTRAINT `ct_province_id_fk` FOREIGN KEY (`province_id`) REFERENCES `province` (`id`),
     PRIMARY KEY(`id`)
@@ -43,8 +65,16 @@ CREATE TABLE `city` (
 CREATE TABLE `district` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `district` VARCHAR(255) NOT NULL,
+    `govern_no` VARCHAR(255) NOT NULL,
+    `zh_cn` VARCHAR(255) DEFAULT NULL,
+    `zh_hk` VARCHAR(255) DEFAULT NULL,
+    `en_us` VARCHAR(255) DEFAULT NULL,
     `city_id` INTEGER NOT NULL,
-    KEY (`district`),
+    KEY (`district`, `city_id`),
+    KEY (`govern_no`, `city_id`),
+    KEY (`zh_cn`),
+    KEY (`zh_hk`),
+    KEY (`en_us`),
     KEY `city_id` (`city_id`),
     CONSTRAINT `dst_city_id_fk` FOREIGN KEY (`city_id`) REFERENCES `city` (`id`),
     PRIMARY KEY(`id`)
@@ -54,8 +84,18 @@ CREATE TABLE `district` (
 CREATE TABLE `street` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `street` VARCHAR(255) NOT NULL,
+    `govern_no` VARCHAR(255) NOT NULL,
+    `zh_cn` VARCHAR(255) DEFAULT NULL,
+    `zh_hk` VARCHAR(255) DEFAULT NULL,
+    `en_us` VARCHAR(255) DEFAULT NULL,
+    `pinyin` VARCHAR(255) DEFAULT NULL,
     `district_id` INTEGER NOT NULL,
-    KEY (`street`),
+    KEY (`street`, `district_id`),
+    KEY (`govern_no`, `district_id`),
+    KEY (`zh_cn`),
+    KEY (`zh_hk`),
+    KEY (`en_us`),
+    KEY (`pinyin`),
     KEY `district_id` (`district_id`),
     CONSTRAINT `st_district_id_fk` FOREIGN KEY (`district_id`) REFERENCES `district` (`id`),
     PRIMARY KEY(`id`)

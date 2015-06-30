@@ -59,6 +59,7 @@ def parse_args():
 
     return material_file, category_file, mysql_uri, image_dir
 
+
 def main():
     import logging
     logging.basicConfig(level=logging.INFO)
