@@ -159,6 +159,8 @@ CREATE TABLE `food_material` (
     `classification` VARCHAR(255) DEFAULT NULL,
     `category` VARCHAR(255) DEFAULT NULL,
     `alias` VARCHAR(255) DEFAULT NULL,
+    `season_in` INTEGER NOT NULL DEFAULT 1,
+    `season_out` INTEGER NOT NULL DEFAULT 366,
     `tags` VARCHAR(255) DEFAULT NULL,
     `image_hash` CHAR(32) DEFAULT NULL,
     `amount_rec` VARCHAR(255) DEFAULT NULL,
@@ -180,6 +182,16 @@ CREATE TABLE `food_material` (
     UNIQUE KEY (`name`),
     UNIQUE KEY (`hash`),
     KEY (`category`),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- 食材总纲类别
+CREATE TABLE `fm_classification_category` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `classification` VARCHAR(255) NOT NULL,
+    `category` VARCHAR(255) NOT NULL,
+    UNIQUE KEY (`classification`, `category`),
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -246,6 +258,16 @@ CREATE TABLE `food_recipe` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+-- 食谱总纲类别
+CREATE TABLE `fr_classification_category` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `classification` VARCHAR(255) NOT NULL,
+    `category` VARCHAR(255) NOT NULL,
+    UNIQUE KEY (`classification`, `category`),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 -- 食谱食材构成
 CREATE TABLE `food_recipe_material` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
@@ -276,6 +298,20 @@ CREATE TABLE `user_like_recipe` (
     `updated_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     CONSTRAINT `ulr_recipe_id_fk` FOREIGN KEY (`recipe_id`) REFERENCES `food_recipe` (`id`),
     CONSTRAINT `ulr_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+    PRIMARY KEY(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- 健康小贴士
+CREATE TABLE `health_tip` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `topic` VARCHAR(255) NOT NULL,
+    `brief` TEXT DEFAULT NULL,
+    `suit_tips` TEXT DEFAULT NULL,
+    `avoid_tips` TEXT DEFAULT NULL,
+    `suit_food_materials` TEXT DEFAULT NULL,
+    `avoid_food_materials` TEXT DEFAULT NULL,
+    KEY (`topic`),
     PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
