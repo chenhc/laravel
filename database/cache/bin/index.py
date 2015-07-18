@@ -21,6 +21,7 @@ from modules.index import IndexCacher
 
 from config.database import CACHE_MYSQL_URI, CACHE_REDIS_URI
 
+
 def parse_args():
     from optparse import OptionParser
     parser = OptionParser()
