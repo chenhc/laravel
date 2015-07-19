@@ -11,6 +11,9 @@
 |
 */
 
+Route::get('/api/address/country/{code}', 'AddressApiController@country');
+Route::get('/api/address/country/{country_code}/province/{province_code}/city/{city_code}/district/{district_code}', 'AddressApiController@district');
+
 api_route('api/food_material', 'FoodMaterialApiController');
 api_route('api/food_recipe', 'FoodRecipeApiController');
 api_route('api/user', 'UserApiController');
