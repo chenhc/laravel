@@ -1,4 +1,6 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+namespace App\Http\Controllers;
 
 use App\User;
 
@@ -17,29 +19,28 @@ class UserApiController extends Controller {
         $this->session=$request->session();
     }
 
-    private function birth2Group($birth)
+    private function get_age_bracket($birthday)
     {
-        list($by, $bm, $bd) = explode('-', $birth);
-        $cm = date('n');
-        $cd = date('j');
-        $age = date('Y')-$by-1;
-        if ($cm > $bm || $cm == $bm && $cd > $bd) 
-            $age++;
+        $birthday = new DateTime($birthday);
+        $today = new DateTime('today');
+        $age = $birthday->diff($today)->y;
+
         if ($age < 1)
-            $group = '婴儿';
+            $bracket = '婴儿';
         else if ($age < 3)
-            $group = '幼儿';
+            $bracket = '幼儿';
         else if ($age < 6)
-            $group = '儿童';
+            $bracket = '儿童';
         else if ($age < 14)
-            $group = '少年';
+            $bracket = '少年';
         else if ($age < 45)
-            $group = '青年';
+            $bracket = '青年';
         else if ($age < 60)
-            $group = '中年';
-        else 
-            $group = '老年';
-        return $group;
+            $bracket = '中年';
+        else
+            $bracket = '老年';
+
+        return $bracket;
     }
 
     public function login(Request $request)
@@ -51,8 +52,8 @@ class UserApiController extends Controller {
 
             $user=Auth::user();
             $this->session->put($user->attributesToArray());
-            $group = $this->birth2Group($user->birthday);
-            Session::put('group', $group);	
+            $age_bracket = $this->get_age_bracket($user->birthday);
+            Session::put('age_bracket', $age_bracket)
             return response()->json(['result'=> 'login success']);
         }
         else
