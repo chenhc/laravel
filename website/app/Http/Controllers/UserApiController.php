@@ -17,30 +17,30 @@ class UserApiController extends Controller {
         $this->session=$request->session();
     }
 
-	private function birth2Group($birth)
-	{
+    private function birth2Group($birth)
+    {
         list($by, $bm, $bd) = explode('-', $birth);
-		$cm = date('n');
-		$cd = date('j');
-		$age = date('Y')-$by-1;
-		if ($cm > $bm || $cm == $bm && $cd > $bd) 
-			$age++;
-		if ($age < 1)
-			$group = '婴儿';
-		else if ($age < 3)
-			$group = '幼儿';
-		else if ($age < 6)
-			$group = '儿童';
-		else if ($age < 14)
-			$group = '少年';
-		else if ($age < 45)
-			$group = '青年';
-		else if ($age < 60)
-			$group = '中年';
-		else 
-			$group = '老年';
-		return $group;
-	}
+        $cm = date('n');
+        $cd = date('j');
+        $age = date('Y')-$by-1;
+        if ($cm > $bm || $cm == $bm && $cd > $bd) 
+            $age++;
+        if ($age < 1)
+            $group = '婴儿';
+        else if ($age < 3)
+            $group = '幼儿';
+        else if ($age < 6)
+            $group = '儿童';
+        else if ($age < 14)
+            $group = '少年';
+        else if ($age < 45)
+            $group = '青年';
+        else if ($age < 60)
+            $group = '中年';
+        else 
+            $group = '老年';
+        return $group;
+    }
 
     public function login(Request $request)
     {
@@ -51,8 +51,8 @@ class UserApiController extends Controller {
 
             $user=Auth::user();
             $this->session->put($user->attributesToArray());
-			$group = $this->birth2Group($user->birthday);
-			Session::put('group', $group);	
+            $group = $this->birth2Group($user->birthday);
+            Session::put('group', $group);	
             return response()->json(['result'=> 'login success']);
         }
         else
@@ -74,7 +74,7 @@ class UserApiController extends Controller {
         //
         $this->validate($request, [
 
-        ]);
+                ]);
 
         $user = new User($request->all());
         $user->save();
@@ -108,7 +108,7 @@ class UserApiController extends Controller {
         //
         $this->validate($request, [
 
-        ]);
+                ]);
 
         $user = Auth::user();
         if (!$user) {
