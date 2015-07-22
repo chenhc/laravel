@@ -1,2 +1,197 @@
-// @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "compass/reset";
+@import "compass/css3";
 
+$font-ST: "\5B8B\4F53";
+$font-yahei: "Microsoft YaHei", "\5fae\8f6f\96c5\9ed1";
+$font-arial: "Arial";
+
+$bgColor: #66C858;
+$borderColor: #19AD8C;
+body {
+	font-family: "Helvetica Neue",Helvetica,"Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+}
+a{
+  text-decoration: none;
+} 
+body {
+	font-size: 16px;
+}
+
+.hxy-nav {
+	  border: 1px solid;
+	  border-top: 7px solid $borderColor;
+	  padding: 15px 20px 0px;
+	  border-bottom: 7px solid $borderColor;
+	  text-align: center;
+
+  .hxy-logo {
+	  font-size: 33px;
+	  margin-top: 10px;
+	  color: #19AD8C;
+	}
+
+	ul.hxy-ul {
+	  position: absolute;
+	  top: 10px;
+	  right: 20px;
+	  li {
+	  	display: inline-block;
+	  }
+	}
+
+	.hxy-login,.hxy-register {
+		display: inline-block;
+	}
+
+	.hxy-search {
+		float: right;
+		position: relative;
+	}
+
+	span.glyphicon.glyphicon-search {
+		position: absolute;
+		right: 4px;
+		top: 5px;
+	}
+}
+.hxy-content {
+	.breadcrumb {
+		font-size: 13px ;
+	    background: #fff ;
+	    margin: 5px 10px ;
+	}
+	.hxy-subnav {
+		margin: auto;
+		width: 60%;
+		min-width: 400px;
+		.hxy-subcontent {
+ 			border: 1px solid #DDDDDD;
+			min-height: 100px;
+			border-top: none;
+		}
+		.tab-content {
+			border: 1px solid #ddd;
+			border-top: none;
+			text-align: center;
+			padding: 40px;
+			ul {
+				li {
+					display: inline-block;
+				}
+				a {
+					display: inline-block;
+					padding: 5px 15px;
+					margin: 0 10px;
+					border: 1px solid;
+				}
+			}
+		}
+	}
+	.hxy-recommand {
+		border: 1px solid #DDDDDD;
+		width: 60%;
+		min-width: 400px;
+		min-height: 200px;
+		margin: 50px auto;
+	}
+	h2 {
+		font-size: 25px;
+	}
+	.hxy-maincontent {
+		text-align: center;
+		width: 80%;
+		margin: 0 auto;
+		padding: 10px;
+		min-height: 300px;
+		.hxy-row {
+			margin: 0 auto;
+		}
+		.hxy-thumbnail {
+			border: none;
+			width: 210px;
+			border: 2px solid #fff;
+			&:hover {
+				border: 2px solid #33C1FF;
+				cursor: pointer;
+			}
+		}
+		.hxy-caption {
+			border: 1px solid #dddddd;
+		}
+		.hxy-brief {
+			white-space: nowrap; 
+			width: 190px;
+			text-align: left;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			margin: 10px auto;
+			font-size: 13px;
+		}
+	}
+	nav {
+		text-align: center;
+	}
+}
+.hxy-intro {
+	width: 80%;
+	margin: 30px auto;
+	border: 2px solid #ddd;
+	img {
+		width: 18%;
+		height: 210px;
+	}
+}
+.hxy-label {
+  display: inline-block;
+  vertical-align: top;
+  width: 50%;
+  ul {
+  	line-height: 2;
+  }
+}
+h4.title {
+  font-size: 30px;
+  margin: 16px;
+}
+.hxy-constitution {
+  display: inline-block;
+  vertical-align: top;
+  float: right;
+  margin: 10px 20px;
+  width: 20%;
+  span {
+  	display: inline-block;
+  	margin: 8px 5px;
+  }
+}
+.hxy-fooddetail {
+  border: 1px solid #ddd;
+  min-height: 300px;
+  width: 80%;
+  margin: 20px auto;
+  position:relative;
+}
+.hxy-title {
+  border: 1px solid;
+  padding: 10px 20px;
+  position: absolute;
+  top: -20px;
+  left: 43%;
+  text-align: center;
+  color: #fff;
+  background-color: $borderColor;
+  font-size: 20px;
+}
+.hxy-detail {
+	margin: 35px;
+	h3 {
+		font-size: 18px;
+		color: #CC0000;
+	}
+	p,ul{
+		font-size: 16px;
+ 		line-height: 1.5;
+        width: 94%;
+        margin: 0 auto;
+	}
+}
