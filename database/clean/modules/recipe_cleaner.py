@@ -105,10 +105,10 @@ class FoodRecipeCleaner(object):
             #sharer处理
             recipe['sharer'] = '小编'
             #分离图片url
-            image_res = None
             if  self.img_dir:
                 procedure = recipe['procedure'].split('\n')
                 for i in xrange(len(procedure)):
+                    image_res = None
                     print procedure[i]
                     if 'http' in procedure[i] or 'jpg' in procedure[i]:
                         logging.info('getting %s url=%s' % (name, procedure[i]))
