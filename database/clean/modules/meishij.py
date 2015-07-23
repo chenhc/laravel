@@ -35,7 +35,8 @@ class FoodMaterialCleaner(object):
 
         self.materials = {}
         self.material2category = {}
-        self.table_name = 'food_material'
+        self.table_name1 = 'food_material'
+        self.table_name2 = 'fm_classification_category'
 
         self.classification_list = set([
             '蔬菜', '水果', '薯类淀粉', '菌藻',
@@ -64,8 +65,45 @@ class FoodMaterialCleaner(object):
             '碳酸饮料类', '果汁及果汁饮料类', '蔬菜汁饮料类', '含乳饮料类', '植物蛋白饮料类', '茶叶及茶饮料类', '固态饮料类', '棒冰、冰激凌类', '其它饮料类',
             '发酵酒类', '蒸馏酒类', '露酒（配制酒类）',
         ])
+        
+        self.classification_category = {
+            '蔬菜':['根菜类', '鲜豆类', '茄果、瓜菜类', '葱蒜类', '嫩茎、叶、花菜类', '水生蔬菜类', '薯芋类', '野生蔬菜类'],
+            '水果':['仁果类', '核果类', '浆果类', '柑橘类', '热带、亚热带水果', '瓜果类'],
+            '薯类淀粉':['薯类', '淀粉类'],
+            '菌藻':['菌类', '藻类'],
+            '畜肉':['猪类', '牛类', '羊类', '驴类', '马类', '其它畜肉类'],
+            '禽肉':['鸡类', '鸭类', '鹅类', '火鸡类', '其它禽肉类'],
+            '鱼虾蟹贝':['鱼类', '虾类', '蟹类', '贝类', '其它水产类'],
+            '蛋类':['鸡蛋类', '鸭蛋类', '鹅蛋类', '鹌鹑蛋类'],
+            '谷类':['小麦类', '稻米类', '玉米类', '大麦类', '小米、黄米类', '其它谷类'],
+            '干豆':['大豆类', '绿豆类', '赤豆类', '芸豆类', '蚕豆类', '其它干豆类'],
+            '坚果种子':['树坚果类', '种子类'],
+            '速食食品':['快餐食品类', '方便食品类', '休闲食品类'],
+            '婴幼儿食品':['婴幼儿配方粉类', '婴幼儿断奶期辅助', '婴幼儿补充食品类'],
+            '小吃甜饼':['小吃类', '蛋糕、甜点类'],
+            '糖蜜饯':['糖类', '糖果类', '蜜饯类'],
+            '乳类':['液态乳类', '奶粉类', '酸奶类', '奶酪类', '奶油类', '其它乳类'],
+            '软饮料':['碳酸饮料类', '果汁及果汁饮料类', '蔬菜汁饮料类', '含乳饮料类', '植物蛋白饮料类', '茶叶及茶饮料类', '固态饮料类', '棒冰、冰激凌类', '其它饮料类'],
+            '酒精饮料':['发酵酒类', '蒸馏酒类', '露酒（配制酒类）']
+        }
 
     def process(self):
+        #处理classification_category
+        fields = ['classification','category']
+        field_clause = format_field_clause(fields)
+        table_clause2 = format_table_clause(self.table_name2)
+
+        cursor = self.mysqldb.cursor()
+
+        for classification,category_list in self.classification_category.items():
+            category_list.sort()
+            category_string = ','.join(category_list)
+            values = [classification, category_string]
+            value_clause = format_value_clause(values)
+            sql = 'INSERT INTO %s (%s) VALUES (%s)' % (table_clause2, field_clause, value_clause)
+            cursor.execute(sql)
+            self.mysqldb.commit()
+
         # 处理category_material
         for line in self.category_file:
             pair = json.loads(line.strip())
@@ -83,7 +121,7 @@ class FoodMaterialCleaner(object):
             else:
                 raise Exception('duplicate material: %s' % (name,))
 
-        table_clause = format_table_clause(self.table_name)
+        table_clause1 = format_table_clause(self.table_name1)
 
         fields = [ 'name', 'hash', 'classification', 'category', 'alias',
                 'tags', 'image_hash', 'amount_rec', 'suit_crowds',
@@ -92,7 +130,6 @@ class FoodMaterialCleaner(object):
                 'choose', 'store', 'tips']
         field_clause = format_field_clause(fields)
 
-        cursor = self.mysqldb.cursor()
         for name, material in self.materials.iteritems():
             logging.info('importing name=%s' % (name,))
 
@@ -144,7 +181,7 @@ class FoodMaterialCleaner(object):
             value_clause = format_value_clause(values)
 
             sql = 'INSERT INTO %s (%s) VALUES (%s)' % \
-                    (table_clause, field_clause, value_clause)
+                    (table_clause1, field_clause, value_clause)
 
             cursor.execute(sql)
             self.mysqldb.commit()
