@@ -22,9 +22,9 @@ Route::post('/api/login', 'UserApiController@login');
 Route::get('/api/logout', 'UserApiController@logout');
 
 Route::group(['prefix' => '/api/user/like/food_material'], function(){
-    Route::post('/', 'MaterialLikeApiController@like');
-    Route::delete('/', 'MaterialLikeApiController@dislike');
-    Route::get('/', 'MaterialLikeApiController@index');
+    Route::post('/', 'UserApiController@setLikedMaterial');
+    Route::delete('/', 'UserApiController@setDislikedMaterial');
+    Route::get('/', 'UserApiController@fetchLikedMaterials');
     
 });
 

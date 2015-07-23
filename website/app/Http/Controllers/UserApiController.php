@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\FoodMaterial;
+use App\MaterialLike;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -135,4 +137,49 @@ class UserApiController extends Controller {
 
     }
 
+    public function setLikedMaterial(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user)
+        {
+            return response()->json(['reason' => 'didn\'t login']);
+        }
+        $user_id = $user->id;
+        $material_hash = $request->input('material_hash');
+        $material_id = foodmaterial::where('hash', $material_hash)->first()->id;
+        $user_like = new MaterialLike;
+        $user_like->user_id = $user_id;
+        $user_like->material_id = $material_id;
+        $user_like->save();
+        return response()->json(['result' => 'success']);
+    }
+    
+    public function setDislikedMaterial(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user)
+        {
+            return response()->json(['reason' => 'didn\'t login']);
+        }
+        $user_id = $user->id;
+        $material_hash = $request->input('material_hash');
+        $material_id = FoodMaterial::where('hash', $material_hash)->first()->id;
+        MaterialLike::where('user_id', $user_id)->where('material_id', $material_id)->first()->delete();
+        return response()->json(['result' => 'success']);
+    }
+
+    public function fetchLikedMaterials(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user)
+        {
+            return response()->json(['reason' => 'didn\'t login']);
+        }
+        $user_id = $user->id;
+        $pagesize = $request->input('pagesize', 10);
+        $page = $request->input('page', 1);
+        $offset = $pagesize * ($page - 1);
+        $materials = User::find($user_id)->material_likes->slice($offset, $pagesize);
+        return response()->json($materials);
+    }
 }
