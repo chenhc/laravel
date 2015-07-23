@@ -21,6 +21,14 @@ api_route('api/user', 'UserApiController');
 Route::post('/api/login', 'UserApiController@login');
 Route::get('/api/logout', 'UserApiController@logout');
 
+Route::group(['prefix' => '/api/user/like/food_material'], function(){
+    Route::post('/', 'MaterialLikeApiController@like');
+    Route::delete('/', 'MaterialLikeApiController@dislike');
+    Route::get('/', 'MaterialLikeApiController@index');
+    
+});
+
+
 weixin_route('food_material', 'FoodMaterialWeixinController');
 
 

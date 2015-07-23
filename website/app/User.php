@@ -34,4 +34,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     protected $hidden = ['id', 'password', 'remember_token', 'created_at', 'updated_at'];
 
     protected $guarded = array('id');
+
+    public function material_likes() 
+    {
+        return $this->belongsToMany('App\FoodMaterial', 'user_like_material', 'user_id', 'material_id');
+    }
 }

@@ -21,8 +21,8 @@ class UserApiController extends Controller {
 
     private function get_age_bracket($birthday)
     {
-        $birthday = new DateTime($birthday);
-        $today = new DateTime('today');
+        $birthday = new \DateTime($birthday);
+        $today = new \DateTime('today');
         $age = $birthday->diff($today)->y;
 
         if ($age < 1)
@@ -53,7 +53,7 @@ class UserApiController extends Controller {
             $user=Auth::user();
             $this->session->put($user->attributesToArray());
             $age_bracket = $this->get_age_bracket($user->birthday);
-            Session::put('age_bracket', $age_bracket)
+            Session::put('age_bracket', $age_bracket);
             return response()->json(['result'=> 'login success']);
         }
         else
@@ -66,7 +66,7 @@ class UserApiController extends Controller {
         $this->session->flush();
 
         Auth::logout();
-        return json_encode('You are logged out');
+        return response()->json('You are logged out');
 
     }
 

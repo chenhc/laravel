@@ -10,6 +10,6 @@ class FoodMaterial extends Model {
     protected $guarded = array('id');
 
     // hidden from json
-    protected $hidden = ['id', 'created_at', 'updated_at'];
+    protected $hidden = ['id', 'created_at', 'updated_at', 'pivot'];
 
 }
