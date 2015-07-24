@@ -28,6 +28,11 @@ Route::group(['prefix' => '/api/user/like/food_material'], function(){
     
 });
 
+Route::group(['prefix' => '/api/user/like/food_recipe'], function(){
+    Route::post('/', 'UserApiController@setLikedRecipe');
+    Route::delete('/', 'UserApiController@setDislikedRecipe');
+    Route::get('/', 'UserApiController@fetchLikedRecipes');
+});
 
 weixin_route('food_material', 'FoodMaterialWeixinController');
 

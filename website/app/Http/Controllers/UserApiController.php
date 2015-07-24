@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\FoodMaterial;
-use App\MaterialLike;
+use App\FoodRecipe;
+use App\UserLikeMaterial;
+use App\UserLikeRecipe;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -146,11 +148,12 @@ class UserApiController extends Controller {
         }
         $user_id = $user->id;
         $material_hash = $request->input('material_hash');
-        $material_id = foodmaterial::where('hash', $material_hash)->first()->id;
-        $user_like = new MaterialLike;
-        $user_like->user_id = $user_id;
-        $user_like->material_id = $material_id;
-        $user_like->save();
+        $material_id = FoodMaterial::where('hash', $material_hash)->first()->id;
+//        $user_like = new UserLikeMaterial;
+//        $user_like->user_id = $user_id;
+//        $user_like->material_id = $material_id;
+//        $user_like->save();
+        UserLikeMaterial::create(['user_id' => $user_id, 'material_id' => $material_id]);
         return response()->json(['result' => 'success']);
     }
     
@@ -164,7 +167,7 @@ class UserApiController extends Controller {
         $user_id = $user->id;
         $material_hash = $request->input('material_hash');
         $material_id = FoodMaterial::where('hash', $material_hash)->first()->id;
-        MaterialLike::where('user_id', $user_id)->where('material_id', $material_id)->first()->delete();
+        UserLikeMaterial::where('user_id', $user_id)->where('material_id', $material_id)->first()->delete();
         return response()->json(['result' => 'success']);
     }
 
@@ -179,7 +182,50 @@ class UserApiController extends Controller {
         $pagesize = $request->input('pagesize', 10);
         $page = $request->input('page', 1);
         $offset = $pagesize * ($page - 1);
-        $materials = User::find($user_id)->material_likes->slice($offset, $pagesize);
+        $materials = User::find($user_id)->get_liked_materials->slice($offset, $pagesize);
         return response()->json($materials);
+    }
+
+    public function setLikedRecipe(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user)
+        {
+            return response()->json(['reason' => 'didn\'t login']);
+        }
+        $user_id = $user->id;
+        $recipe_hash = $request->input('recipe_hash');
+        $recipe_id = FoodRecipe::where('hash', $recipe_hash)->first()->id;
+        UserLikeRecipe::create(['user_id' => $user_id, 'recipe_id' => $recipe_id]);
+        return response()->json(['result' => 'success']);
+    }        
+    
+    public function setDislikedRecipe(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user)
+        {
+            return response()->json(['reason' => 'didn\'t login']);
+        }
+        $user_id = $user->id;
+        $recipe_hash = $request->input('recipe_hash');
+        $recipe_id = FoodRecipe::where('hash', $recipe_hash)->first()->id;
+        UserLikeRecipe::where('user_id', $user_id)->where('recipe_id', $recipe_id)->first()->delete();
+        return response()->json(['result' => 'success']);
+    } 
+    
+    public function fetchLikedRecipes(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user)
+        {
+            return response()->json(['reason' => 'didn\'t login']);
+        }
+        $user_id = $user->id;
+        $pagesize = $request->input('pagesize', 10);
+        $page = $request->input('page', 1);
+        $offset = $pagesize * ($page - 1);
+        $recipes = User::find($user_id)->get_liked_recipes->slice($offset, $pagesize);
+        return response()->json($recipes);
     }
 }

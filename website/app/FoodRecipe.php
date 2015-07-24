@@ -11,5 +11,5 @@ class FoodRecipe extends Model {
     protected $guarded = array('id');
 
     // hidden from json
-    protected $hidden = ['created_at', 'updated_at'];
+    protected $hidden = ['created_at', 'updated_at', 'pivot'];
 }

@@ -35,8 +35,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     protected $guarded = array('id');
 
-    public function material_likes() 
+    public function get_liked_materials() 
     {
         return $this->belongsToMany('App\FoodMaterial', 'user_like_material', 'user_id', 'material_id');
+    }
+
+    public function get_liked_recipes()
+    {
+        return $this->belongsToMany('App\FoodRecipe', 'user_like_recipe', 'user_id', 'recipe_id');
     }
 }

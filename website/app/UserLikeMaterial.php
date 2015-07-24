@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MaterialLike extends Model {
+class UserLikeMaterial extends Model {
 
     // table name
     protected $table = 'user_like_material';
