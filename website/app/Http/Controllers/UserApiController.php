@@ -13,7 +13,7 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 
-use Auth, Redirect, Input, Session;
+use Auth, Redirect, Input;
 
 class UserApiController extends Controller {
 
@@ -47,42 +47,70 @@ class UserApiController extends Controller {
         return $bracket;
     }
 
+
+    protected function create(array $data)
+    {
+        return User::create([
+            'username' => $data['username'],
+            //'email' => $data['email'],
+            'password' => bcrypt($data['password']),
+        ]);
+    }
+
     public function login(Request $request)
     {
-        $email = Input::get('email');
-        $password = Input::get('password');
-        if (Auth::attempt(['email' => $email, 'password' => $password]))
+        $account = $request->json()->get('account');
+        $password = $request->json()->get('password');
+
+        // 用户名登录
+        if (Auth::attempt(['username' => $account, 'password' => $password]) ||
+            // 邮箱登陆
+            Auth::attempt(['email' => $account, 'password' => $password]))
         {
 
             $user=Auth::user();
-            $this->session->put($user->attributesToArray());
+            $request->session()->put($user->attributesToArray());
             $age_bracket = $this->get_age_bracket($user->birthday);
-            Session::put('age_bracket', $age_bracket);
-            return response()->json(['result'=> 'login success']);
-        }
-        else
-            return response()->json(['result'=> 'login fail', 'reason'=>'用户名或密码不正确']);
+            $request->session()->push('age_bracket', $age_bracket);
 
+            return response()->json([
+                'status'=> true
+            ]);
+        }
+
+        return response()->json([
+            'status' => false,
+            'reason' => '用户名或密码不正确',
+            'account' => $account,
+            'password' => $password,
+        ]);
     }
 
     public function logout()
     {
-        $this->session->flush();
+        $request->session()->flush();
 
         Auth::logout();
-        return response()->json('You are logged out');
+        return response()->json([
+            'status' => true,
+        ]);
 
     }
+
 
     public function store(Request $request)
     {
         //
         $this->validate($request, [
 
-                ]);
+        ]);
 
-        $user = new User($request->all());
+        $user = $this->create($request->json()->all());
         $user->save();
+
+        return response()->json([
+            'status' => true,
+        ]);
     }
 
     public function destroy(Request $request, $hash)
@@ -90,11 +118,17 @@ class UserApiController extends Controller {
         //
         $user = Auth::user();
         if (!$user) {
-            return response()->json(['reason' => 'didn\'t login']);
+            return response()->json([
+                'status' => false,
+                'reason' => 'not login'
+            ]);
         }
 
         User::destroy($user->id);
-        return response()->json(true);
+
+        return response()->json([
+            'status' => true
+        ]);
     }
 
     public function index()
