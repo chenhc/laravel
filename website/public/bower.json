@@ -8,6 +8,7 @@
         "angular-animate" : "latest",
         "jquery"          : "latest",
         "jquery-lazyload" : "latest",
-        "bootstrap"       : "latest"
+        "bootstrap"       : "latest",
+        "smalot-bootstrap-datetimepicker": "latest"
     }
 }
