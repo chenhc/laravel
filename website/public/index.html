@@ -49,7 +49,7 @@
           <li class="active">胡萝卜</li>
         </ol>
         <div class="hxy-intro">
-            <img src="/static/images/food.jpg" alt="">
+            <img ng-src="/images/{{ data.image_hash }}.jpg" alt="">
             <div class="hxy-constitution">
                 <a href="#" ng-repeat="item in data.suit_ctcms" class="hxy-suit_ctcms"><span class="label label-success">{{ item }}</span></a>
                 <a href="#" ng-repeat="item in data.avoid_ctcms" class="hxy-avoid_ctcms"><span class="label label-danger">{{ item }}</span></a>
