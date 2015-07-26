@@ -98,13 +98,15 @@ class UserApiController extends Controller {
     }
 
 
+    // 增
+    // 注册用户
     public function store(Request $request)
     {
-        //
+        // 字段验证
         $this->validate($request, [
-
         ]);
 
+        // 创建用户并保存到数据库
         $user = $this->create($request->json()->all());
         $user->save();
 
@@ -113,17 +115,23 @@ class UserApiController extends Controller {
         ]);
     }
 
+
+    // 删
+    // 注销用户
     public function destroy(Request $request, $hash)
     {
-        //
+        // 用户认证
         $user = Auth::user();
-        if (!$user) {
+        if (!$user)
+        {
             return response()->json([
                 'status' => false,
-                'reason' => 'not login'
+                'reason' => 'no login',
+                'hint' => '请先登录',
             ]);
         }
 
+        // 删除用户记录
         User::destroy($user->id);
 
         return response()->json([
@@ -131,6 +139,70 @@ class UserApiController extends Controller {
         ]);
     }
 
+
+    // 改
+    // 修改用户信息
+    public function update(Request $request, $hash)
+    {
+        // 字段验证
+        $this->validate($request, [
+        ]);
+
+        // 用户认证
+        $user = Auth::user();
+        if (!$user)
+        {
+            return response()->json([
+                'status' => false,
+                'reason' => 'no login',
+                'hint' => '请先登录'
+            ]);
+        }
+
+        // 遍历并更新属性
+        foreach ($request->json()->all() as $attr => $value) {
+            $user->$attr = $value;
+        }
+
+        // 保存更新到数据库
+        $user->save();
+
+        return response()->json([
+            'status' => true,
+        ]);
+    }
+
+
+    // 查
+    // 获取用户信息
+    public function fetch(Request $request, $hash)
+    {
+        // 获取本人信息
+        $user = Auth::user();
+        if ($user && $user->hash == $hash)
+        {
+            return response()->json($user);
+        }
+
+        // 获取其他用户信息
+        $user = User::where(['hash' => $hash])->first();
+        if ($user)
+        {
+            return response()->json([
+                'username' => $user['username'],
+            ]);
+        }
+
+        return response()->json([
+            'status' => false,
+            'reason' => 'user not exists',
+            'hint' => '用户不存在',
+        ]);
+    }
+
+
+    // 列
+    // 搜索用户
     public function index()
     {
         //
@@ -140,37 +212,6 @@ class UserApiController extends Controller {
         }
 
         return response()->json($user);
-    }
-
-    public function update(Request $request)
-    {
-        //
-        $this->validate($request, [
-
-                ]);
-
-        $user = Auth::user();
-        if (!$user) {
-            return response()->json(['reason' => 'didn\'t login']);
-        }
-
-        foreach ($request->all() as $attr => $value) {
-            $user->$attr = $value;
-        }
-
-        $user->save();
-    }
-
-    public function fetch(Request $request, $hash)
-    {
-        // sql doesn't have 'hash' field. so temporarily using 'ID'
-        $user = User::where(['ID' => $hash])->first();
-        if (!$user) {
-            return response()->json(['reason' => 'user not found']);
-        }
-
-        return response()->json($user);
-
     }
 
     public function setLikedMaterial(Request $request)

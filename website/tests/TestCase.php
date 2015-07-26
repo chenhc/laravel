@@ -28,22 +28,65 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
     }
 
 
-    public function postJson($uri, array $data = [], array $headers = [],
-            $with_csrf_token = false)
+    public function requestJson($method, $uri, array $data = [],
+            array $headers = [], $with_csrf_token = false)
     {
+        // 初始化会话，不然CSRF检查会失败
+        $this->withSession([]);
+
+        // 初始化请求头、数据和参数
         $headers['Content-Type'] = 'application/json';
         $server = $this->transformHeadersToServerVars($headers);
         $json = json_encode($data);
         $data = $with_csrf_token ? ['_token' => csrf_token()] : [];
 
-        $this->call('POST', $uri, $data, [], [], $server, $json);
+        $this->call($method, $uri, $data, [], [], $server, $json);
 
         return $this;
     }
 
 
-    public function postJsonCsrf($uri, array $data = [], array $headers = [])
+    // POST请求
+    public function postJson($uri, array $data = [], array $headers = [],
+            $with_csrf_token = false)
+    {
+        return $this->requestJson('POST', $uri, $data, $headers,
+                    $with_csrf_token);
+    }
+
+
+    public function postJsonWithCsrf($uri, array $data = [], array $headers = [])
     {
         return $this->postJson($uri, $data, $headers, true);
+    }
+
+
+    // DELETE请求
+    public function deleteJson($uri, array $data = [], array $headers = [],
+            $with_csrf_token = false)
+    {
+        return $this->requestJson('DELETE', $uri, $data, $headers,
+                    $with_csrf_token);
+    }
+
+
+    public function deleteJsonWithCsrf($uri, array $data = [], array $headers = [])
+    {
+        return $this->deleteJson($uri, $data, $headers, true);
+    }
+
+
+    // PUT请求
+    public function putJson($uri, array $data = [], array $headers = [],
+            $with_csrf_token = false)
+    {
+        return $this->requestJson('PUT', $uri, $data, $headers,
+                    $with_csrf_token);
+    }
+
+
+    public function putJsonWithCsrf($uri, array $data = [], array $headers = [])
+    {
+        return $this->putJson($uri, $data, $headers, true);
     }
 }
