@@ -36,7 +36,7 @@ class IndexCacher(object):
         # 菜谱标签集{tag_set}
         # SADD 'recipe_taste' '甜味' '麻辣味'
         # SADD 'recipe_tags' '云贵菜' '粤菜' '早餐' '山东小吃'
-        # SADD 'recipe_classification' '家常菜谱' '国家' '各地小吃'
+        # SADD 'recipe_classifications' '家常菜谱' '国家' '各地小吃'
         for tag in data:
             self.redisdb.sadd(tag_set, tag)
 
@@ -171,7 +171,7 @@ class IndexCacher(object):
                     item)
 
         # 总纲索引
-        self.build_tag_item_index(tag_set = 'recipe_classification', \
+        self.build_tag_item_index(tag_set = 'recipe_classifications', \
                 tag_item_map = 'classification2category',
                 data = classification2category)
 
