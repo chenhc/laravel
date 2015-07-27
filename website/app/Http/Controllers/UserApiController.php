@@ -17,6 +17,11 @@ use Auth, Redirect, Input;
 
 class UserApiController extends Controller {
 
+    private $json_no_login = [
+        'status' => false,
+        'reason' => 'no login',
+        'hint' => '请先登录',
+    ];
 
     public function __construct(Request $request)
     {
@@ -124,11 +129,7 @@ class UserApiController extends Controller {
         $user = Auth::user();
         if (!$user)
         {
-            return response()->json([
-                'status' => false,
-                'reason' => 'no login',
-                'hint' => '请先登录',
-            ]);
+            return response()->json($this->json_no_login);
         }
 
         // 删除用户记录
@@ -152,11 +153,7 @@ class UserApiController extends Controller {
         $user = Auth::user();
         if (!$user)
         {
-            return response()->json([
-                'status' => false,
-                'reason' => 'no login',
-                'hint' => '请先登录'
-            ]);
+            return response()->json($this->json_no_login);
         }
 
         // 遍历并更新属性
@@ -208,10 +205,13 @@ class UserApiController extends Controller {
         //
         $user = Auth::user();
         if (!$user) {
-            return response()->json(['reason' => 'didn\'t login']);
+            return response()->json($this->json_no_login);
         }
 
-        return response()->json($user);
+        return response()->json([
+            'status' => true,
+            'data' => $user
+            ]);
     }
 
     public function setLikedMaterial(Request $request)
@@ -219,31 +219,27 @@ class UserApiController extends Controller {
         $user = Auth::user();
         if (!$user)
         {
-            return response()->json(['reason' => 'didn\'t login']);
+            return response()->json($this->json_no_login);
         }
         $user_id = $user->id;
-        $material_hash = $request->input('material_hash');
+        $material_hash = $request->json()->get('material_hash');
         $material_id = FoodMaterial::where('hash', $material_hash)->first()->id;
-//        $user_like = new UserLikeMaterial;
-//        $user_like->user_id = $user_id;
-//        $user_like->material_id = $material_id;
-//        $user_like->save();
         UserLikeMaterial::create(['user_id' => $user_id, 'material_id' => $material_id]);
-        return response()->json(['result' => 'success']);
+        return response()->json(['status' => true]);
     }
-    
+
     public function setDislikedMaterial(Request $request)
     {
         $user = Auth::user();
         if (!$user)
         {
-            return response()->json(['reason' => 'didn\'t login']);
+            return response()->json($this->json_no_login);
         }
         $user_id = $user->id;
-        $material_hash = $request->input('material_hash');
+        $material_hash = $request->json()->get('material_hash');
         $material_id = FoodMaterial::where('hash', $material_hash)->first()->id;
         UserLikeMaterial::where('user_id', $user_id)->where('material_id', $material_id)->first()->delete();
-        return response()->json(['result' => 'success']);
+        return response()->json(['status' => true]);
     }
 
     public function fetchLikedMaterials(Request $request)
@@ -251,14 +247,17 @@ class UserApiController extends Controller {
         $user = Auth::user();
         if (!$user)
         {
-            return response()->json(['reason' => 'didn\'t login']);
+            return response()->json($this->json_no_login);
         }
         $user_id = $user->id;
         $pagesize = $request->input('pagesize', 10);
         $page = $request->input('page', 1);
         $offset = $pagesize * ($page - 1);
         $materials = User::find($user_id)->get_liked_materials->slice($offset, $pagesize);
-        return response()->json($materials);
+        return response()->json([
+            'status' => true,
+            'data' =>$materials
+            ]);
     }
 
     public function setLikedRecipe(Request $request)
@@ -266,41 +265,44 @@ class UserApiController extends Controller {
         $user = Auth::user();
         if (!$user)
         {
-            return response()->json(['reason' => 'didn\'t login']);
+            return response()->json($this->json_no_login);
         }
         $user_id = $user->id;
-        $recipe_hash = $request->input('recipe_hash');
+        $recipe_hash = $request->json()->get('recipe_hash');
         $recipe_id = FoodRecipe::where('hash', $recipe_hash)->first()->id;
         UserLikeRecipe::create(['user_id' => $user_id, 'recipe_id' => $recipe_id]);
-        return response()->json(['result' => 'success']);
-    }        
-    
+        return response()->json(['status' => true]);
+    }
+
     public function setDislikedRecipe(Request $request)
     {
         $user = Auth::user();
         if (!$user)
         {
-            return response()->json(['reason' => 'didn\'t login']);
+            return response()->json($this->json_no_login);
         }
         $user_id = $user->id;
-        $recipe_hash = $request->input('recipe_hash');
+        $recipe_hash = $request->json()->get('recipe_hash');
         $recipe_id = FoodRecipe::where('hash', $recipe_hash)->first()->id;
         UserLikeRecipe::where('user_id', $user_id)->where('recipe_id', $recipe_id)->first()->delete();
-        return response()->json(['result' => 'success']);
-    } 
-    
+        return response()->json(['status' => true]);
+    }
+
     public function fetchLikedRecipes(Request $request)
     {
         $user = Auth::user();
         if (!$user)
         {
-            return response()->json(['reason' => 'didn\'t login']);
+            return response()->json($this->json_no_login);
         }
         $user_id = $user->id;
         $pagesize = $request->input('pagesize', 10);
         $page = $request->input('page', 1);
         $offset = $pagesize * ($page - 1);
         $recipes = User::find($user_id)->get_liked_recipes->slice($offset, $pagesize);
-        return response()->json($recipes);
+        return response()->json([
+            'status' => true,
+            'data' => $recipes
+            ]);
     }
 }

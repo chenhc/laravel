@@ -80,7 +80,7 @@ class UserApiTest extends TestCase
                 'status' => true,
             ])
             ->seeInDatabase('user', [
-                'email' => $user->email,
+               'email' => $user->email,
             ]);
     }
 
@@ -141,6 +141,61 @@ class UserApiTest extends TestCase
                 'status' => false,
             ]);
     }
+
+    // 测试用户设置喜欢／不喜欢的食材
+    public function testLikedAndDislikedMaterial()
+    {
+        $this->actingAs($this->test_user)
+            ->postJsonWithCsrf('/api/user/like/food_material', [
+                'material_hash' => 'f37b2af64d01f6c18d2f319e649c81b8',
+            ])->seeJson([
+                'status' => true,
+            ])->seeInDatabase('user_like_material', [
+                'material_id' => 370,
+            ]);
+
+        $this->actingAs($this->test_user)
+            ->get('/api/user/like/food_material?page=1')
+            ->seeJson([
+                'status' => true,
+            ]);
+        $this->actingAs($this->test_user)
+            ->deleteJsonWithCsrf('/api/user/like/food_material', [
+                'material_hash' => 'f37b2af64d01f6c18d2f319e649c81b8',
+            ])->seeJson([
+                'status' => true,
+            ])->notSeeInDatabase('user_like_material', [
+                'material_id' => 370,
+            ]);
+    }
+
+    // 测试用户设置喜欢／不喜欢的
+    public function testLikedAndDislikedRecipe()
+    {
+        $this->actingAs($this->test_user)
+            ->postJsonWithCsrf('/api/user/like/food_recipe', [
+                'recipe_hash' => 'fd01860748d35f4dea3a2bfd997c035a',
+            ])->seeJson([
+                'status' => true,
+            ])->seeInDatabase('user_like_recipe', [
+                'recipe_id' => 56,
+            ]);
+
+        $this->actingAs($this->test_user)
+            ->get('/api/user/like/food_recipe?page=1')
+            ->seeJson([
+                'status' => true,
+            ]);
+        $this->actingAs($this->test_user)
+            ->deleteJsonWithCsrf('/api/user/like/food_recipe', [
+                'recipe_hash' => 'fd01860748d35f4dea3a2bfd997c035a',
+            ])->seeJson([
+                'status' => true,
+            ])->notSeeInDatabase('user_like_recipe', [
+                'recipe_id' => 56,
+            ]);
+    }
+
 
 
     public function tearDown()
