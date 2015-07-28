@@ -46,7 +46,7 @@ class FoodMaterialTest extends TestCase
             'name' => $material->name,
         ]);
 
-        FoodMaterial::where('name', $material->name)->first()->delete();
+        FoodMaterial::where('hash', $material->hash)->first()->delete();
     }
 
     public function testFetch()
@@ -88,6 +88,8 @@ class FoodMaterialTest extends TestCase
         ])->seeJson([
             'status' => true,
         ]);
+
+        FoodMaterial::destroy($material->id);
     }
 
     public function testIndex()

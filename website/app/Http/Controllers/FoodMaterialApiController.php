@@ -36,7 +36,7 @@ class FoodMaterialApiController extends Controller {
         if (!$material) {
             return response()->json([
                 'status' => false,
-                'reason' => 'item not exist'
+                'reason' => 'item not exists'
             ]);
         }
 
@@ -53,7 +53,7 @@ class FoodMaterialApiController extends Controller {
         if (!$material) {
             return response()->json([
                 'status' => false,
-                'reason' => 'item not exist'
+                'reason' => 'item not exists'
             ]);
         }
 
@@ -73,7 +73,7 @@ class FoodMaterialApiController extends Controller {
         if (!$material) {
             return response()->json([
                 'status' => false,
-                'reason' => 'item not exist'
+                'reason' => 'item not exists'
             ]);
         }
 

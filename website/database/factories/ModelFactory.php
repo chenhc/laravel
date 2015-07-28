@@ -34,8 +34,20 @@ $factory->define(App\FoodMaterial::class, function (Faker\Generator $faker)
     ];
 });
 
-$factory->define(App\FoodRecipe::class, function (Faker\Generator $facker)
+$factory->define(App\FoodRecipe::class, function (Faker\Generator $faker)
 {
     return [
+        "tags" => "汤粥,美容",
+        "taste" => "甜味",
+        "accessories" => "冰糖,纯净水",
+        "setup_time" => "数小时",
+        "difficulty" => "初级入门",
+        "cook_time" => "<60分钟",
+        "name" => $faker->name,
+        "amount" => "2人份",
+        "primaries" => "燕窝",
+        "method" => "炖",
+        "procedure" => "",
+        'hash' => str_random(16),
     ];
 });
