@@ -1,0 +1,75 @@
+<div class="hxy-content">
+    <ol class="breadcrumb">
+      <li><a href="#">首页</a></li>
+      <li><a href="#">美食</a></li>
+      <li><a href="#">食材百科</a></li>
+      <li><a href="#">蔬果类</a></li>
+      <li><a href="#">蔬菜</a></li>
+      <li class="active">胡萝卜</li>
+    </ol>
+    <div class="hxy-intro">
+        <img ng-src="/images/{{ material.image_hash }}.jpg" alt="">
+        <div class="hxy-constitution">
+            <a href="#" ng-repeat="item in material.suit_ctcms" class="hxy-suit_ctcms"><span class="label label-success">{{ item }}</span></a>
+            <a href="#" ng-repeat="item in material.avoid_ctcms" class="hxy-avoid_ctcms"><span class="label label-danger">{{ item }}</span></a>
+        </div>
+        <div class="hxy-label">
+            <h4 class="title">{{ material.name }}</h4>
+            <ul>
+                <li>【别名】：{{ material.alias }}</li>
+                <li>【食量建议】：{{ material.amount_rec}}</li>
+                <li>【适宜人群】：{{ material.suit_crowds }}</li>
+                <li class="hxy-avoid">【禁忌人群】：{{ material.avoid_crowds }}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="hxy-fooddetail">
+        <div class="hxy-title">{{ material.name }}百科知识</div>
+        <div class="hxy-detail hxy-brief">
+            <h3>{{ material.name }}介绍</h3>
+            <hr>
+            <p>
+                {{ material.brief }}
+            </p>
+        </div>
+        <div class="hxy-detail hxy-nutrient">
+            <h3>{{ material.name }}的营养价值</h3>
+            <hr>
+            <ul>
+                <li ng-repeat="item in material.nutrient">
+                    {{ item }}
+                </li>
+            </ul>
+        </div>
+        <div class="hxy-detail hxy-efficacy">
+            <h3>{{ material.name }}的功效</h3>
+            <hr>
+            <ul>
+                <li ng-repeat="item in material.efficacy">
+                    {{ item }}
+                </li>
+            </ul>
+        </div>
+        <div class="hxy-detail hxy-taboos">
+            <h3>{{ material.name }}的食用禁忌</h3>
+            <hr>
+            <ul>
+                <li ng-repeat="item in material.taboos">
+                    {{ item }}
+                </li>
+            </ul>
+        </div>
+        <div class="hxy-detail hxy-mix">
+            <h3>{{ material.name }}的搭配宜忌</h3>
+            <hr>
+            <ul>
+                <li ng-repeat="item in material.suit_mix" class="hxy-suit_mix">
+                    {{ item }}
+                </li>
+                <li ng-repeat="item in material.avoid_mix" class="hxy-avoid_mix">
+                    {{ item }}
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

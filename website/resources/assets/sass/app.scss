@@ -7,152 +7,276 @@ $font-arial: "Arial";
 
 $bgColor: #66C858;
 $borderColor: #19AD8C;
+
 body {
-	font-family: "Helvetica Neue",Helvetica,"Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+    font-family: "Helvetica Neue",Helvetica,"Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
 }
-a{
+
+a {
   text-decoration: none;
-} 
+}
+
 body {
-	font-size: 16px;
+    font-size: 16px;
 }
 
 .hxy-nav {
-	  border: 1px solid;
-	  border-top: 7px solid $borderColor;
-	  padding: 15px 20px 0px;
-	  border-bottom: 7px solid $borderColor;
-	  text-align: center;
+    border: 1px solid;
+    border-top: 7px solid $borderColor;
+    padding: 15px 20px 0px;
+    border-bottom: 7px solid $borderColor;
+    text-align: center;
 
-  .hxy-logo {
-	  font-size: 33px;
-	  margin-top: 10px;
-	  color: #19AD8C;
-	}
+    .hxy-logo {
+        font-size: 33px;
+        margin-top: 10px;
+        color: #19AD8C;
+    }
 
-	ul.hxy-ul {
-	  position: absolute;
-	  top: 10px;
-	  right: 20px;
-	  li {
-	  	display: inline-block;
-	  }
-	}
+    ul.hxy-ul {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        li {
+            display: inline-block;
+        }
+    }
 
-	.hxy-login,.hxy-register {
-		display: inline-block;
-	}
+    .hxy-login,.hxy-register {
+        display: inline-block;
+    }
 
-	.hxy-search {
-		float: right;
-		position: relative;
-	}
+    .hxy-search {
+        float: right;
+        position: relative;
 
-	span.glyphicon.glyphicon-search {
-		position: absolute;
-		right: 4px;
-		top: 5px;
-	}
+        input{
+            width: 90px;
+            padding-left: 10px;
+            padding-top: 3px;
+            border: 0px;
+            border-left: 1px solid rgb(234, 234, 234);
+            transition:0.8s cubic-bezier(.84,-0.37,.79,1.41);
+        }
+
+        input:hover::-webkit-input-placeholder{
+            color: #19AD8C;
+        }
+
+        input:focus{
+            width: 150px;
+        }
+    }
+
+    span.glyphicon.glyphicon-search {
+        position: absolute;
+        right: 4px;
+        top: 5px;
+    }
 }
+
 .hxy-content {
-	.breadcrumb {
-		font-size: 13px ;
-	    background: #fff ;
-	    margin: 5px 10px ;
-	}
-	.hxy-subnav {
-		margin: auto;
-		width: 60%;
-		min-width: 400px;
-		.hxy-subcontent {
- 			border: 1px solid #DDDDDD;
-			min-height: 100px;
-			border-top: none;
-		}
-		.tab-content {
-			border: 1px solid #ddd;
-			border-top: none;
-			text-align: center;
-			padding: 40px;
-			ul {
-				li {
-					display: inline-block;
-				}
-				a {
-					display: inline-block;
-					padding: 5px 15px;
-					margin: 0 10px;
-					border: 1px solid;
-				}
-			}
-		}
-	}
-	.hxy-recommand {
-		border: 1px solid #DDDDDD;
-		width: 60%;
-		min-width: 400px;
-		min-height: 200px;
-		margin: 50px auto;
-	}
-	h2 {
-		font-size: 25px;
-	}
-	.hxy-maincontent {
-		text-align: center;
-		width: 80%;
-		margin: 0 auto;
-		padding: 10px;
-		min-height: 300px;
-		.hxy-row {
-			margin: 0 auto;
-		}
-		.hxy-thumbnail {
-			border: none;
-			width: 210px;
-			border: 2px solid #fff;
-			&:hover {
-				border: 2px solid #33C1FF;
-				cursor: pointer;
-			}
-		}
-		.hxy-caption {
-			border: 1px solid #dddddd;
-		}
-		.hxy-brief {
-			white-space: nowrap; 
-			width: 190px;
-			text-align: left;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			margin: 10px auto;
-			font-size: 13px;
-		}
-	}
-	nav {
-		text-align: center;
-	}
+    .breadcrumb {
+        font-size: 13px;
+        background: #fff;
+        margin: 5px 10px;
+    }
+
+    .hxy-subnav {
+        margin: auto;
+        width: 60%;
+        min-width: 400px;
+
+        .hxy-subcontent {
+            border: 1px solid #DDDDDD;
+            min-height: 100px;
+            border-top: none;
+            padding: 70px 0;
+            #main_register{
+                margin: auto;
+                width: 271px;
+                .user{
+                    margin-bottom: 26px;
+                    position: relative;
+                    input{
+                        width: 250px;
+                        margin-left: 5px;
+                        display: inline-block;
+                        vertical-align: middle;
+                    }
+                    .required{
+                        position: absolute;
+                        left: -8px;
+                        top: 2px;
+                        color: red;
+                    }
+                    .tip{
+                        position: absolute;
+                        top: 39px;
+                        left: 30px;
+                        color: red;
+                    }
+                }
+                .password{
+                    position: relative;
+                    margin-bottom: 26px;
+                    input{
+                        width: 250px;
+                        display: inline-block;
+                        margin-left: 5px;
+                        vertical-align: middle;
+                    }
+                    .required{
+                        position: absolute;
+                        left: -8px;
+                        top: 2px;
+                        color: red;
+                    }
+                    .tip{
+                        position: absolute;
+                        top: 39px;
+                        left: 30px;
+                        color: red;
+                    }
+                }
+                .red{
+                    input.ng-invalid.ng-touched{
+                        border-color: red;
+                    }
+                }
+                .redEnsured{
+                    input.ng-touched{
+                        border-color: red;
+                    }
+                }
+                .redUntouched{
+                    input.ng-untouched{
+                        border-color: red;
+                    }
+                }
+                #check{
+                    margin-bottom: 26px;
+                    width: 543px;
+                    input{
+                        width: 150px;
+                        display: inline-block;
+                        margin-left: 21px;
+                        vertical-align: middle;
+                    }
+                    img{
+                        display: inline-block;
+                        height: 32px;
+                        width: 100px;
+                        background-color: black;
+                        vertical-align: middle;
+                    }
+                }
+                #button{
+                    margin-bottom: 26px;
+                    text-align: center;
+                    float: right;
+                }
+            }
+        }
+
+        .tab-content {
+            border: 1px solid #ddd;
+            border-top: none;
+            text-align: center;
+            padding: 40px;
+
+            ul {
+                li {
+                    display: inline-block;
+                }
+                a {
+                    display: inline-block;
+                    padding: 5px 15px;
+                    margin: 0 10px;
+                    border: 1px solid;
+                }
+            }
+        }
+    }
+
+    .hxy-recommand {
+        border: 1px solid #DDDDDD;
+        width: 60%;
+        min-width: 400px;
+        min-height: 200px;
+        margin: 50px auto;
+    }
+
+    h2 {
+        font-size: 25px;
+    }
+
+    .hxy-maincontent {
+        text-align: center;
+        width: 80%;
+        margin: 0 auto;
+        padding: 10px;
+        min-height: 300px;
+
+        .hxy-row {
+            margin: 0 auto;
+        }
+
+        .hxy-thumbnail {
+            border: none;
+            width: 210px;
+            border: 2px solid #fff;
+            &:hover {
+                border: 2px solid #33C1FF;
+                cursor: pointer;
+            }
+        }
+
+        .hxy-caption {
+            border: 1px solid #dddddd;
+        }
+
+        .hxy-brief {
+            white-space: nowrap;
+            width: 190px;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 10px auto;
+            font-size: 13px;
+        }
+    }
+
+    nav {
+        text-align: center;
+    }
 }
+
 .hxy-intro {
-	width: 80%;
-	margin: 30px auto;
-	border: 2px solid #ddd;
-	img {
-		width: 18%;
-		height: 210px;
-	}
+    width: 80%;
+    margin: 30px auto;
+    border: 2px solid #ddd;
+
+    img {
+        width: 18%;
+        height: 210px;
+    }
 }
+
 .hxy-label {
   display: inline-block;
   vertical-align: top;
   width: 50%;
   ul {
-  	line-height: 2;
+    line-height: 2;
   }
 }
+
 h4.title {
   font-size: 30px;
   margin: 16px;
 }
+
 .hxy-constitution {
   display: inline-block;
   vertical-align: top;
@@ -160,10 +284,11 @@ h4.title {
   margin: 10px 20px;
   width: 20%;
   span {
-  	display: inline-block;
-  	margin: 8px 5px;
+    display: inline-block;
+    margin: 8px 5px;
   }
 }
+
 .hxy-fooddetail {
   border: 1px solid #ddd;
   min-height: 300px;
@@ -171,6 +296,7 @@ h4.title {
   margin: 20px auto;
   position:relative;
 }
+
 .hxy-title {
   border: 1px solid;
   padding: 10px 20px;
@@ -182,16 +308,19 @@ h4.title {
   background-color: $borderColor;
   font-size: 20px;
 }
+
 .hxy-detail {
-	margin: 35px;
-	h3 {
-		font-size: 18px;
-		color: #CC0000;
-	}
-	p,ul{
-		font-size: 16px;
- 		line-height: 1.5;
+    margin: 35px;
+
+    h3 {
+        font-size: 18px;
+        color: #CC0000;
+    }
+
+    p, ul {
+        font-size: 16px;
+        line-height: 1.5;
         width: 94%;
         margin: 0 auto;
-	}
+    }
 }

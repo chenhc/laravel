@@ -1,16 +1,16 @@
-<!doctype html>
-<html ng-app="myApp">
+<!DOCTYPE html>
+<html ng-app="iLifeApp">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>爱生活</title>
     <meta content="" name="Keywords">
     <meta content="" name="Description">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>爱生活</title>
     <link rel="stylesheet" href="/libs/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/css/app.css">
 </head>
-<body ng-controller="TextController">
+<body>
     <div class="hxy-nav">
         <div class="hxy-logo">爱生活</div>
         <ul class="hxy-ul">
@@ -18,7 +18,7 @@
             <li><a class="hxy-register" href="register.html">注册</a></li>
         </ul>
         <div class="hxy-search">
-            <input type="text"></input><span class="glyphicon glyphicon-search"></span>
+            <input type="text" placeholder="搜索" /><span class="glyphicon glyphicon-search"></span>
         </div>
         <div class="nav nav-pills">
             <li role="presentation" class="dropdown">
@@ -39,145 +39,13 @@
             <li role="presentation"><a href="#">论坛</a></li>
         </div>
     </div>
-    <div class="hxy-content">
-        <ol class="breadcrumb">
-          <li><a href="#">首页</a></li>
-          <li><a href="#">美食</a></li>
-          <li><a href="#">食材百科</a></li>
-          <li><a href="#">蔬果类</a></li>
-          <li><a href="#">蔬菜</a></li>
-          <li class="active">胡萝卜</li>
-        </ol>
-        <div class="hxy-intro">
-            <img ng-src="/images/{{ data.image_hash }}.jpg" alt="">
-            <div class="hxy-constitution">
-                <a href="#" ng-repeat="item in data.suit_ctcms" class="hxy-suit_ctcms"><span class="label label-success">{{ item }}</span></a>
-                <a href="#" ng-repeat="item in data.avoid_ctcms" class="hxy-avoid_ctcms"><span class="label label-danger">{{ item }}</span></a>
-            </div>
-            <div class="hxy-label">
-                <h4 class="title">{{ data.name }}</h4>
-                <ul>
-                    <li>【别名】：{{ data.alias }}</li>
-                    <li>【食量建议】：{{ data.amount_rec}}</li>
-                    <li>【适宜人群】：{{ data.suit_crowds }}</li>
-                    <li class="hxy-avoid">【禁忌人群】：{{ data.avoid_crowds }}</li>
-                </ul>
-            </div>
-        </div>
-        <div class="hxy-fooddetail">
-            <div class="hxy-title">{{ data.name }}百科知识</div>
-            <div class="hxy-detail hxy-brief">
-                <h3>{{ data.name }}介绍</h3>
-                <hr>
-                <p>
-                    {{ data.brief }}
-                </p>
-            </div>
-            <div class="hxy-detail hxy-nutrient">
-                <h3>{{ data.name }}的营养价值</h3>
-                <hr>
-                <ul>
-                    <li ng-repeat="item in data.nutrient">
-                        {{ item }}
-                    </li>
-                </ul>
-            </div>
-            <div class="hxy-detail hxy-efficacy">
-                <h3>{{ data.name }}的功效</h3>
-                <hr>
-                <ul>
-                    <li ng-repeat="item in data.efficacy">
-                        {{ item }}
-                    </li>
-                </ul>
-            </div>
-            <div class="hxy-detail hxy-taboos">
-                <h3>{{ data.name }}的食用禁忌</h3>
-                <hr>
-                <ul>
-                    <li ng-repeat="item in data.taboos">
-                        {{ item }}
-                    </li>
-                </ul>
-            </div>
-            <div class="hxy-detail hxy-mix">
-                <h3>{{ data.name }}的搭配宜忌</h3>
-                <hr>
-                <ul>
-                    <li ng-repeat="item in data.suit_mix" class="hxy-suit_mix">
-                        {{ item }}
-                    </li>
-                    <li ng-repeat="item in data.avoid_mix" class="hxy-avoid_mix">
-                        {{ item }}
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <script type="text/javascript" src="/libs/jquery/dist/jquery.min.js"></script>
+    <div ng-view></div>
     <script type="text/javascript" src="/libs/angular/angular.min.js"></script>
     <script type="text/javascript" src="/libs/angular-route/angular-route.min.js"></script>
+    <script type="text/javascript" src="/libs/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/app.js"></script>
     <script>
-        $(".dropdown-toggle").dropdown();
-
-        url = "/api/food_material/2ea27146d96ab8474ad59a02baacc4ce";
-        var myAppModule = angular.module('myApp', []);
-        myAppModule.controller('TextController',
-            function($scope, $http){
-                $http.get(url).success(function(data){
-                    data = solveData(data);
-                    console.log(data);
-                    $scope.data = data;
-                })
-            })
-
-
-        //solve data
-        function solveData(data){
-
-            var suit_ctcms = ( data.suit_ctcms == null ? null : data.suit_ctcms.split(','));
-            var avoid_ctcms = ( data.avoid_ctcms == null ? null : data.avoid_ctcms.split(','));
-            var nutrient = ( data.nutrient == null ? null : data.nutrient.split("\n"));
-            var efficacy = ( data.efficacy == null ? null : data.efficacy.split("\n"));
-            var taboos = ( data.taboos == null ? null: data.taboos.split("\n"));
-            var suit_mix = ( data.suit_mix == null ? null : data.suit_mix.split(","));
-            var avoid_mix = ( data.avoid_mix == null ? null : data.avoid_mix.split(","));
-            var tips = ( data.tips == null ? null : data.tips.split("\n"));
-
-
-            data.suit_ctcms = suit_ctcms;
-            data.avoid_ctcms = avoid_ctcms;
-            data.nutrient = nutrient;
-            data.efficacy = efficacy;
-            data.taboos = taboos;
-            data.suit_mix = suit_mix;
-            data.avoid_mix = avoid_mix;
-            data.tips = tips;
-            //data solve end
-
-            //data check
-            for(item in data){
-                if(data[item] == null || data[item] == ""){
-                    data[item] = '无';
-                    $('.hxy-'+item).hide();
-                }
-            }
-
-            if(data.suit_ctcms == '无'){
-                $('.hxy-suit_ctcms').hide();
-            }else{
-                $('.hxy-suit_ctcms').show();
-            }
-
-            if(data.avoid_ctcms == '无'){
-                $('.hxy-avoid_ctcms').hide();
-            }else{
-                $('.hxy-avoid_ctcms').show();
-            }
-            return data;
-        }
-        //data solve end
     </script>
 </body>
 </html>
