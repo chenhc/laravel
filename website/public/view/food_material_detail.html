@@ -3,9 +3,7 @@
       <li><a href="#">首页</a></li>
       <li><a href="#">美食</a></li>
       <li><a href="#">食材百科</a></li>
-      <li><a href="#">蔬果类</a></li>
-      <li><a href="#">蔬菜</a></li>
-      <li class="active">胡萝卜</li>
+      <li ng-show="material.name" class="active">胡萝卜</li>
     </ol>
     <div class="hxy-intro">
         <img ng-src="/images/{{ material.image_hash }}.jpg" alt="">

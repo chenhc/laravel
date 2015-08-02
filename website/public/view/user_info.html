@@ -1,0 +1,116 @@
+<div class="zf-detail">
+    <div id="detail-title">账号中心</div>
+    <div id="detail-main">
+        <div class="detail-nav">
+            <div class="hxy-subnav">
+                <ul class="nav nav-tabs">
+                    <li role="presentation" class="active"><a href="#/user">个人资料</a></li>
+                    <li role="presentation"><a href="#/user">修改头像</a></li>
+                    <li role="presentation"><a href="#">修改密码</a></li>
+                    <li role="presentation"><a href="#">邮箱设置</a></li>
+                    <li role="presentation"><a href="#">手机设置</a></li>
+                    <li role="presentation"><a href="#">邀请好友</a></li>
+                    <li role="presentation"><a href="#">账号绑定</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="detail-content" ng-controller="UserController">
+            <form>
+                <div class="piece">
+                    <div class="piece-left">用户名：</div>
+                    <div class="piece-right">
+                        <input value="{{ user.username }}" type="text" class="form-control" placeholder="用户名" required>
+                    </div>
+                </div>
+                <div class="piece">
+                    <div class="piece-left">昵称：</div>
+                    <div class="piece-right">
+                        <input value="{{ user.nickname }}"type="text" class="form-control" placeholder="昵称" required>
+                    </div>
+                </div>
+                <div class="piece">
+                    <div class="piece-left">真实姓名：</div>
+                    <div class="piece-right">
+                        <input value="{{ user.realname }}"type="text" class="form-control" placeholder="真实姓名" required>
+                    </div>
+                </div>
+                <div class="piece">
+                    <div class="piece-left">性别：</div>
+                    <div class="piece-right">
+                        <select class="form-control other-piece">
+                            <option>男</option>
+                            <option>女</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="piece">
+                    <div class="piece-left">生日：</div>
+                    <div class="piece-right">
+                        <div class="input-group date form_datetime col-md-5" data-date="1979-09-16">
+                            <input class="form-control" size="16" type="text" value="" readonly>
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                         </div>
+                    </div>
+                </div>
+                <div class="piece">
+                    <div class="piece-left">家乡：</div>
+                    <div class="piece-right">
+                        <select class="form-control other-piece"></select>
+                        <select class="form-control other-piece"></select>
+                    </div>
+                </div>
+                <div class="piece">
+                    <div class="piece-left">地区：</div>
+                    <div class="piece-right">
+                        <select class="form-control other-piece"></select>
+                        <select class="form-control other-piece"></select>
+                    </div>
+                </div>
+                <div class="piece">
+                    <div class="piece-left">职业：</div>
+                    <div class="piece-right">
+                        <select class="form-control other-piece"></select>
+                    </div>
+                </div>
+                <div class="piece">
+                    <div class="piece-left">签名：</div>
+                    <div class="piece-right">
+                        <div class="piece-right-right-position">
+                            <textarea class="form-control other-piece-textarea" ng-model="textarea"></textarea>
+                            <div class="piece-right-right">还可以输入{{limitation - textarea.length}}字</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="piece">
+                    <div class="piece-left">验证码：</div>
+                    <div class="piece-right">
+                        <input type="text" class="form-control other-piece" placeholder="验证码">
+                        <div class="other-piece-img"><img src="#"></div>
+                        <div class="other-piece">
+                            <a href="#">点击换一换</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="piece">
+                    <div class="piece-left">邮箱：</div>
+                    <div class="piece-right">
+                        <input value="{{ user.email}}" type="email" class="form-control" placeholder="邮箱" required>
+                    </div>
+                </div>
+                <div class="piece">
+                    <div class="piece-left"></div>
+                    <div class="piece-right">
+                        <input type="button" value="发送激活邮箱" class="btn btn-info">
+                    </div>
+                </div>
+                <div class="piece">
+                    <div class="piece-left"></div>
+                    <div class="piece-right">
+                        <input type="submit" value="提交" class="btn btn-info">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

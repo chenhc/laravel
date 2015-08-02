@@ -49,16 +49,141 @@ angular.module('iLifeApp', ['ngRoute'])
             $('.hxy-avoid_ctcms').show();
         }
 
-        $scope.material = data;
+        $scope.material = data.data;
     }
 
     $scope.fetchMaterial($routeParams.hash, $scope.renderMaterial);
 })
 
+.controller('UserController', function($scope, $http) {
+
+    $scope.renderBirthday = function() {
+        $('.form_datetime').datetimepicker({
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            forceParse: 0,
+            showMeridian: 1,
+            format: "yyyy-mm-dd",
+            minView: 2,
+            endDate: $scope.user.birthday
+        });
+    }
+
+    $scope.fetchSelf = function() {
+        $http.get('/api/user')
+        .success(function(data, status, headers, config) {
+            if (data.status) {
+                $scope.user = data.data;
+                $scope.renderBirthday();
+            }
+        })
+    }
+
+
+    // 个性签名
+    $scope.STATUS_LEN_LIMIT = 150;  // 长度限制150
+    $scope.$watch('textarea', function(newStatus, oldStatus) {
+        if(newStatus && (newStatus != oldStatus)) {
+            if (newStatus.length >= $scope.limitation) {
+                $scope.textarea = newStatus.substr(0, $scope.limitation);   // 截短
+            }
+        }
+    });
+
+    // 请求获取个人信息
+    $scope.fetchSelf();
+})
+
+// 登录控制器
+.controller('LoginController', function($scope, $http, $location) {
+
+    $scope.submit = function(form) {
+        console.log(form.account);
+        if(form.account.$valid && form.password.$valid) {
+            $http.post('/api/user/login', {
+                'account':$scope.account,
+                'password':$scope.password
+            }).success(function(data, status, headers, config) {
+                if (data.status) {
+                     $location.path('/user');
+                }
+            }).error(function(data, status, headers, config) {
+                console.log('post error');
+            });
+        }
+    }
+})
+
+// 注册控制器
+.controller('RegisterController', function($scope, $http, $location) {
+
+    // 重置功能
+    $scope.reset = function(form) {
+        if(form) {
+            form.$setPristine();
+            form.$setUntouched();
+        }
+
+        $scope.name = '';
+        $scope.email = '';
+        $scope.password = '';
+        $scope.ensured = '';
+    }
+
+    // 提交注册功能
+    $scope.submit = function(form) {
+        // 判断可以提交
+        if (form.name.$valid &&
+            form.email.$valid &&
+            form.password.$valid &&
+            form.ensured.$valid &&
+            $scope.password == $scope.ensured
+        ) {
+            $http.post('/api/user', {
+                'username': $scope.name,
+                'email': $scope.email,
+                'password': $scope.password
+            }).success(function(data, status, headers, config) {
+                if (data.status) {
+                    $location.path('/user');
+                }
+            }).error(function(data, status, headers, config) {
+                console.log(data);
+                console.log('post error');
+            });
+        }
+    }
+})
+
 .config(function($routeProvider, $locationProvider) {
     $routeProvider
+
+    // 用户注册
+    .when('/user/register', {
+        templateUrl: 'view/register.html',
+        controller: 'RegisterController'
+    })
+
+    // 用户登录
+    .when('/user/login', {
+        templateUrl: 'view/login.html',
+        controller: 'LoginController'
+    })
+
+    // 用户信息
+    .when('/user', {
+        templateUrl: 'view/user_info.html',
+        controller: 'UserController',
+    })
+
+    // 食材详情
     .when('/food_material_detail/:hash', {
         templateUrl: 'view/food_material_detail.html',
         controller: 'FoodMaterialController'
     })
+
+    .otherwise({redirectTo: '/'})
 })
