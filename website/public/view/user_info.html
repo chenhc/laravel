@@ -1,3 +1,4 @@
+<div ng-include="'view/nav.html'"></div>
 <div class="zf-detail">
     <div id="detail-title">账号中心</div>
     <div id="detail-main">
@@ -78,7 +79,7 @@
                     <div class="piece-right">
                         <div class="piece-right-right-position">
                             <textarea class="form-control other-piece-textarea" ng-model="textarea"></textarea>
-                            <div class="piece-right-right">还可以输入{{limitation - textarea.length}}字</div>
+                            <div class="piece-right-right">还可以输入{{STATUS_LEN_LIMIT - textarea.length}}字</div>
                         </div>
                     </div>
                 </div>
