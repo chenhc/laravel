@@ -135,6 +135,7 @@ class FoodMaterialCleaner(object):
                 'choose', 'store', 'tips']
         field_clause = format_field_clause(fields)
 
+        cursor = self.mysqldb.cursor()
         for name, material in self.materials.iteritems():
             logging.info('importing name=%s' % (name,))
 
@@ -193,3 +194,4 @@ class FoodMaterialCleaner(object):
 
     def process(self):
         self.process_fmcc()
+        #self.process_fm()
