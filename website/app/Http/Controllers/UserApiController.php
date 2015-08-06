@@ -91,7 +91,7 @@ class UserApiController extends Controller {
         ]);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         $request->session()->flush();
 
@@ -99,7 +99,6 @@ class UserApiController extends Controller {
         return response()->json([
             'status' => true,
         ]);
-
     }
 
 

@@ -95,6 +95,16 @@ class UserApiTest extends TestCase
             ]);
     }
 
+    // 测试用户退出
+    public function testLogout()
+    {
+        $this->actingAs($this->test_user)
+            ->get('/api/user/logout')
+            ->seeJson([
+                'status' => true
+            ]);
+    }
+
 
     // 测试用户名登陆
     public function testLoginWithUserName()
