@@ -24,7 +24,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @var array
      */
-    protected $fillable = ['name', 'email', 'password'];
+    protected $fillable = ['username', 'email', 'password'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -34,4 +34,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     protected $hidden = ['id', 'password', 'remember_token', 'created_at', 'updated_at'];
 
     protected $guarded = array('id');
+
+    public function get_liked_materials() 
+    {
+        return $this->belongsToMany('App\FoodMaterial', 'user_like_material', 'user_id', 'material_id');
+    }
+
+    public function get_liked_recipes()
+    {
+        return $this->belongsToMany('App\FoodRecipe', 'user_like_recipe', 'user_id', 'recipe_id');
+    }
 }

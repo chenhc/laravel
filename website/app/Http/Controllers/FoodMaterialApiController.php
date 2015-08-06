@@ -9,17 +9,24 @@ use Illuminate\Http\Request;
 
 class FoodMaterialApiController extends Controller {
 
+    protected function create(array $data)
+    {
+        FoodMaterial::create([
+            'name' => $data['name'],
+            'hash' => $data['hash'],
+            'category' => $data['category'],
+        ]);
+    }
     public function store(Request $request)
     {
         //
         $this->validate($request, [
-            'name' => 'required|unique|max:255',
-            'hash' => 'required|unique|max:32',
-            'category' => 'required|max:255',
         ]);
 
-        $material = new FoodMaterial($request->all());
-        $material->save();
+        $material = $this->create($request->json()->all());
+        return response()->json([
+            'status' => true,
+        ]);
     }
 
     public function destroy(Request $request, $hash)
@@ -27,11 +34,16 @@ class FoodMaterialApiController extends Controller {
         //
         $material = FoodMaterial::where(['hash' => $hash])->first();
         if (!$material) {
-            return response()->json(['reason' => 'item not found']);
+            return response()->json([
+                'status' => false,
+                'reason' => 'item not exists'
+            ]);
         }
 
         FoodMaterial::destroy($material->id);
-        return response()->json(true);
+        return response()->json([
+            'status' => true
+        ]);
     }
 
     public function fetch(Request $request, $hash)
@@ -39,31 +51,41 @@ class FoodMaterialApiController extends Controller {
         //
         $material = FoodMaterial::where(['hash' => $hash])->first();
         if (!$material) {
-            return response()->json(['reason' => 'item not found']);
+            return response()->json([
+                'status' => false,
+                'reason' => 'item not exists'
+            ]);
         }
 
-        return response()->json($material);
+        return response()->json([
+            'status' => true,
+            'data' => $material
+        ]);
     }
 
     public function update(Request $request, $hash)
     {
         //
         $this->validate($request, [
-            'name' => 'required|unique|max:255',
-            'hash' => 'required|unique|max:32',
-            'category' => 'required|max:255',
         ]);
 
         $material = FoodMaterial::where(['hash' => $hash])->first();
         if (!$material) {
-            return response()->json(['reason' => 'item not found']);
+            return response()->json([
+                'status' => false,
+                'reason' => 'item not exists'
+            ]);
         }
 
-        foreach ($request->all() as $attr => $value) {
+        foreach ($request->json()->all() as $attr => $value) {
             $material->$attr = $value;
         }
 
         $material->save();
+
+        return response()->json([
+            'status' => true,
+        ]);
     }
 
     public function index(Request $request)
@@ -74,7 +96,10 @@ class FoodMaterialApiController extends Controller {
         $offset = $pagesize * ($page - 1);
         $materials = FoodMaterial::where(['category' => $category])
             ->skip($offset)->take($pagesize)->get();
-        return response()->json($materials);
+        return response()->json([
+            'status' => true,
+            'data' => $materials,
+        ]);
     }
 
 }

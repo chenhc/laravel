@@ -18,8 +18,21 @@ api_route('api/food_material', 'FoodMaterialApiController');
 api_route('api/food_recipe', 'FoodRecipeApiController');
 api_route('api/user', 'UserApiController');
 
-Route::post('/api/login', 'UserApiController@login');
-Route::get('/api/logout', 'UserApiController@logout');
+Route::post('/api/user/login', 'UserApiController@login');
+Route::get('/api/user/logout', 'UserApiController@logout');
+
+Route::group(['prefix' => '/api/user/like/food_material'], function(){
+    Route::post('/', 'UserApiController@setLikedMaterial');
+    Route::delete('/', 'UserApiController@setDislikedMaterial');
+    Route::get('/', 'UserApiController@fetchLikedMaterials');
+    
+});
+
+Route::group(['prefix' => '/api/user/like/food_recipe'], function(){
+    Route::post('/', 'UserApiController@setLikedRecipe');
+    Route::delete('/', 'UserApiController@setDislikedRecipe');
+    Route::get('/', 'UserApiController@fetchLikedRecipes');
+});
 
 weixin_route('food_material', 'FoodMaterialWeixinController');
 

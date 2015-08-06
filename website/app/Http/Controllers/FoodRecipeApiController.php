@@ -13,19 +13,13 @@ class FoodRecipeApiController extends Controller {
     {
         //
         $this->validate($request, [
-            'name' => 'required|unique|max:255',
-            'hash' => 'required|unique|max:32',
-            'method' => 'required|max:255',
-            'difficulty' => 'required|max:255',
-            'amount' => 'required|numeric',
-            'taste' => 'required|max:255',
-            'primaries' => 'required',
-            'accessories' => 'required',
-            'procedure' => 'required',
         ]);
 
-        $Recipe = new FoodRecipe($request->all());
+        $Recipe = new FoodRecipe($request->json()->all());
         $Recipe->save();
+        return response()->json([
+            'status' => true,
+        ]);
     }
 
     public function destroy(Request $request, $hash)
@@ -33,11 +27,16 @@ class FoodRecipeApiController extends Controller {
         //
         $Recipe = FoodRecipe::where(['hash' => $hash])->first();
         if (!$Recipe) {
-            return response()->json(['reason' => 'item not found']);
+            return response()->json([
+                'status' => false,
+                'reason' =>'item not exists'
+            ]);
         }
 
         FoodRecipe::destroy($Recipe->id);
-        return response()->json(true);
+        return response()->json([
+            'status' => true,
+        ]);
     }
 
     public function fetch(Request $request, $hash)
@@ -45,47 +44,52 @@ class FoodRecipeApiController extends Controller {
         //
         $Recipe = FoodRecipe::where(['hash' => $hash])->first();
         if (!$Recipe) {
+            return response()->json([
+                'status' => false,
+                'reason' =>'item not exists'
+            ]);
             return response()->json(['reason' => 'item not found']);
         }
 
-        return response()->json($Recipe);
+        return response()->json([
+            'status' => true,
+            'data' => $Recipe,
+        ]);
     }
 
     public function update(Request $request, $hash)
     {
         //
         $this->validate($request, [
-            'name' => 'required|unique|max:255',
-            'hash' => 'required|unique|max:32',
-            'method' => 'required|max:255',
-            'difficulty' => 'required|max:255',
-            'amount' => 'required|numeric',
-            'taste' => 'required|max:255',
-            'primaries' => 'required',
-            'accessories' => 'required',
-            'procedure' => 'required',
         ]);
 
         $Recipe = FoodRecipe::where(['hash' => $hash])->first();
         if (!$Recipe) {
-            return response()->json(['reason' => 'item not found']);
+            return response()->json([
+                'status' => false,
+                'reason' =>'item not exists'
+            ]);
         }
 
-        foreach ($request->all() as $attr => $value) {
+        foreach ($request->json()->all() as $attr => $value) {
             $Recipe->$attr = $value;
         }
 
         $Recipe->save();
+        return response()->json([
+            'status' => true,
+        ]);
     }
 
     public function index(Request $request) {
-        $category = $request->input('category');
         $pagesize = $request->input('pagesize', 10);
         $page = $request->input('page', 1);
         $offset = $pagesize * ($page - 1);
-        $recipes = FoodRecipe::where(['category' => $category])
-            ->skip($offset)->take($pagesize)->get();
-        return response()->json($recipes);
+        $recipes = FoodRecipe::skip($offset)->take($pagesize)->get();
+        return response()->json([
+            'status' => true,
+            'data' => $recipes
+        ]);
     }
 
 }
