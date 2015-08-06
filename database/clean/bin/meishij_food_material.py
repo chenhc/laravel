@@ -65,7 +65,8 @@ def main():
     logging.basicConfig(level=logging.INFO)
     material_file, category_file, mysql_uri, image_dir = parse_args()
     FoodMaterialCleaner(material_file=file(material_file),
-            category_file=file(category_file), mysqldb=uri2service(mysql_uri)).process()
+            category_file=file(category_file), mysqldb=uri2service(mysql_uri),
+            image_dir=image_dir).process()
 
 if __name__ == '__main__':
     main()
