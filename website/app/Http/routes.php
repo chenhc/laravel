@@ -16,6 +16,7 @@ Route::get('/api/address/country/{country_code}/province/{province_code}/city/{c
 
 Route::post('/api/user/login', 'UserApiController@login');
 Route::get('/api/user/logout', 'UserApiController@logout');
+Route::post('/api/user/validity', 'UserApiController@validity');
 
 api_route('api/food_material', 'FoodMaterialApiController');
 api_route('api/food_recipe', 'FoodRecipeApiController');

@@ -206,7 +206,49 @@ class UserApiTest extends TestCase
             ]);
     }
 
+    public function testValidityWithUsername()
+    {
+        $user = factory(User::class)->make();
 
+        $this->postJsonWithCsrf('/api/user/validity', [
+                'username' => $user->username,
+            ])
+            ->seeJson([
+                'status' => true,
+            ]);
+    }
+
+    public function testValidityWithEmail()
+    {
+        $user = factory(User::class)->make();
+
+        $this->postJsonWithCsrf('/api/user/validity', [
+                'email' => $user->email,
+            ])
+            ->seeJson([
+                'status' => true,
+            ]);
+    }
+
+    public function testvalidityWithUsernameFailed()
+    {
+        $this->postJsonWithCsrf('/api/user/validity', [
+                'username' => $this->test_user->username,
+            ])
+            ->seeJson([
+                'status' => false,
+            ]);
+    }
+
+    public function testvalidityWithEmailFailed()
+    {
+        $this->postJsonWithCsrf('/api/user/validity', [
+                'email' => $this->test_user->email,
+            ])
+            ->seeJson([
+                'status' => false,
+            ]);
+    }
 
     public function tearDown()
     {
