@@ -1,0 +1,28 @@
+<div class="hxy-nav">
+    <div class="hxy-logo">爱生活</div>
+    <ul class="hxy-ul" ng-if="!loginInfo">
+        <li><a class="hxy-login" href="#/user/login">登录</a></li>
+        <li><a class="hxy-register" href="#/user/register">注册</a></li>
+    </ul>
+    <div class="hxy-search">
+        <input type="text" placeholder="搜索" /><span class="glyphicon glyphicon-search"></span>
+    </div>
+    <div class="nav nav-pills" ng-controller="NavigationBarController">
+        <li role="presentation" class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">美食<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="food_material.html">食材百科</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+                <li class="divider"></li>
+                <li><a href="#">One more separated link</a></li>
+            </ul>
+        </li>
+        <li role="presentation" class=""><a href="#">理疗</a></li>
+        <li role="presentation"><a href="#">运动</a></li>
+        <li role="presentation"><a href="#">养生</a></li>
+        <li role="presentation"><a href="#">论坛</a></li>
+    </div>
+</div>
