@@ -95,6 +95,16 @@ class UserApiTest extends TestCase
             ]);
     }
 
+    // 测试用户退出
+    public function testLogout()
+    {
+        $this->actingAs($this->test_user)
+            ->get('/api/user/logout')
+            ->seeJson([
+                'status' => true
+            ]);
+    }
+
 
     // 测试用户名登陆
     public function testLoginWithUserName()
@@ -196,7 +206,49 @@ class UserApiTest extends TestCase
             ]);
     }
 
+    public function testValidityWithUsername()
+    {
+        $user = factory(User::class)->make();
 
+        $this->postJsonWithCsrf('/api/user/validity', [
+                'username' => $user->username,
+            ])
+            ->seeJson([
+                'status' => true,
+            ]);
+    }
+
+    public function testValidityWithEmail()
+    {
+        $user = factory(User::class)->make();
+
+        $this->postJsonWithCsrf('/api/user/validity', [
+                'email' => $user->email,
+            ])
+            ->seeJson([
+                'status' => true,
+            ]);
+    }
+
+    public function testvalidityWithUsernameFailed()
+    {
+        $this->postJsonWithCsrf('/api/user/validity', [
+                'username' => $this->test_user->username,
+            ])
+            ->seeJson([
+                'status' => false,
+            ]);
+    }
+
+    public function testvalidityWithEmailFailed()
+    {
+        $this->postJsonWithCsrf('/api/user/validity', [
+                'email' => $this->test_user->email,
+            ])
+            ->seeJson([
+                'status' => false,
+            ]);
+    }
 
     public function tearDown()
     {

@@ -91,7 +91,7 @@ class UserApiController extends Controller {
         ]);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         $request->session()->flush();
 
@@ -99,7 +99,6 @@ class UserApiController extends Controller {
         return response()->json([
             'status' => true,
         ]);
-
     }
 
 
@@ -304,5 +303,38 @@ class UserApiController extends Controller {
             'status' => true,
             'data' => $recipes
             ]);
+    }
+
+    public function validity(Request $request)
+    {
+        $data = $request->json();
+        if ($data->has('username'))
+        {
+            $name = $data->get('username');
+            $user = User::where('username', $name)->first();
+            if ($user)
+            {
+                return response()->json([
+                    'status' => false,
+                    'reason' => '该用户名已经存在'
+                ]);
+            }
+        }
+        if ($data->has('email'))
+        {
+            $email = $data->get('email');
+            $user = User::where('email', $email)->first();
+            if ($user)
+            {
+                return response()->json([
+                    'status' => false,
+                    'reason' => '该邮箱已经被使用'
+                ]);
+            }
+        }
+
+        return response()->json([
+            'status' => true,
+        ]);
     }
 }
