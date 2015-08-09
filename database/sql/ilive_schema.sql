@@ -105,6 +105,7 @@ CREATE TABLE `street` (
 CREATE TABLE `user` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `username` VARCHAR(255) NOT NULL,
+    `hash` CHAR(32) NOT NULL,
     `realname` VARCHAR(255) DEFAULT NULL,
     `nickname` VARCHAR(255) DEFAULT NULL,
     `email` VARCHAR(255) DEFAULT NULL,
@@ -198,6 +199,29 @@ CREATE TABLE `fm_classification_category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+-- 食材类别映射
+CREATE TABLE `fm_category_map` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `category_id` INTEGER NOT NULL,
+    `material_id` INTEGER NOT NULL,
+    CONSTRAINT `fmcm_category_id_fk` FOREIGN KEY (`category_id`) REFERENCES `fm_classification_category` (`id`),
+    CONSTRAINT `fmcm_material_id_fk` FOREIGN KEY (`material_id`) REFERENCES `food_material` (`id`),
+    UNIQUE KEY (`category_id`, `material_id`),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- 食材列别映射视图
+CREATE VIEW `fm_category_map_view`
+    (`id`, `classification`, `category`, `material`, `material_id`) AS
+        SELECT `fmcm`.`id`, `fmcc`.`classification`, `fmcc`.`category`, `fm`.`name`, `fm`.`id`
+        FROM `fm_category_map` AS `fmcm`
+            LEFT JOIN `fm_classification_category` AS `fmcc`
+                ON `fmcm`.`category_id` = `fmcc`.`id`
+            LEFT JOIN `food_material` AS `fm`
+                ON `fmcm`.`material_id` = `fm`.id;
+
+
 -- 食材营养价值
 CREATE TABLE `food_material_nutrient` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
@@ -239,6 +263,7 @@ CREATE TABLE `user_like_material` (
 CREATE TABLE `food_recipe` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
+    `source` VARCHAR(255) NOT NULL,
     `hash` CHAR(32) NOT NULL,
     `area` VARCHAR(255) DEFAULT NULL,
     `tags` VARCHAR(255) DEFAULT NULL,
@@ -270,11 +295,35 @@ CREATE TABLE `fr_classification_category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+-- 食谱类别映射
+CREATE TABLE `fr_category_map` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `category_id` INTEGER NOT NULL,
+    `recipe_id` INTEGER NOT NULL,
+    CONSTRAINT `frcm_category_id_fk` FOREIGN KEY (`category_id`) REFERENCES `fr_classification_category` (`id`),
+    CONSTRAINT `frcm_recipe_id_fk` FOREIGN KEY (`recipe_id`) REFERENCES `food_recipe` (`id`),
+    UNIQUE KEY (`category_id`, `recipe_id`),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- 食谱类别映射视图
+CREATE VIEW `fr_category_map_view`
+    (`id`, `classification`, `category`, `recipe`, `recipe_id`) AS
+        SELECT `frcm`.`id`, `frcc`.`classification`, `frcc`.`category`, `fr`.`name`, `fr`.`id`
+        FROM `fr_category_map` AS `frcm`
+            LEFT JOIN `fr_classification_category` AS `frcc`
+                ON `frcm`.`category_id` = `frcc`.`id`
+            LEFT JOIN `food_recipe` AS `fr`
+                ON `frcm`.`recipe_id` = `fr`.`id`;
+
+
 -- 食谱食材构成
 CREATE TABLE `food_recipe_material` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `recipe_id` INTEGER NOT NULL,
     `material_id` INTEGER NOT NULL,
+    `role` ENUM("PRIMARY", "ACCESSORY") DEFAULT NULL,
     `dosage_amount` VARCHAR(255) DEFAULT NULL,
     `dosage_unit` VARCHAR(255) DEFAULT NULL,
     `dosage_unit_readable` VARCHAR(255) DEFAULT NULL,

@@ -21,7 +21,7 @@ from collections import OrderedDict
 
 from pylib.net.http import requests_with_random_ip
 
-from pylib.util.common import encoded_dict
+from pylib.util.common import encoded_dict, encoded_jsonic_object
 from pylib.util.sql import format_table_clause, format_field_clause, \
     format_value_clause
 
@@ -195,3 +195,409 @@ class FoodMaterialCleaner(object):
     def process(self):
         self.process_fmcc()
         #self.process_fm()
+
+
+class FoodRecipeCleaner(object):
+
+    def __init__(self, recipe_file, category_file, classification_file,
+            effect_file, mysqldb, image_dir=None):
+
+        self.recipe_file = recipe_file
+        self.category_file = category_file
+        self.classification_file = classification_file
+        self.effect_file = effect_file
+        self.mysqldb = mysqldb
+        self.image_dir = image_dir
+
+        self.classifications = set()
+        self.categories = set()
+        self.category2id = {}
+
+        self.recipes = set()
+        self.recipe_list = []
+        self.recipe2id = {}
+
+        self.health_tips = {}
+
+        self.classification2category = OrderedDict()
+        self.category2recipe = {}
+
+        self.fr_table = 'food_recipe'
+        self.frm_table = 'food_recipe_material'
+        self.frcc_table = 'fr_classification_category'
+        self.ht_table = 'health_tip'
+        self.frcm_table = 'fr_category_map'
+
+        # 食材数据
+        self.materials = dict()
+        cursor = self.mysqldb.cursor()
+        cursor.execute('SELECT * FROM `food_material`')
+        for material in cursor.fetchall():
+            name = material['name']
+            self.materials[name] = material
+
+    def process_frcc(self):
+        # classification/category对应关系
+        for line in self.classification_file:
+            pair = encoded_jsonic_object(json.loads(line.strip()))
+            classification = pair['classification']
+            category = pair['category']
+            self.classifications.add(classification)
+            self.categories.add(category)
+
+            category_list = self.classification2category\
+                    .setdefault(classification, list())
+            if category not in category_list:
+                    category_list.append(category)
+
+        # 表结构
+        table_clause = format_table_clause(self.frcc_table)
+
+        fields = ['classification','category']
+        field_clause = format_field_clause(fields)
+
+        # 写入数据
+        cursor = self.mysqldb.cursor()
+        for classification, categories in \
+                self.classification2category.iteritems():
+
+            for category in categories:
+                values = [classification, category]
+                value_clause = format_value_clause(values)
+
+                sql = 'INSERT INTO %s (%s) VALUE (%s)' % \
+                        (table_clause, field_clause, value_clause)
+
+                cursor.execute(sql)
+                category_id = self.mysqldb.insert_id()
+                self.mysqldb.commit()
+
+                self.category2id[category] = category_id
+
+    def process_ht(self):
+        bad_materials = set()
+        MATERIAL_BASE_URL = 'http://www.meishij.net/'
+        def fixed_material_list(material_list):
+            result = []
+            for material in material_list:
+                url =  material.get('url')
+                if url == '####':
+                    continue
+
+                if url.startswith(MATERIAL_BASE_URL):
+                    name = url[len(MATERIAL_BASE_URL):]
+
+                    material = self.materials.get(name)
+                    if material is None:
+                        bad_materials.add(name)
+                        logging.warn('bad material: name=%s bads=%d' % \
+                                (name, len(bad_materials)))
+
+                        result.append(dict(name=name))
+                    else:
+                        result.append(dict(name=name, hash=material['hash'],
+                            image_hash=material['image_hash']))
+
+                    continue
+
+                logging.warn('unknown url: url=%s' % (url,))
+
+            return result
+
+        # 预处理健康小贴士数据
+        for line in self.effect_file:
+            health_tip = encoded_jsonic_object(json.loads(line.strip()))
+            health_tip['topic'] = topic = health_tip.pop('category')
+
+            health_tip['suit_food_materials'] = \
+                    json.dumps(fixed_material_list(health_tip.pop('suit_material_list')))
+            health_tip['avoid_food_materials'] = \
+                    json.dumps(fixed_material_list(health_tip.pop('avoid_material_list')))
+
+            if topic not in self.health_tips:
+                self.health_tips[topic] = health_tip
+            else:
+                duplicate = health_tip == self.health_tips[topic]
+
+                logging.warn('duplicate effect_detail: topic=%s duplicate=%s' % \
+                        (topic, duplicate))
+
+        # 表结构
+        table_clause = format_table_clause(self.ht_table)
+
+        fields = ['topic','brief','suit_tips',
+                  'avoid_tips','suit_food_materials',
+                  'avoid_food_materials']
+        field_clause = format_field_clause(fields)
+
+        # 写入数据
+        cursor = self.mysqldb.cursor()
+        for topic, health_tip in self.health_tips.items():
+            logging.info('import health tips: topic=%s' % (topic,))
+
+            values = [health_tip.get(field) for field in fields]
+            value_clause = format_value_clause(values)
+
+            sql = 'INSERT INTO %s (%s) VALUES (%s)' % \
+                    (table_clause, field_clause, value_clause)
+
+            cursor.execute(sql)
+            self.mysqldb.commit()
+
+        for name in bad_materials:
+            logging.warn('bad material: name=%s' % (name,))
+
+    def process_frm(self):
+        # 表结构
+        table_clause = format_table_clause(self.frm_table)
+
+        fields = ['recipe_id', 'material_id', 'role']
+        field_clause = format_field_clause(fields)
+
+        # 写入数据
+        cursor = self.mysqldb.cursor()
+        for recipe in self.recipe_list:
+            recipe_id = str(recipe['id'])
+            for fusage_id, role in (('primary_ids', 'PRIMARY'),
+                    ('accessory_ids', 'ACCESSORY')):
+                for material_id in recipe.get(fusage_id, ()):
+                    material_id = str(material_id)
+                    values = [recipe_id, material_id, role]
+                    value_clause = format_value_clause(values)
+
+                    sql = 'INSERT INTO %s (%s) VALUES (%s)' % \
+                            (table_clause, field_clause, value_clause)
+
+                    cursor.execute(sql)
+                    self.mysqldb.commit()
+
+    def process_fr(self):
+        # 字段集合定义
+        areas = set()
+        all_tags = set()
+        methods = set()
+        difficulties = set()
+        amounts = set()
+        tastes = set()
+        setup_times = set()
+        cook_times = set()
+        all_primaries = set()
+        all_accessories = set()
+        bad_materials = set()
+
+        # 用料列表加工
+        def process_material_list(recipe, fusage, fusage_id, dataset):
+            material_list = []
+            for name in recipe.get(fusage, '').split(','):
+                dataset.add(name)
+
+                material = self.materials.get(name)
+                if material is not None:
+                    material_list.append(dict(name=material['name'],
+                        hash=material['hash'],
+                        image_hash=material['image_hash']))
+                    recipe.setdefault(fusage_id, []).append(material['id'])
+                else:
+                    material_list.append(dict(name=name))
+                    bad_materials.add(name)
+            return material_list
+
+        # 预处理食谱列表
+        for line in self.recipe_file:
+            recipe = encoded_jsonic_object(json.loads(line.strip()))
+            name = recipe['name']
+
+            # 生成哈希值
+            name_md5 = hashlib.md5(name + HASH_SALT).hexdigest()
+            recipe['hash'] = name_md5
+
+            # 地域字段集合
+            areas.add(recipe.get('area', None))
+
+            # 便签集合
+            for tag in recipe.get('tags', '').split(','):
+                all_tags.add(tag)
+
+            # 做法字段集合
+            methods.add(recipe.get('method', ''))
+
+            # 难度字段
+            difficulties.add(recipe.get('difficulty', ''))
+
+            # 分量字段
+            amount = recipe.get('amount', '')
+            amounts.add(amount)
+
+            amount = amount.replace('未知', '').replace('人份', '')
+            if not amount:
+                amount = 0
+            else:
+                amount = int(amount)
+            recipe['amount'] = str(amount)
+
+            # 口味字段
+            tastes.add(recipe.get('taste', ''))
+
+            # 准备时间
+            setup_times.add(recipe.get('setup_time', ''))
+
+            # 烹饪时间
+            cook_time = recipe['cook_time']
+            cook_times.add(cook_time)
+            if 'img' in cook_time or 'src' in cook_time:
+                recipe['cook_time'] = None
+
+            # 分享者
+            recipe['sharer'] = None
+
+            # 主料
+            recipe['primaries'] = json.dumps(process_material_list(recipe,
+                'primaries', 'primary_ids', all_primaries))
+
+            # 辅料
+            recipe['accessories'] = json.dumps(process_material_list(recipe,
+                'accessories', 'accessory_ids', all_accessories))
+
+            self.recipes.add(name)
+            self.recipe_list.append(recipe)
+
+        # 表结构
+        table_clause = format_table_clause(self.fr_table)
+
+        fields = ['name', 'source', 'hash', 'area', 'tags', 'method',
+                'difficulty', 'sharer', 'amount', 'taste', 'setup_time',
+                'cook_time', 'primaries', 'accessories',
+                'procedure']
+        field_clause = format_field_clause(fields)
+
+        # 写入数据
+        cursor = self.mysqldb.cursor()
+        self.recipe_list = self.recipe_list[:10]
+        for recipe in self.recipe_list:
+            name = recipe['name']
+            logging.info('importing recipe: name=%s' % (name,))
+
+            # 整理做法步骤
+            procedure = recipe['procedure'].split('\n')
+            for i in xrange(len(procedure)):
+                url = procedure[i]
+                if 'http' in url or 'jpg' in url:
+                    logging.info('getting image: name=%s url=%s' % (name, url))
+
+                    # 请求图片
+                    image_res = None
+                    for x in xrange(5):
+                        try:
+                            image_res = requests_with_random_ip.get(url,
+                                    timeout=3*x)
+                            break
+                        except Exception as err:
+                            logging.warn('requests error: %s' % (err,))
+
+                    if image_res:
+                        image_raw = image_res.content
+                        image_md5 = hashlib.md5(image_raw).hexdigest()
+
+                        # 图片写入文件
+                        image_file = '%s/%s.jpg' % (self.image_dir, image_md5)
+                        file(image_file, 'w+').write(image_raw)
+
+                        # 记录图片哈希值
+                        procedure[i] = image_md5 + '.jpg'
+                    else:
+                        logging.warn('requests image fail: name=%s url=%s' % \
+                                (name, url))
+
+            recipe['procedure'] = '\n'.join(procedure)
+
+            values = [recipe.get(field) for field in fields]
+            value_clause = format_value_clause(values)
+
+            sql = 'INSERT INTO %s (%s) VALUES (%s)' % \
+                    (table_clause, field_clause, value_clause)
+
+            cursor.execute(sql)
+            recipe['id'] = recipe_id = self.mysqldb.insert_id()
+            self.mysqldb.commit()
+
+            self.recipe2id.setdefault(name, []).append(recipe_id)
+
+        self.process_frm()
+
+        return
+
+        # 显示缺失食材
+        for name in bad_materials:
+            logging.warn('bad material: name=%s' % (name,))
+
+        # 显示辅料全集
+        for accessory in all_accessories:
+            logging.info('accessory: %s' % (accessory,))
+
+        # 显示主料全集
+        for primary in all_primaries:
+            logging.info('primary: %s' % (primary,))
+
+        # 显示准备时间全集
+        for setup_time in setup_times:
+            logging.info('setup_time: %s' % (setup_time,))
+
+        # 显示口味全集
+        for taste in tastes:
+            logging.info('taste: %s' % (taste,))
+
+        # 显示分量全集
+        for amount in amounts:
+            logging.info('amount: %s' % (amount,))
+
+        # 显示难度全集
+        for difficulty in difficulties:
+            logging.info('difficulty: %s' % (difficulty,))
+
+        # 显示便签全集
+        for tag in all_tags:
+            logging.info('tag: %s' % (tag,))
+
+        # 显示做法全集
+        for method in methods:
+            logging.info('method: %s' % (method,))
+
+        # 显示地域全集
+        for area in areas:
+            logging.info('area: %s' % (area,))
+
+        # 显示cook_time全集
+        for cook_time in cook_times:
+            logging.info('cook time: %s' % (cook_time,))
+
+    def process_frc(self):
+        # 表结构
+        table_clause = format_table_clause(self.frcm_table)
+
+        fields = ['category_id', 'recipe_id']
+        field_clause = format_field_clause(fields)
+
+        # category/recipe对应关系
+        cursor = self.mysqldb.cursor()
+        for line in self.category_file:
+            pair = encoded_jsonic_object(json.loads(line.strip()))
+
+            recipe = pair['recipe']
+            category = pair['category']
+            category_id = str(self.category2id[category])
+
+            for recipe_id in self.recipe2id.get(recipe, ()):
+                values = [category_id, str(recipe_id)]
+                value_clause = format_value_clause(values)
+
+                sql = 'INSERT INTO %s (%s) VALUES (%s)' % \
+                        (table_clause, field_clause, value_clause)
+
+                cursor.execute(sql)
+                self.mysqldb.commit()
+
+    def process(self):
+        self.process_ht()
+        self.process_frcc()
+        self.process_fr()
+        self.process_frc()
