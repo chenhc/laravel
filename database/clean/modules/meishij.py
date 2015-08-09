@@ -472,7 +472,7 @@ class FoodRecipeCleaner(object):
 
         # 写入数据
         cursor = self.mysqldb.cursor()
-        self.recipe_list = self.recipe_list[:10]
+        #self.recipe_list = self.recipe_list[:10]
         for recipe in self.recipe_list:
             name = recipe['name']
             logging.info('importing recipe: name=%s' % (name,))
