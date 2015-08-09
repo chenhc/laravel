@@ -211,6 +211,17 @@ CREATE TABLE `fm_category_map` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+-- 食材列别映射视图
+CREATE VIEW `fm_category_map_view`
+    (`id`, `classification`, `category`, `material`, `material_id`) AS
+        SELECT `fmcm`.`id`, `fmcc`.`classification`, `fmcc`.`category`, `fm`.`name`, `fm`.`id`
+        FROM `fm_category_map` AS `fmcm`
+            LEFT JOIN `fm_classification_category` AS `fmcc`
+                ON `fmcm`.`category_id` = `fmcc`.`id`
+            LEFT JOIN `food_material` AS `fm`
+                ON `fmcm`.`material_id` = `fm`.id;
+
+
 -- 食材营养价值
 CREATE TABLE `food_material_nutrient` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
@@ -294,6 +305,17 @@ CREATE TABLE `fr_category_map` (
     UNIQUE KEY (`category_id`, `recipe_id`),
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- 食谱类别映射视图
+CREATE VIEW `fr_category_map_view`
+    (`id`, `classification`, `category`, `recipe`, `recipe_id`) AS
+        SELECT `frcm`.`id`, `frcc`.`classification`, `frcc`.`category`, `fr`.`name`, `fr`.`id`
+        FROM `fr_category_map` AS `frcm`
+            LEFT JOIN `fr_classification_category` AS `frcc`
+                ON `frcm`.`category_id` = `frcc`.`id`
+            LEFT JOIN `food_recipe` AS `fr`
+                ON `frcm`.`recipe_id` = `fr`.`id`;
 
 
 -- 食谱食材构成
