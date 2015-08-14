@@ -42,11 +42,12 @@ class IndexCacher(object):
 
         # 写食材{tag_item_map}:{tag}索引
         # RPUSH "tag2material:维生素C" '{"name": "苹果", "hash": "xxxx", "hash_image": "xxxx", "alias": "xxxx"}' '{"name": "橙子", "hash": "xxxx"}'
+        # RPUSH "fm_classification2category:乳类" '奶油类'
 
         # 写菜谱{tag_item_map}:{tag}索引
         # RPUSH "tag2recipe:云贵菜" '{"taste":"其他口味", "hash": "515ac3ab55d9e1c1bca3fb6ce4b08fb4", "name": "菠萝鸡肉丁", "area": "云贵菜"}'
         # RPUSH "taste2recipe:麻辣味" '{"taste":"麻辣味","hash":"d67946b81c5cc02a14dec89284408b65","name":"麻辣猪血糕", "area":"港台菜"}'
-        # RPUSH "classification2category:家常菜谱" '凉菜'
+        # RPUSH "fr_classification2category:家常菜谱" '凉菜'
         for tag, item_list in data.iteritems():
             key = '%s:%s' % (tag_item_map, tag)
             for item in item_list:
@@ -58,18 +59,20 @@ class IndexCacher(object):
 
         # 写食材{tag_item_map}索引
         # HMSET "tag2material" "维生素C" '[{"name": "苹果", "hash": "xxxx", "image_hash", "xxxx", "alias": "xxxx"}, {"name": "橙子", "hash" "xxxx"}]'
+        # HMSET "fm_classification2category" "乳类" '["奶油类", "奶粉类", "奶酪类"]'
 
         # 写菜谱{tag_item_map}索引
         # HMSET "taste2recipe" "麻辣味" '[{"taste": "麻辣味","hash":"xxxx", "name": "麻辣风爪", "area": null},{"taste":麻辣味,"hash":"xxx", "name": "麻辣猪血糕","area": "港台菜"}]'
         # HMSET "tag2recipe" "云贵菜" '[{"taste":"其他口味", "hash": "515ac3ab55d9e1c1bca3fb6ce4b08fb4", "name": "菠萝鸡肉丁", "area": "云贵菜"}']'
-        # HMSET "classification2category" "家常菜谱" '["凉菜","素食"]'
+        # HMSET "fr_classification2category" "家常菜谱" '["凉菜","素食"]'
         self.redisdb.hmset(tag_item_map, data)
 
-    def build_food_material_cache(self, food_materials):
+    def build_food_material_cache(self, food_materials, fm_classification_category):
         material_infos = {}
         classification2material = {}
         category2material = {}
         tag2material = {}
+        fm_classification2category = {}
         for material in food_materials:
             # 食材简述
             material_info = {
@@ -119,7 +122,22 @@ class IndexCacher(object):
         self.build_tag_item_index(tag_set='material_categories',
                 tag_item_map='category2material', data=category2material)
 
-    def build_food_recipe_cache(self, food_recipes, classification_category):
+        for item in fm_classification_category:
+            classification = item['classification']
+            print classification
+            category = item['category']
+            categories = category.split(',')
+            for item in categories:
+                print item
+                fm_classification2category.setdefault(classification, set()).add( \
+                    item)
+
+        # 总纲到类别索引
+        self.build_tag_item_index(tag_set='material_classifications', \
+                tag_item_map="fm_classification2category", \
+                data=fm_classification2category)
+
+    def build_food_recipe_cache(self, food_recipes, fr_classification_category):
         recipe_infos = {}
         # 标签:云贵菜 粤菜 早餐 山东小吃
         tag2recipe = {}
@@ -127,7 +145,7 @@ class IndexCacher(object):
         taste2recipe = {}
 
         # 总纲:家常菜谱 国家 各地小吃
-        classification2category = {}
+        fr_classification2category = {}
 
         for recipe in food_recipes:
             # 菜谱简单介绍
@@ -162,18 +180,18 @@ class IndexCacher(object):
         self.build_tag_item_index(tag_set = 'recipe_tags', \
                 tag_item_map = 'tag2recipe', data = tag2recipe)
 
-        for item in classification_category:
+        for item in fr_classification_category:
             classification = item['classification']
             category = item['category']
             categories = category.split(',')
             for item in categories:
-                classification2category.setdefault(classification, set()).add( \
+                fr_classification2category.setdefault(classification, set()).add( \
                     item)
 
         # 总纲索引
         self.build_tag_item_index(tag_set = 'recipe_classifications', \
-                tag_item_map = 'classification2category',
-                data = classification2category)
+                tag_item_map = 'fr_classification2category',
+                data = fr_classification2category)
 
     def build(self):
         cursor = self.mysqldb.cursor()
@@ -181,15 +199,18 @@ class IndexCacher(object):
         cursor.execute('SELECT * FROM `food_material`')
         food_materials = cursor.fetchall()
 
-        self.build_food_material_cache(food_materials)
+        cursor.execute('SELECT * FROM `fm_classification_category`')
+        fm_classification_category = cursor.fetchall()
+
+        self.build_food_material_cache(food_materials, fm_classification_category)
         logging.info('build food_material cache success')
 
         # 食谱
         cursor.execute('SELECT * FROM `food_recipe`;')
         food_recipes = cursor.fetchall()
         cursor.execute('SELECT * FROM `fr_classification_category`;')
-        classification_category = cursor.fetchall()
+        fr_classification_category = cursor.fetchall()
 
         self.build_food_recipe_cache(food_recipes, \
-                classification_category)
+                fr_classification_category)
         logging.info('build food_recipe cache success')
