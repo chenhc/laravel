@@ -124,11 +124,9 @@ class IndexCacher(object):
 
         for item in fm_classification_category:
             classification = item['classification']
-            print classification
             category = item['category']
             categories = category.split(',')
             for item in categories:
-                print item
                 fm_classification2category.setdefault(classification, set()).add( \
                     item)
 
