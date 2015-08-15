@@ -21,6 +21,7 @@ Changelog:
 
 import urllib
 
+from copy import deepcopy
 from urlparse import urlparse, parse_qsl
 
 URI_SERVICE_SUPPORTED = {}
@@ -86,6 +87,8 @@ def uri2service(uri, scheme_conf=None, **kwargs):
         raise Exception('no scheme conf')
 
     cls, mapping, converts = scheme_conf
+    mapping = deepcopy(mapping)
+    converts = deepcopy(converts)
     all_kwargs = getattr(params, mapping.pop('__kwargs__', '__nosuch__'), {})
     for dst, src in mapping.iteritems():
         value = getattr(params, src, None)
