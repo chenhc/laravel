@@ -34,6 +34,14 @@ Route::group(['prefix' => '/api/user/like/food_recipe'], function(){
     Route::get('/', 'UserApiController@fetchLikedRecipes');
 });
 
+Route::group(['prefix' => '/api/hot'], function() {
+    Route::get('/food_recipe', 'HotApiController@fetchHotRecipes');
+    Route::get('/food_material', 'HotApiController@fetchHotMaterials');
+    Route::get('/seasonal_diseases', 'HotApiController@fetchSeasonalDiseases');
+    Route::get('/one_day_recipes', 'HotApiController@fetchOneDayRecipes');
+    Route::get('/health_tips', 'HotApiController@fetchHealthTips');
+});
+
 weixin_route('food_material', 'FoodMaterialWeixinController');
 
 Route::controllers([
