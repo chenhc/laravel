@@ -578,6 +578,7 @@ class FoodRecipeCleaner(object):
         field_clause = format_field_clause(fields)
 
         # category/recipe对应关系
+        inserted = set()
         cursor = self.mysqldb.cursor()
         for line in self.category_file:
             pair = encoded_jsonic_object(json.loads(line.strip()))
@@ -587,14 +588,17 @@ class FoodRecipeCleaner(object):
             category_id = str(self.category2id[category])
 
             for recipe_id in self.recipe2id.get(recipe, ()):
-                values = [category_id, str(recipe_id)]
-                value_clause = format_value_clause(values)
+                values = (category_id, str(recipe_id))
+                if values not in inserted:
+                    inserted.add(values)
 
-                sql = 'INSERT INTO %s (%s) VALUES (%s)' % \
-                        (table_clause, field_clause, value_clause)
+                    value_clause = format_value_clause(values)
 
-                cursor.execute(sql)
-                self.mysqldb.commit()
+                    sql = 'INSERT INTO %s (%s) VALUES (%s)' % \
+                            (table_clause, field_clause, value_clause)
+
+                    cursor.execute(sql)
+                    self.mysqldb.commit()
 
     def process(self):
         self.process_ht()

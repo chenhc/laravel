@@ -259,6 +259,19 @@ CREATE TABLE `user_like_material` (
 -- 用户收藏食材
 
 
+-- 食材清理触发器
+DELIMITER |
+CREATE TRIGGER `food_material_before_delete`
+BEFORE DELETE
+    ON `food_material` FOR EACH ROW
+BEGIN
+    DELETE FROM `fm_category_map` WHERE `material_id`=`OLD`.`id`;
+    DELETE FROM `food_material_nutrient` WHERE `material_id`=`OLD`.`id`;
+    DELETE FROM `food_recipe_material` WHERE `material_id`=`OLD`.`id`;
+    DELETE FROM `user_like_material` WHERE `material_id`=`OLD`.`id`;
+END|
+DELIMITER ;
+
 -- 食谱
 CREATE TABLE `food_recipe` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
@@ -351,6 +364,19 @@ CREATE TABLE `user_like_recipe` (
     CONSTRAINT `ulr_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
     PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- 食谱清理触发器
+DELIMITER |
+CREATE TRIGGER `food_recipe_before_delete`
+BEFORE DELETE
+    ON `food_recipe` FOR EACH ROW
+BEGIN
+    DELETE FROM `fr_category_map` WHERE `recipe_id`=`OLD`.`id`;
+    DELETE FROM `food_recipe_material` WHERE `recipe_id`=`OLD`.`id`;
+    DELETE FROM `user_like_recipe` WHERE `recipe_id`=`OLD`.`id`;
+END|
+DELIMITER ;
 
 
 -- 健康小贴士
