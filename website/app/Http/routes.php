@@ -18,6 +18,9 @@ Route::post('/api/user/login', 'UserApiController@login');
 Route::get('/api/user/logout', 'UserApiController@logout');
 Route::post('/api/user/validity', 'UserApiController@validity');
 
+Route::get('/api/category/food_material', 'CategoryApiController@fetchFmCategory');
+Route::get('/api/category/food_recipe', 'CategoryApiController@fetchFrCategory');
+
 api_route('api/food_material', 'FoodMaterialApiController');
 api_route('api/food_recipe', 'FoodRecipeApiController');
 api_route('api/user', 'UserApiController');
@@ -40,9 +43,11 @@ Route::group(['prefix' => '/api/hot'], function() {
     Route::get('/seasonal_diseases', 'HotApiController@fetchSeasonalDiseases');
     Route::get('/one_day_recipes', 'HotApiController@fetchOneDayRecipes');
     Route::get('/health_tips', 'HotApiController@fetchHealthTips');
+    Route::get('/sports', 'HotApiController@fetchHotSports');
 });
 
 weixin_route('food_material', 'FoodMaterialWeixinController');
+weixin_route('food_recipe', 'FoodRecipeWeixinController');
 
 Route::controllers([
 	'auth' => 'Auth\AuthController',

@@ -24,7 +24,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @var array
      */
-    protected $fillable = ['username', 'email', 'password'];
+    protected $fillable = ['username', 'hash', 'realname', 'nickname', 'email',
+        'telephone', 'birthday', 'sex', 'tags', 'password'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -35,7 +36,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     protected $guarded = array('id');
 
-    public function get_liked_materials() 
+    public function get_liked_materials()
     {
         return $this->belongsToMany('App\FoodMaterial', 'user_like_material', 'user_id', 'material_id');
     }

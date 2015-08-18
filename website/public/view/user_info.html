@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="detail-content" ng-controller="UserController">
-            <form>
+            <form ng-model="form" name="form" class="css-form" novalidate>
                 <div class="piece">
                     <div class="piece-left">用户名：</div>
                     <div class="piece-right">
@@ -26,29 +26,28 @@
                 <div class="piece">
                     <div class="piece-left">昵称：</div>
                     <div class="piece-right">
-                        <input value="{{ user.nickname }}"type="text" class="form-control" placeholder="昵称" required>
+                        <input ng-model="user.nickname" type="text" class="form-control" placeholder="昵称" required>
                     </div>
                 </div>
                 <div class="piece">
                     <div class="piece-left">真实姓名：</div>
                     <div class="piece-right">
-                        <input value="{{ user.realname }}"type="text" class="form-control" placeholder="真实姓名" required>
+                        <input ng-model="user.realname" type="text" class="form-control" placeholder="真实姓名" required>
                     </div>
                 </div>
                 <div class="piece">
                     <div class="piece-left">性别：</div>
                     <div class="piece-right">
-                        <select class="form-control other-piece">
-                            <option>男</option>
-                            <option>女</option>
+                        <select ng-model="user.sex" ng-options="sex for sex in ['男', '女']" class="form-control other-piece">
+                            <option value="">秘密</option>
                         </select>
                     </div>
                 </div>
                 <div class="piece">
                     <div class="piece-left">生日：</div>
-                    <div class="piece-right">
+                    <div class="piece-right" datepicker>
                         <div class="input-group date form_datetime col-md-5" data-date="1979-09-16">
-                            <input class="form-control" size="16" type="text" value="" readonly>
+                            <input ng-model="user.birthday" id="birth" class="form-control" size="16" type="text" value="">
                             <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                             <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
                          </div>
@@ -108,7 +107,7 @@
                 <div class="piece">
                     <div class="piece-left"></div>
                     <div class="piece-right">
-                        <input type="submit" value="提交" class="btn btn-info">
+                        <input type="submit" ng-click="submit(form)" value="提交" class="btn btn-info">
                     </div>
                 </div>
             </form>

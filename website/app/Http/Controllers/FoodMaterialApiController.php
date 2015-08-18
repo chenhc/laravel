@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 
+use Redis;
+
 class FoodMaterialApiController extends Controller {
 
     protected function create(array $data)
@@ -90,16 +92,34 @@ class FoodMaterialApiController extends Controller {
 
     public function index(Request $request)
     {
+        $classification = $request->input('classification');
         $category = $request->input('category');
-        $pagesize = $request->input('pagesize', 10);
+        $pagesize = $request->input('pagesize', 8);
         $page = $request->input('page', 1);
         $offset = $pagesize * ($page - 1);
-        $materials = FoodMaterial::where(['category' => $category])
-            ->skip($offset)->take($pagesize)->get();
+        if ($classification)
+        {
+            $materials = FoodMaterial::where('classification', $classification);
+            if ($category)
+            {
+                $materials = $materials->where('category', $category);
+            }
+            $totalMaterials = $materials->count();
+            $materials = $materials->skip($offset)->take($pagesize)->get();
+        }
+        else
+        {
+            $totalMaterials = FoodMaterial::all()->count();
+            $materials = FoodMaterial::skip($offset)->take($pagesize)->get();
+        }
+        $remian = $totalMaterials % $pagesize;
+        $totalPage = floor($totalMaterials / $pagesize);
+        if ($remian)
+            $totalPage += 1;
         return response()->json([
             'status' => true,
             'data' => $materials,
+            'totalPage' => $totalPage,
         ]);
     }
-
 }

@@ -1,22 +1,22 @@
 <div ng-include="'view/nav.html'"></div>
 <div class="hxy-content">
     <ol class="breadcrumb">
-      <li><a href="#">首页</a></li>
-      <li><a href="#">美食</a></li>
-      <li><a href="#">食材百科</a></li>
-      <li ng-show="material.name" class="active">胡萝卜</li>
+      <li><a href="#/">首页</a></li>
+      <li class="active">美食</li>
+      <li><a href="#/food_material">食材百科</a></li>
+      <li ng-show="material.name" class="active">{{material.name}}</li>
     </ol>
     <div class="hxy-intro">
         <img ng-src="/images/{{ material.image_hash }}.jpg" alt="">
         <div class="hxy-constitution">
-            <a href="#" ng-repeat="item in material.suit_ctcms" class="hxy-suit_ctcms"><span class="label label-success">{{ item }}</span></a>
-            <a href="#" ng-repeat="item in material.avoid_ctcms" class="hxy-avoid_ctcms"><span class="label label-danger">{{ item }}</span></a>
+            <a href="#" ng-repeat="item in material.suit_ctcms" class="hxy-suit_ctcms" ng-hide="material.suit_ctcms == '无'"><span class="label label-success">{{ item }}</span></a>
+            <a href="#" ng-repeat="item in material.avoid_ctcms" class="hxy-avoid_ctcms" ng-hide="material.avoid_ctcms == '无'"><span class="label label-danger">{{ item }}</span></a>
         </div>
         <div class="hxy-label">
             <h4 class="title">{{ material.name }}</h4>
             <ul>
                 <li>【别名】：{{ material.alias }}</li>
-                <li>【食量建议】：{{ material.amount_rec}}</li>
+                <li>【食量建议】：{{ material.amount_rec }}</li>
                 <li>【适宜人群】：{{ material.suit_crowds }}</li>
                 <li class="hxy-avoid">【禁忌人群】：{{ material.avoid_crowds }}</li>
             </ul>
@@ -24,14 +24,14 @@
     </div>
     <div class="hxy-fooddetail">
         <div class="hxy-title">{{ material.name }}百科知识</div>
-        <div class="hxy-detail hxy-brief">
+        <div class="hxy-detail hxy-brief" ng-hide="material.brief == '无'">
             <h3>{{ material.name }}介绍</h3>
             <hr>
             <p>
                 {{ material.brief }}
             </p>
         </div>
-        <div class="hxy-detail hxy-nutrient">
+        <div class="hxy-detail hxy-nutrient" ng-hide="material.nutrient == '无'">
             <h3>{{ material.name }}的营养价值</h3>
             <hr>
             <ul>
@@ -40,7 +40,7 @@
                 </li>
             </ul>
         </div>
-        <div class="hxy-detail hxy-efficacy">
+        <div class="hxy-detail hxy-efficacy" ng-hide="material.efficacy == '无'">
             <h3>{{ material.name }}的功效</h3>
             <hr>
             <ul>
@@ -49,7 +49,7 @@
                 </li>
             </ul>
         </div>
-        <div class="hxy-detail hxy-taboos">
+        <div class="hxy-detail hxy-taboos" ng-hide="material.taboos == '无'">
             <h3>{{ material.name }}的食用禁忌</h3>
             <hr>
             <ul>
@@ -58,14 +58,14 @@
                 </li>
             </ul>
         </div>
-        <div class="hxy-detail hxy-mix">
+        <div class="hxy-detail hxy-mix" ng-hide="(material.suit_mix == '无') && (material.avoid_mix == '无')">
             <h3>{{ material.name }}的搭配宜忌</h3>
             <hr>
             <ul>
-                <li ng-repeat="item in material.suit_mix" class="hxy-suit_mix">
+                <li ng-repeat="item in material.suit_mix" class="hxy-suit_mix" ng-hide="material.suit_mix == '无'">
                     {{ item }}
                 </li>
-                <li ng-repeat="item in material.avoid_mix" class="hxy-avoid_mix">
+                <li ng-repeat="item in material.avoid_mix" class="hxy-avoid_mix" ng-hide="material.avoid_mix == '无'">
                     {{ item }}
                 </li>
             </ul>

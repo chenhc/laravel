@@ -57,9 +57,20 @@ class UserApiController extends Controller {
     {
         return User::create([
             'username' => $data['username'],
-            //'email' => $data['email'],
+            'email' => $data['email'],
+            'hash' => md5($data['username'] . env('HASH_SALT')),
             'password' => bcrypt($data['password']),
         ]);
+    }
+
+    protected function attempt(array $data)
+    {
+        if (Auth::attempt($data))
+        {
+            return true;
+        }
+        else
+            return false;
     }
 
     public function login(Request $request)
@@ -68,11 +79,10 @@ class UserApiController extends Controller {
         $password = $request->json()->get('password');
 
         // 用户名登录
-        if (Auth::attempt(['username' => $account, 'password' => $password]) ||
+        if ($this->attempt(['username' => $account, 'password' => $password]) ||
             // 邮箱登陆
-            Auth::attempt(['email' => $account, 'password' => $password]))
+            $this->attempt(['email' => $account, 'password' => $password]))
         {
-
             $user=Auth::user();
             $request->session()->put($user->attributesToArray());
             $age_bracket = $this->get_age_bracket($user->birthday);
@@ -81,8 +91,8 @@ class UserApiController extends Controller {
             return response()->json([
                 'status'=> true
             ]);
+            // ->withCookie(cookie('user', $user->name, 69));
         }
-
         return response()->json([
             'status' => false,
             'reason' => '用户名或密码不正确',
@@ -111,8 +121,12 @@ class UserApiController extends Controller {
         ]);
 
         // 创建用户并保存到数据库
-        $user = $this->create($request->json()->all());
-        $user->save();
+        $user_data = $request->json()->all();
+        $user = $this->create($user_data);
+        // $user->save();
+
+        $this->attempt(['username' => $user_data['username'],
+            'password' => $user_data['password']]);
 
         return response()->json([
             'status' => true,
@@ -165,6 +179,7 @@ class UserApiController extends Controller {
 
         return response()->json([
             'status' => true,
+            'user' => $user,
         ]);
     }
 

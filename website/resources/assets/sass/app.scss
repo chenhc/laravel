@@ -16,6 +16,10 @@ a {
   text-decoration: none;
 }
 
+a:hover {
+    text-decoration: none;
+}
+
 body {
     font-size: 16px;
 }
@@ -37,13 +41,17 @@ body {
         position: absolute;
         top: 10px;
         right: 20px;
-        li {
+        >li {
             display: inline-block;
         }
     }
 
     .hxy-login,.hxy-register {
         display: inline-block;
+    }
+
+    .zf-logout,.zf-account {
+        cursor: pointer;
     }
 
     .hxy-search {
@@ -210,6 +218,11 @@ body {
                         border-color: red;
                     }
                 }
+                .redSame{
+                    input{
+                        border-color: red;
+                    }
+                }
             }
                 #check{
                     margin-bottom: 26px;
@@ -251,9 +264,59 @@ body {
                     margin: 0 10px;
                     border: 1px solid;
                 }
+                .active {
+                    background: black;
+                    color: white;
+                }
             }
         }
     }
+
+    .zf-subnav {
+        margin: auto;
+        width: 60%;
+        min-width: 400px;
+
+        .tab-content {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 40px;
+
+            ul {
+
+                li {
+                    display: inline-block;
+                    border-radius: 3px;
+                }
+
+                a {
+                    display: inline-block;
+                    padding: 5px 15px;
+                    margin: 10px 10px;
+                    border: 1px solid;
+                    border-radius: 3px;
+                    cursor: pointer;
+                }
+
+                .active {
+                    background: black;
+                    color: white;
+                }
+
+            }
+
+        }
+
+    }
+
+    .direct {
+        margin: auto;
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        font-size: 50px;
+    }
+
 
     .hxy-recommand {
         border: 1px solid #DDDDDD;
@@ -455,4 +518,317 @@ h4.title {
             }
         }
     }
+}
+
+#zf-main{
+    margin: auto auto;
+    padding: 0 20px;
+    width: 1250px;
+    #zf-title{
+        margin: 30px auto 60px auto;
+        text-align: center;
+        font-size: 30px;
+        font-weight: bold;
+    }
+
+    #personal-slider {
+
+        .scrollable {
+            width: 1000px;
+            margin: 0 auto 55px auto;
+            padding: 0;
+            border: 10px solid #fff;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            position: relative;
+        }
+
+        .left {
+            position: absolute;
+            width: 20px;
+            height: 100%;
+            left: 0px;
+            top: 0px;
+            background: rgba(221, 221, 221, 0.5);
+        }
+
+        .left:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .left:hover ~ .right ~ .items {
+            animation-direction: reverse;
+            animation-duration: 5s;
+            -webkit-animation-direction: reverse;
+            -webkit-animation-duration: 5s;
+        }
+
+        .right {
+            position: absolute;
+            width: 20px;
+            height: 100%;
+            left: 962px;
+            top: 0px;
+            background: rgba(221, 221, 221, 0.5);
+        }
+
+        .right:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .right:hover ~ .items {
+            animation-duration: 5s;
+            -webkit-animation-duration: 5s;
+        }
+
+        img {
+            max-width: 500px;
+            margin: 0;
+            float: left;
+            display: inline-block;
+        }
+
+        .items {
+            width: 2000px;
+            -webkit-animation: hscroll 8s infinite;
+            -moz-animation: hscroll 8s infinite;
+            -ms-animation: hscroll 8s infinite;
+        }
+
+        .items:hover {
+            -webkit-animation-play-state: paused;
+            -moz-animation-play-state: paused;
+            -ms-animation-play-state: paused;
+            animation-play-state: paused;
+        }
+
+
+    }
+
+    #zf-ppt{
+        margin: auto auto;
+        width: 1000px;
+        #zf-ppt-title{
+            border-right: 400px solid #ddd;
+            border-left: 400px solid #ddd;
+            line-height: 3px;
+            text-align: center;
+            font-weight: bold;
+            font-size: -webkit-xxx-large;
+        }
+        #zf-ppt-main{
+            border-right: 3px solid #ddd;
+            border-left: 3px solid #ddd;
+            border-bottom: 3px solid #ddd;
+            padding: 25px 25px;
+            text-align: center;
+            .zf-ppt-slider{
+                 width: 100%;
+                 height: 400px;
+                  position: relative;
+                  .zf-ppt-slider-main{
+                    width: 100%;
+                    height: 400px;
+                    position: relative;
+                    overflow: hidden;
+                    .zf-ppt-slider-main-i{
+                        width: 100%;
+                        height: 400px;
+                        position:absolute;
+                        opacity: 0;
+                        right: 50%;
+                        top: 0;
+                        -webkit-transition:all 1s;
+                        img{
+                            width: 100%;
+                            position: absolute;
+                              left: 0;
+                              top: 50%;
+                              z-index: 1;
+                        }
+                    }
+                    .zf-ppt-slider-main-i-active{
+                          opacity: 1;
+                          right: 0;
+                    }
+                }
+                .zf-ppt-slider-ctrl{
+                      width: 100%;
+                      height: 10px;
+                      line-height: 10px;
+                      text-align: center;
+                      position: absolute;
+                      left: 0;
+                      bottom: -10px;
+                      background-color: rgba(221, 221, 221, 0.35);
+                      .zf-ppt-slider-ctrl-i{
+                          display: inline-block;
+                          position: relative;
+                          width: 100px;
+                          height: 10px;
+                          background-color: #FFC1C1;
+                          img{
+                              width: 100%;
+                             position: absolute;
+                              bottom: 50px;
+                              left: 0;
+                              z-index: 1;
+                              opacity: 0;
+                              -webkit-transition:all 0.5s;
+                        }
+                    }
+                    .zf-ppt-slider-ctrl-i:hover{
+                          background-color: #337ab7;/*#DDD000*/
+                          img{
+                              bottom: 10px;
+                              -webkit-box-reflect:below 0px -webkit-gradient(
+                                linear,
+                                left top,
+                                left bottom,
+                                from(transparent),
+                                color-stop(50%,transparent),
+                                to(rgba(255,255,255,0.3))
+                              );
+                              opacity: 1;
+                        }
+                    }
+                    .zf-ppt-slider-ctrl-i-active{
+                          background-color: #19AD8C;
+                          img{
+                              opacity: 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .zf-more{
+        margin: 30px auto;
+        .zf-more-title{
+            color: #337ab7;
+            border-bottom: 2px solid #FFC1C1;
+            .zf-more-title-right{
+                float: right;
+            }
+        }
+        .zf-more-main{
+            margin: 10px auto;
+        }
+    }
+}
+
+#zf-healthCenter {
+    margin:auto auto;
+    padding: 0 20px;
+    width: 1250px;
+
+    .zf-title {
+        text-align: center;
+        color: #19AD8C;
+        padding: 30px 0;
+        font-weight: bold;
+        font-size: 30px;
+    }
+
+    .zf-main {
+        margin: 20px auto;
+        border-width: 2px;
+        border-color: #dddddd;
+        border-radius: 4px 4px 0 0;
+        border-style: solid;
+        position: relative;
+
+        .zf-nav {
+            position: absolute;
+            left: 910px;
+            top: 250px;
+
+            .selfButton {
+                width: 100px;
+                height: 100px;
+                border-radius: 10px;
+                border: 1px solid #dddddd;
+                font-size: 20px;
+                display: block;
+                background: white;
+                margin-bottom: 20px;
+                -webkit-transition:all 0.5s;
+            }
+
+            .selfButton:hover {
+                border-radius: 50px;
+            }
+
+            .homeButton {
+                width: 100px;
+                height: 100px;
+                border-radius: 10px;
+                border: 1px solid #dddddd;
+                font-size: 30px;
+                display: block;
+                background: white;
+                -webkit-transition:all 0.5s;
+            }
+
+            .homeButton:hover {
+                border-radius: 50px;
+            }
+
+            .blue {
+                background: #337ab7;
+                color: white;
+                border: white;
+                border-radius: 50px;
+            }
+        }
+
+        .zf-form {
+            padding: 20px 100px;
+
+            .piece {
+                padding: 20px 28px;
+
+                .answer {
+                    padding: 20px 0;
+
+                    .choice {
+                        margin-left: 90px;
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+@-webkit-keyframes hscroll {
+    0% { margin-left: 0; }
+    27.33% { margin-left: 0; }
+    33.33% { margin-left: -500px; }
+    60.66% { margin-left: -500px; }
+    66.66% { margin-left: -1000px; }
+    94.99% { margin-left: -1000px; }
+    100% { margin-left: 0; }
+}
+
+@-moz-keyframes hscroll {
+    0% { margin-left: 0; }
+    27.33% { margin-left: 0; }
+    33.33% { margin-left: -500px; }
+    60.66% { margin-left: -500px; }
+    66.66% { margin-left: -1000px; }
+    94.99% { margin-left: -1000px; }
+    100% { margin-left: 0; }
+}
+
+@-ms-keyframes hscroll {
+    0% { margin-left: 0; }
+    27.33% { margin-left: 0; }
+    33.33% { margin-left: -500px; }
+    60.66% { margin-left: -500px; }
+    66.66% { margin-left: -1000px; }
+    94.99% { margin-left: -1000px; }
+    100% { margin-left: 0; }
 }

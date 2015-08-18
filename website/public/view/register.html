@@ -12,17 +12,19 @@
         </ul>
         <div class="hxy-subcontent">
             <form id="main_register" ng-model="form" name="form" class="css-form" novalidate>
-                <div class="user red" ng-class="{redUntouched: form.$submitted}">
-                    <span class="glyphicon glyphicon-user"></span><input type="text" ng-model="name" name="name" class="form-control" placeholder="用户名" required><span class="required">*</span>
-                    <div class="tip" ng-show="form.$submitted || (form.name.$touched && form.name.$invalid)">
+                <div class="user red" ng-class="{redUntouched: form.$submitted, redSame: nameIsSame}">
+                    <span class="glyphicon glyphicon-user"></span><input type="text" ng-model="name" name="name" class="form-control" placeholder="用户名" ng-blur="isSameName();" ng-focus="nameIsSame = false" required><span class="required">*</span>
+                    <div class="tip" ng-show="form.$submitted || (form.name.$touched)">
                         <span ng-show="form.name.$error.required">请输入用户名</span>
+                        <span ng-show="nameIsSame">已有相同的名字被注册</span>
                     </div>
                 </div>
-                <div class="user red" ng-class="{redUntouched: form.$submitted}">
-                    <span class="glyphicon glyphicon-envelope"></span><input input type="email" name="email" ng-model="email" class="form-control" placeholder="邮箱" required><span class="required">*</span>
-                    <div ng-show="form.$submitted || (form.email.$touched && form.email.$invalid)" class="tip">
+                <div class="user red" ng-class="{redUntouched: form.$submitted, redSame: emailIsSame}">
+                    <span class="glyphicon glyphicon-envelope"></span><input input type="email" name="email" ng-model="email" class="form-control" placeholder="邮箱" ng-blur="isSameEmail();" ng-focus="emailIsSame = false" required><span class="required">*</span>
+                    <div ng-show="form.$submitted || (form.email.$touched)" class="tip">
                         <span ng-show="form.email.$error.required">请输入邮箱</span>
                         <span ng-show="form.email.$error.email">请输入正确的邮箱</span>
+                        <span ng-show="emailIsSame">已有相同的邮箱被注册</span>
                     </div>
                 </div>
                 <div class="password red" ng-class="{redUntouched: form.$submitted}">

@@ -5,6 +5,7 @@
         "angular"         : "latest",
         "angular-route"   : "latest",
         "angular-resource": "latest",
+        "angular-cookies" : "latest",
         "angular-animate" : "latest",
         "jquery"          : "latest",
         "jquery-lazyload" : "latest",

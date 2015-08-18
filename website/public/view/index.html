@@ -1,0 +1,75 @@
+<div ng-include="'view/nav.html'"></div>
+<div id="zf-main" ng-controller="IndexController">
+    <div id="zf-title">未时小肠养生期间，宜心平气和地静下来，适合下棋等</div>
+    <div id="personal-slider" ng-show="isLogin == true">
+        <div class="scrollable">
+            <div class="left"></div>
+            <div class="right"></div>
+            <div class="items">
+                <img ng-repeat="data in personal | limitTo: 4" ng-src="/images/{{data.image_hash}}.jpg">
+            </div>
+        </div>
+    </div>
+    <div id="zf-ppt">
+        <div id="zf-ppt-title">想你所想</div>
+        <div id="zf-ppt-main">
+            <div class="zf-ppt-slider">
+                <div class="zf-ppt-slider-main" id="template_main">
+                    <div class="zf-ppt-slider-main-i" ng-repeat="data in ppt | limitTo: 7" id="main_{{data.image_hash}}" ng-class="{'zf-ppt-slider-main-i-active': show == data.image_hash}" imgCenter>
+                        <img ng-src="/images/{{data.image_hash}}.jpg" class="img_{{data.image_hash}}">
+                    </div>
+                </div>
+                <div class="zf-ppt-slider-ctrl" id="template_ctrl">
+                    <a class="zf-ppt-slider-ctrl-i" ng-repeat="data in ppt"  href="#" ng-click="slider(data.image_hash);" id=" ctrl_{{data.image_hash}}" ng-class="{'zf-ppt-slider-ctrl-i-active': show == data.image_hash}">
+                        <img ng-src="/images/{{data.image_hash}}.jpg">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="zf-more">
+        <div class="zf-more-title">
+           <span class="glyphicon glyphicon-cutlery"></span> 美食
+           <div class="zf-more-title-right"><a>更多</a></div>
+        </div>
+        <div class="zf-more-main">
+           <div class="row">
+              <div class="col-xs-6 col-md-3" ng-repeat="data in food | limitTo: 4">
+                  <a href="#/food_material_detail/{{data.hash}}" class="thumbnail">
+                        <img ng-src="/images/{{data.image_hash}}.jpg" alt="...">
+                  </a>
+              </div>
+           </div>
+        </div>
+    </div>
+    <div class="zf-more">
+        <div class="zf-more-title">
+           <span class="glyphicon glyphicon-heart"></span> 运动
+           <div class="zf-more-title-right"><a>更多</a></div>
+        </div>
+        <div class="zf-more-main">
+           <div class="row">
+              <div class="col-xs-6 col-md-3" ng-repeat="data in sport | limitTo: 4">
+                  <a href="#/food_material_detail/{{data.hash}}" class="thumbnail">
+                        <img ng-src="/images/{{data.image_hash}}.jpg" alt="...">
+                  </a>
+              </div>
+           </div>
+        </div>
+    </div>
+    <div class="zf-more">
+        <div class="zf-more-title">
+           <span class="glyphicon glyphicon glyphicon-book"></span> 生活百科
+           <div class="zf-more-title-right"><a>更多</a></div>
+        </div>
+        <div class="zf-more-main">
+           <div class="row">
+              <div class="col-xs-6 col-md-3" ng-repeat="data in tip | limitTo: 4">
+                  <a href="#/food_material_detail/{{data.hash}}" class="thumbnail">
+                        <img ng-src="/images/{{data.image_hash}}.jpg" alt="...">
+                  </a>
+              </div>
+           </div>
+        </div>
+    </div>
+</div>
