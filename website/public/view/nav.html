@@ -19,7 +19,8 @@
             </div>
         </li>
         <li ng-show="isLogin == true"><a class="zf-account" href="#/user">{{user.username}},欢迎！</a></li>
-        <li ng-show="isLogin == true"><a class="zf-logout" ng-click="logout()">注销</a></li>
+        <li ng-show="isLogin == true"><a href="#/user/like/food_material">| 非常喜爱的<span class="glyphicon glyphicon-heart"></span> |</a></li>
+        <li ng-show="isLogin == true"><a class="zf-logout" ng-click="logout()">退出登录</a></li>
     </ul>
     <div class="hxy-search">
         <input type="text" placeholder="Search"><span class="glyphicon glyphicon-search" ></span>

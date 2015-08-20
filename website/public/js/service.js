@@ -177,6 +177,10 @@ angular.module('iLifeApp')
                                         params, null);
         };
 
+        service.fetchLike = function(item, params) {
+            return HttpService.callApi('GET', api_url + '/like/' + item, params, null);
+        };
+
         return service;
 
     }
@@ -203,6 +207,46 @@ angular.module('iLifeApp')
         service.tips = function() {
             return HttpService.callApi('GET', api_url + '/health_tips', null, null);
         };
+
+        return service;
+    }
+])
+
+.factory('TurnPageService', ['$q',
+    function($q) {
+    
+        var service = {};
+
+        service.turnPage = function(element, AP, TP) {
+            var page;
+            var deferred = $q.defer();
+
+            if(AP == element || element > TP) {
+                deferred.reject('There was an error: ');
+            }
+
+            if(element == 1 || element == 2 || element == 3) {
+                page = 3;
+            }
+            else {
+                if(element == TP
+                    || element == TP - 1
+                    || element == TP - 2) {
+                    page = TP - 2;
+                }
+                else {
+                    page = element;
+                }
+            }
+            var object = {
+                    'element': element,
+                    'page': page
+                    };
+
+            deferred.resolve(object);
+            return deferred.promise;
+
+         };
 
         return service;
     }

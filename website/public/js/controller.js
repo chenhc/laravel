@@ -37,8 +37,8 @@ angular.module('iLifeApp')
 
 // 食材列表控制器
 .controller('FoodMaterialController', ['$scope',
-        '$routeParams', 'FoodMaterialService', 'CategoryService',
-    function($scope, $routeParams, FoodMaterialService, CategoryService) {
+        '$routeParams', 'FoodMaterialService', 'CategoryService', 'TurnPageService',
+    function($scope, $routeParams, FoodMaterialService, CategoryService, TurnPageService) {
 
         $scope.category = $routeParams.category;
         $scope.classification = $routeParams.classification;
@@ -114,29 +114,12 @@ angular.module('iLifeApp')
 
         // 转页函数
         $scope.turnPage = function(element) {
-
-            if($scope.activePage == element || element > $scope.totalPage) {
-                return;
-            }
-
-            $scope.activePage = element;
-
-            if(element == 1 || element == 2 || element == 3) {
-                $scope.page = 3;
-            }
-            else {
-                if(element == $scope.totalPage
-                    || element == $scope.totalPage - 1
-                    || element == $scope.totalPage - 2) {
-                    $scope.page = $scope.totalPage - 2;
-                }
-                else {
-                    $scope.page = $scope.activePage;
-                }
-            }
-
-            $scope.refresh($scope.classification, $scope.category, element, 8);
-
+            TurnPageService.turnPage(element, $scope.activePage, $scope.totalPage)
+                .then(function(response) {
+                    $scope.activePage = response.element;
+                    $scope.page = response.page;
+                    $scope.refresh($scope.classification, $scope.category, response.element, 8);
+                });
          }
 
         $scope.initial();
@@ -281,7 +264,7 @@ angular.module('iLifeApp')
     }
 ])
 
-//主页控制器
+// 主页控制器
 .controller('IndexController', function($scope, $http, $cookies, $location) {
 
     //监听是否登出
@@ -343,7 +326,7 @@ angular.module('iLifeApp')
 
 })
 
-//健康中心控制器
+// 健康中心控制器
 .controller('HealthController', function($scope, $http, $cookies, $location) {
    /* $scope.questions = [
         {question:'您舌头的颜色',choice1:,choice2:,choice3:,choice4:},
@@ -362,8 +345,58 @@ angular.module('iLifeApp')
     }
 })
 
+// 用户收藏控制器
+.controller('UserLikeController', ['$scope', '$routeParams',
+    'UserService', 'TurnPageService',
+    function($scope, $routeParams, UserService, TurnPageService) {
+        $scope.page = 3;
+        $scope.activePage = 1;
+        $scope.totalPage = 1;
+        $scope.choiceItem = $routeParams.item;
+        $scope.like = {};
+
+        renderData = function(response) {
+            var data = response.data;
+            $scope.like = data;
+            for (material in data) {
+                for(attr in data[material]) {
+                    var value = data[material][attr];
+                    if (['suit_ctcms', 'avoid_ctcms', 'suit_mix', 'avoid_mix']
+                        .indexOf(attr) >= 0)
+                        value = value ? value.split(',') : "无";
+                    else if (['nutrient', 'efficacy', 'taboos'].indexOf(attr) >= 0)
+                        value = value ? value.split('\n'): "无";
+                    $scope.like[material][attr] = value;
+                }
+            }
+        };
+
+        $scope.refresh = function(item, page) {
+            var params = {
+                        'page': page
+                    };
+            UserService.fetchLike(item, params)
+                .then(function(response) {
+                    $scope.totalPage = response.totalPage;
+                    renderData(response);
+                });
+        };
+
+        $scope.turnPage = function(element) {
+            TurnPageService.turnPage(element, $scope.activePage, $scope.totalPage)
+                .then(function(response) {
+                    $scope.activePage = response.element;
+                    $scope.page = response.page;
+                    $scope.refresh($scope.choiceItem, $scope.activePage);
+                });
+        };
+
+        $scope.refresh($scope.choiceItem, 1);
+    }
+])
+
 // 导航栏控制器
-.controller('NavigationBarController',['$scope', '$location',
+.controller('NavigationBarController', ['$scope', '$location',
         'UserService',
     function($scope, $location, UserService) {
 
@@ -398,8 +431,9 @@ angular.module('iLifeApp')
 
             }
             else {
-
-                if($location.url() == '/user') {
+                if($location.url() == '/user'
+                    || $location.url() == '/user/like/food_material'
+                    || $location.url() == '/user/like/food_recipe') {
                     $location.path('/user/login');
                 }
 

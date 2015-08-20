@@ -48,5 +48,10 @@ angular.module('iLifeApp', ['ngRoute','ngCookies'])
         controller: 'FoodMaterialController',
     })
 
+    .when('/user/like/:item', {
+        templateUrl: 'view/user_like.html',
+        controller: 'UserLikeController',
+    })
+
     .otherwise({redirectTo: '/'})
 });

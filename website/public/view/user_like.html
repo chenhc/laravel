@@ -1,0 +1,58 @@
+<div ng-include="'view/nav.html'"></div>
+<div class="user_like" ng-controller="UserLikeController">
+    <div class="like_main">
+        <div class="like_nav">
+            <ul class="nav nav-tabs nav-justified">
+                <li ng-class="{active: choiceItem == 'food_material'}" role="presentation"><a href='#/user/like/food_material'>喜爱的食材</a></li>
+                <li ng-class="{active: choiceItem == 'food_recipe'}" role="presentation"><a href='#/user/like/food_recipe'>喜爱的食谱</a></li>
+            </ul>
+        </div>
+        <div class='like_piece' ng-repeat="data in like">
+            <img ng-src="/images/{{ data.image_hash }}.jpg" alt="">
+            <div class="like_piece_constitution">
+                <a href="#" ng-repeat="item in data.suit_ctcms track by $index" class="suit_ctcms" ng-hide="item == '无'"><span class="label label-success">{{ item }}</span></a>
+                <a href="#" ng-repeat="item in data.avoid_ctcms track by $index" class="avoid_ctcms" ng-hide="item == '无'"><span class="label label-danger">{{ item }}</span></a>
+            </div>
+            <a href="#/food_material_detail/{{ data.hash }}">
+                <div class="like_piece_label">
+                    <h4 class="title">{{ data.name }}</h4>
+                    <ul>
+                        <li>【别名】：{{ data.alias }}</li>
+                        <li>【食量建议】：{{ data.amount_rec }}</li>
+                        <li>【适宜人群】：{{ data.suit_crowds }}</li>
+                        <li class="avoid">【禁忌人群】：{{ data.avoid_crowds }}</li>
+                    </ul>
+                </div>
+            </a>
+        </div>
+    </div>
+    <nav>
+        <ul class="pagination">
+            <li>
+              <a ng-click="turnPage(1);" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            <li ng-class="{active: activePage == 1}">
+                <a ng-click="turnPage(page-2);">{{page - 2}}</a>
+            </li>
+            <li ng-class="{active: activePage == 2}">
+                <a ng-click='turnPage(page-1);'>{{page - 1}}</a>
+            </li>
+            <li ng-class="{active: ((totalPage >= 5) && (activePage != 1 && activePage != 2 && activePage != totalPage && activePage != totalPage - 1)) || (totalPage >= 3 && totalPage <= 4 && acitvePage == 3)}">
+                <a ng-click="turnPage(page);">{{page}}</a>
+            </li>
+            <li ng-class="{active: (totalPage >= 5 && activePage == totalPage - 1) || (totalPage == 4 && activePage == 4)}">
+                <a ng-click="turnPage(page+1);">{{page + 1}}</a>
+            </li>
+            <li ng-class="{active: totalPage >= 5 && activePage == totalPage}">
+                <a ng-click="turnPage(page+2);">{{page + 2}}</a>
+            </li>
+            <li>
+              <a ng-click="turnPage(totalPage);" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+        </ul>
+    </nav>
+</div>
