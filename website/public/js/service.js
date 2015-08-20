@@ -145,9 +145,12 @@ angular.module('iLifeApp')
                                         null, data);
         };
 
-        service.fetchLikedMaterials = function() {
+        service.fetchLikedMaterials = function(_page) {
+            params = {
+                page: _page
+            };
             return HttpService.callApi('GET', api_url + '/like/food_material',
-                                        null, null);
+                                        params, null);
         };
 
         service.setLikedRecipe = function(hash) {
@@ -166,9 +169,12 @@ angular.module('iLifeApp')
                                         null, data);
         };
 
-        service.fetchLikedRecipes = function() {
+        service.fetchLikedRecipes = function(_page) {
+            params = {
+                page: _page
+            };
             return HttpService.callApi('GET', api_url + '/like/food_recipe',
-                                        null, null);
+                                        params, null);
         };
 
         return service;

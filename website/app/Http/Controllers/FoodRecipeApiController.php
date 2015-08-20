@@ -87,12 +87,9 @@ class FoodRecipeApiController extends Controller {
         $pagesize = $request->input('pagesize', 10);
         $page = $request->input('page', 1);
         $offset = $pagesize * ($page - 1);
-        $totalPage = FoodRecipe::count();
+        $count = FoodRecipe::count();
         $recipes = FoodRecipe::skip($offset)->take($pagesize)->get();
-        $remian = $totalPage % $pagesize;
-        $totalPage = floor($totalPage / $pagesize);
-        if ($remian)
-            $totalPage += 1;
+        $totalPage = getTotalPage($count, $pagesize);
         return response()->json([
             'status' => true,
             'data' => $recipes,

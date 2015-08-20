@@ -112,10 +112,7 @@ class FoodMaterialApiController extends Controller {
             $totalMaterials = FoodMaterial::all()->count();
             $materials = FoodMaterial::skip($offset)->take($pagesize)->get();
         }
-        $remian = $totalMaterials % $pagesize;
-        $totalPage = floor($totalMaterials / $pagesize);
-        if ($remian)
-            $totalPage += 1;
+        $totalPage = getTotalPage($totalMaterials, $pagesize);
         return response()->json([
             'status' => true,
             'data' => $materials,

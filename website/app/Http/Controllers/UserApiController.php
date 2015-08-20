@@ -267,11 +267,14 @@ class UserApiController extends Controller {
         $pagesize = $request->input('pagesize', 10);
         $page = $request->input('page', 1);
         $offset = $pagesize * ($page - 1);
-        $materials = User::find($user_id)->get_liked_materials->slice($offset, $pagesize);
+        $materials = User::find($user_id)->get_liked_materials;
+        $totalPage = getTotalPage($materials->count(), $pagesize);
+        $materials = $materials->slice($offset, $pagesize);
         return response()->json([
             'status' => true,
-            'data' =>$materials
-            ]);
+            'data' => $materials,
+            'totalPage' => $totalPage,
+        ]);
     }
 
     public function setLikedRecipe(Request $request)
@@ -313,11 +316,14 @@ class UserApiController extends Controller {
         $pagesize = $request->input('pagesize', 10);
         $page = $request->input('page', 1);
         $offset = $pagesize * ($page - 1);
-        $recipes = User::find($user_id)->get_liked_recipes->slice($offset, $pagesize);
+        $recipes = User::find($user_id)->get_liked_recipes;
+        $totalPage = getTotalPage($recipes->count(), $pagesize);
+        $recipes = $recipes->slice($offset, $pagesize);
         return response()->json([
             'status' => true,
-            'data' => $recipes
-            ]);
+            'data' => $recipes,
+            'total' => $totalPage,
+        ]);
     }
 
     public function validity(Request $request)
