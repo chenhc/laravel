@@ -1,0 +1,133 @@
+<div ng-include="'view/nav.html'"></div>
+<div id="zf-healthCenter" ng-controller="HealthController">
+    <div class="zf-title">健康中心</div>
+    <div class="zf-main">
+        <div class="zf-nav">
+           <button class="selfButton blue">个人身体</button>
+           <button class="homeButton">家庭</button>
+        </div>
+        <form class="zf-form">
+        <!--由于不清楚每个问题答案选项的个数所以不敢贸然使用ng-repeat-->
+            <div class="piece">
+                <label for="answer">您的舌质的颜色</label>
+                <div class="answer">
+                    <input type="radio" class="choice" name="stomach" ng-model="color" value='1'>
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach" ng-model="color" value="2">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach" ng-model="color" value="3">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach" ng-model="color" value="4">
+                    <label for="stomach">胃寒</label>
+                </div>
+            </div>
+            <div class="piece">
+                <label for="answer">您的舌体的形态</label>
+                <div class="answer">
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                </div>
+            </div>
+            <div class="piece">
+                <label for="answer">您的舌苔的颜色</label>
+                <div class="answer">
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                </div>
+            </div>
+            <div class="piece">
+                <label for="answer">您的舌苔的厚度</label>
+                <div class="answer">
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                </div>
+            </div>
+            <div class="piece">
+                <label for="answer">您的排泄物的形状</label>
+                <div class="answer">
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                </div>
+            </div>
+            <div class="piece">
+                <label for="answer">您的排泄物的粘稠度</label>
+                <div class="answer">
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                </div>
+            </div>
+            <div class="piece">
+                <label for="answer">您的口腔的气味</label>
+                <div class="answer">
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                </div>
+            </div>
+            <div class="piece">
+                <label for="answer">您的生活习惯、饮食嗜好</label>
+                <div class="answer">
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                </div>
+            </div>
+            <div class="piece">
+                <label for="answer">您一分钟脉搏跳动的次数</label>
+                <div class="answer">
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                    <input type="radio" class="choice" name="stomach">
+                    <label for="stomach">胃寒</label>
+                </div>
+            </div>
+            <div class="piece">
+                <input type="button" class="btn btn-primary" value="确定" ng-click="click()">
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,87 @@
+<div ng-include="'view/nav.html'"></div>
+<div class="hxy-content">
+    <ol class="breadcrumb">
+      <li><a href="#/">首页</a></li>
+      <li class="active">美食</li>
+      <li><a ng-click="classification = null; category = null; initial();">食材百科</a></li>
+      <li class="active">{{category}}</li>
+    </ol>
+    <div class="zf-subnav">
+        <div class="tab-content">
+            <ul>
+                <li ng-repeat="data in classificationAll" ng-class="{active: classification == data}">
+                    <a ng-click="changeClassification(data);">{{data}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="direct" ng-hide="classification == null">
+        <span class="glyphicon glyphicon-triangle-bottom"></span>
+    </div>
+    <div class="zf-subnav" ng-hide="classification == null">
+        <div class="tab-content">
+            <ul>
+                <li ng-repeat="data in categoryAll[classification]" ng-class="{active: category == data}">
+                    <a ng-click="changeCategory(data);">{{data}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="hxy-recommand">
+    </div>
+    <div class="hxy-maincontent">
+        <h2>食材知识知多少</h2>
+        <hr>
+        <div class="row hxy-row">
+            <div class="col-sm-5 col-md-3" ng-repeat="data in itemsUp">
+                <div class="thumbnail hxy-thumbnail">
+                    <a href="#/food_material_detail/{{data.hash}}"><img ng-src="images/{{data.image_hash}}.jpg" alt="{{data.name}}"></a>
+                    <div class="caption hxy-caption">
+                        <h3><a href="#/food_material_detail/{{data.hash}}">{{data.name}}</a></h3>
+                        <p class="hxy-brief"><a href="#/food_material_detail/{{data.hash}}">{{data.brief}}</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row hxy-row">
+            <div class="col-sm-5 col-md-3" ng-repeat="data in itemsDown">
+                <div class="thumbnail hxy-thumbnail">
+                    <a href="#/food_material_detail/{{data.hash}}"><img ng-src="images/{{data.image_hash}}.jpg" alt="{{data.name}}"></a>
+                    <div class="caption hxy-caption">
+                        <h3><a href="#/food_material_detail/{{data.hash}}">{{data.name}}</a></h3>
+                        <p class="hxy-brief"><a href="#/food_material_detail/{{data.hash}}">{{data.brief}}</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav>
+        <ul class="pagination">
+            <li>
+              <a ng-click="turnPage(1);" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            <li ng-class="{active: activePage == 1}">
+                <a ng-click="turnPage(page-2);">{{page - 2}}</a>
+            </li>
+            <li ng-class="{active: activePage == 2}">
+                <a ng-click='turnPage(page-1);'>{{page - 1}}</a>
+            </li>
+            <li ng-class="{active: ((totalPage >= 5) && (activePage != 1 && activePage != 2 && activePage != totalPage && activePage != totalPage - 1)) || (totalPage >= 3 && totalPage <= 4 && acitvePage == 3)}">
+                <a ng-click="turnPage(page);">{{page}}</a>
+            </li>
+            <li ng-class="{active: (totalPage >= 5 && activePage == totalPage - 1) || (totalPage == 4 && activePage == 4)}">
+                <a ng-click="turnPage(page+1);">{{page + 1}}</a>
+            </li>
+            <li ng-class="{active: totalPage >= 5 && activePage == totalPage}">
+                <a ng-click="turnPage(page+2);">{{page + 2}}</a>
+            </li>
+            <li>
+              <a ng-click="turnPage(totalPage);" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+        </ul>
+    </nav>
+</div>

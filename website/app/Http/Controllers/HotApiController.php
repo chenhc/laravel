@@ -30,6 +30,17 @@ class HotApiController extends Controller {
         ]);
     }
 
+    // 获取热门运动
+    public function fetchHotSports(Request $request) {
+        $value = Redis::get('hot_sports');
+        $value = json_decode($value, true);
+        return response()->json([
+            'status' => true,
+            'data' => $value['data'],
+            'update_time' => $value['updatetime'],
+        ]);
+    }
+
     // 获取健康Tips（生活百科）
     public function fetchHealthTips(Request $request) {
         $value = Redis::get('health_tips');

@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 
+use Redis;
+
 class FoodRecipeApiController extends Controller {
 
     public function store(Request $request)
@@ -85,11 +87,16 @@ class FoodRecipeApiController extends Controller {
         $pagesize = $request->input('pagesize', 10);
         $page = $request->input('page', 1);
         $offset = $pagesize * ($page - 1);
+        $totalPage = FoodRecipe::count();
         $recipes = FoodRecipe::skip($offset)->take($pagesize)->get();
+        $remian = $totalPage % $pagesize;
+        $totalPage = floor($totalPage / $pagesize);
+        if ($remian)
+            $totalPage += 1;
         return response()->json([
             'status' => true,
-            'data' => $recipes
+            'data' => $recipes,
+            'totalPage' => $totalPage,
         ]);
     }
-
 }
