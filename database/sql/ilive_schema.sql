@@ -213,8 +213,8 @@ CREATE TABLE `fm_category_map` (
 
 -- 食材列别映射视图
 CREATE VIEW `fm_category_map_view`
-    (`id`, `classification`, `category`, `material`, `material_id`) AS
-        SELECT `fmcm`.`id`, `fmcc`.`classification`, `fmcc`.`category`, `fm`.`name`, `fm`.`id`
+    (`id`, `classification`, `category`, `material`, `material_hash`, `material_image_hash`, `material_id`) AS
+        SELECT `fmcm`.`id`, `fmcc`.`classification`, `fmcc`.`category`, `fm`.`name`, `fm`.`hash`, `fm`.`image_hash`, `fm`.`id`
         FROM `fm_category_map` AS `fmcm`
             LEFT JOIN `fm_classification_category` AS `fmcc`
                 ON `fmcm`.`category_id` = `fmcc`.`id`
@@ -278,6 +278,7 @@ CREATE TABLE `food_recipe` (
     `name` VARCHAR(255) NOT NULL,
     `source` VARCHAR(255) NOT NULL,
     `hash` CHAR(32) NOT NULL,
+    `image_hash` CHAR(32) DEFAULT NULL,
     `area` VARCHAR(255) DEFAULT NULL,
     `tags` VARCHAR(255) DEFAULT NULL,
     `method` VARCHAR(255) NOT NULL,
@@ -322,8 +323,8 @@ CREATE TABLE `fr_category_map` (
 
 -- 食谱类别映射视图
 CREATE VIEW `fr_category_map_view`
-    (`id`, `classification`, `category`, `recipe`, `recipe_id`) AS
-        SELECT `frcm`.`id`, `frcc`.`classification`, `frcc`.`category`, `fr`.`name`, `fr`.`id`
+    (`id`, `classification`, `category`, `recipe`, `recipe_hash`, `recipe_image_hash`, `recipe_id`) AS
+        SELECT `frcm`.`id`, `frcc`.`classification`, `frcc`.`category`, `fr`.`name`, `fr`.`hash`, `fr`.`image_hash`, `fr`.`id`
         FROM `fr_category_map` AS `frcm`
             LEFT JOIN `fr_classification_category` AS `frcc`
                 ON `frcm`.`category_id` = `frcc`.`id`
