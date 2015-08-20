@@ -32,7 +32,26 @@ angular.module('iLifeApp')
         var service = {};
         var api_url = '/api/food_material';
 
-       service.fetch = function(hash) {
+        service.fetch = function(hash) {
+            return HttpService.callApi('GET', api_url + '/' + hash, null, null);
+        };
+
+        service.index = function(params) {
+            return HttpService.callApi('GET', api_url, params, null);
+        };
+
+        return service;
+    }
+])
+
+.factory('FoodRecipeService', ['HttpService',
+
+    function(HttpService) {
+
+        var service = {};
+        var api_url = '/api/food_recipe';
+
+        service.fetch = function(hash) {
             return HttpService.callApi('GET', api_url + '/' + hash, null, null);
         };
 
@@ -64,8 +83,13 @@ angular.module('iLifeApp')
         var service = {};
         var api_url = '/api/user';
 
-       service.getUser = function() {
-            return HttpService.callApi('GET', api_url, null, null);
+        // 获取用户信息，不加参数默认取当前用户信息
+        service.getUser = function() {
+            if (arguments[0])
+                return HttpService.callApi('GET', api_url + '/' + arguments[0],
+                                            null, null);
+            else
+                return HttpService.callApi('GET', api_url, null, null);
         };
 
         service.valid = function(data) {
@@ -82,6 +106,11 @@ angular.module('iLifeApp')
             return  HttpService.callApi('POST', api_url, null, data);
         };
 
+        service.destory = function(hash) {
+            return HttpService.callApi('DELETE', api_url + '/' + hash,
+                                        null, null);
+        };
+
         service.login = function(account, password) {
             var data = {
                 'account': account,
@@ -94,8 +123,52 @@ angular.module('iLifeApp')
             return HttpService.callApi('GET', api_url + '/logout', null, null);
         };
 
-        service.update = function() {
+        service.update = function(hash, data) {
+            return HttpService.callApi('PUT', api_url + '/' + hash,
+                                        null, data);
+        };
 
+        service.setLikedMaterial = function(hash) {
+            data = {
+                'material_hash': hash
+            };
+            return HttpService.callApi('POST', api_url + '/like/food_material',
+                                        null, data);
+        };
+
+        service.setDislikedMaterial = function(hash) {
+            data = {
+                'material_hash': hash
+            };
+            return HttpService.callApi('Delete',
+                                        api_url + '/like/food_material',
+                                        null, data);
+        };
+
+        service.fetchLikedMaterials = function() {
+            return HttpService.callApi('GET', api_url + '/like/food_material',
+                                        null, null);
+        };
+
+        service.setLikedRecipe = function(hash) {
+            data = {
+                'recipe_hash': hash
+            };
+            return HttpService.callApi('POST', api_url + '/like/food_recipe',
+                                        null, data);
+        };
+
+        service.setDislikedRecipe = function(hash) {
+            data = {
+                'recipe_hash': hash
+            };
+            return HttpService.callApi('POST', api_url + '/like/food_recipe',
+                                        null, data);
+        };
+
+        service.fetchLikedRecipes = function() {
+            return HttpService.callApi('GET', api_url + '/like/food_recipe',
+                                        null, null);
         };
 
         return service;
@@ -110,19 +183,19 @@ angular.module('iLifeApp')
         var api_url = 'api/hot';
 
         service.personal = function() {
-            return HttpService.callApi('GET', api_url + '/personal', null);
+            return HttpService.callApi('GET', api_url + '/personal', null, null);
         };
 
         service.food_material = function() {
-            return HttpService.callApi('GET', api_url + '/food_material', null);
+            return HttpService.callApi('GET', api_url + '/food_material', null, null);
         };
 
         service.sports = function() {
-            return HttpService.callApi('GET', api_url + '/sports', null);
+            return HttpService.callApi('GET', api_url + '/sports', null, null);
         };
 
         service.tips = function() {
-            return HttpService.callApi('GET', api_url + '/health_tips', null);
+            return HttpService.callApi('GET', api_url + '/health_tips', null, null);
         };
 
         return service;

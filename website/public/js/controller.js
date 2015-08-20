@@ -393,7 +393,7 @@ angular.module('iLifeApp')
                             $scope.isLogin = false;
                             $scope.$emit('intermediary', $scope.isLogin);
                             $location.path('/');
-                        }); 
+                        });
                 };
 
             }
