@@ -1,13 +1,14 @@
 <?php namespace App\Http\Controllers;
 
 use App\FoodRecipe;
+use App\FoodRecipeCategoryView;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 
-use Redis;
+use Redis, DB;
 
 class FoodRecipeApiController extends Controller {
 
@@ -87,8 +88,17 @@ class FoodRecipeApiController extends Controller {
         $pagesize = $request->input('pagesize', 10);
         $page = $request->input('page', 1);
         $offset = $pagesize * ($page - 1);
-        $count = FoodRecipe::count();
-        $recipes = FoodRecipe::skip($offset)->take($pagesize)->get();
+        $category = $request->input('category');
+        if ($category) {
+            $recipes = FoodRecipeCategoryView::where('category', $category);
+            $count = $recipes->count();
+            $recipes = $recipes->skip($offset)->take($pagesize)->get();
+        }
+        else {
+            $count = FoodRecipeCategoryView::count();
+            $recipes = FoodRecipeCategoryView::skip($offset)->take($pagesize)
+                                            ->get();
+        }
         $totalPage = getTotalPage($count, $pagesize);
         return response()->json([
             'status' => true,

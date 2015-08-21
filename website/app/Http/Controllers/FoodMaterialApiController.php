@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\FoodMaterial;
+use App\FoodMaterialCategoryView;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -99,7 +100,9 @@ class FoodMaterialApiController extends Controller {
         $offset = $pagesize * ($page - 1);
         if ($classification)
         {
-            $materials = FoodMaterial::where('classification', $classification);
+            $materials = FoodMaterialCategoryView::where(
+                'classification', $classification
+            );
             if ($category)
             {
                 $materials = $materials->where('category', $category);
@@ -109,8 +112,9 @@ class FoodMaterialApiController extends Controller {
         }
         else
         {
-            $totalMaterials = FoodMaterial::all()->count();
-            $materials = FoodMaterial::skip($offset)->take($pagesize)->get();
+            $totalMaterials = FoodMaterialCategoryView::all()->count();
+            $materials = FoodMaterialCategoryView::skip($offset)
+                                                ->take($pagesize)->get();
         }
         $totalPage = getTotalPage($totalMaterials, $pagesize);
         return response()->json([
